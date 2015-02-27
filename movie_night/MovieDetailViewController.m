@@ -8,6 +8,8 @@
 
 #import "MovieDetailViewController.h"
 #import "AppDelegate.h"
+#import <UIKit/UIKit.h>
+#import <MediaPlayer/MediaPlayer.h> 
 
 @interface MovieDetailViewController ()
 
@@ -182,15 +184,6 @@
 }
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     
-    if ([[segue identifier] isEqualToString:@"trailer"]) {
-        TrailerViewController *detailViewController = segue.destinationViewController;
-        
-        if (detailViewController != nil) {
-            
-            detailViewController.trailerURL = self.selectedMovie.movie_trailer;
-        }
-    }
-
 }
 
 

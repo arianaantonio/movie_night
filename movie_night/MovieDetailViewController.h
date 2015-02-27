@@ -8,7 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "MovieClass.h"
-#import "TrailerViewController.h"
+#import "HCYoutubeParser.h"
+
+
 
 @interface MovieDetailViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 {

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>E8EB5CCC-1499-4457-BCB2-BF006DC8982F</string>
+	<key>IDESourceControlProjectName</key>
+	<string>movie_night</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>6D3D3E37F4F6E3EAE147837B9E8C69F89C1EF073</key>
+		<string>https://github.com/p32424/movie_night.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>movie_night.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>6D3D3E37F4F6E3EAE147837B9E8C69F89C1EF073</key>
+		<string>..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/p32424/movie_night.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>6D3D3E37F4F6E3EAE147837B9E8C69F89C1EF073</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>6D3D3E37F4F6E3EAE147837B9E8C69F89C1EF073</string>
+			<key>IDESourceControlWCCName</key>
+			<string>movie_night</string>
+		</dict>
+	</array>
+</dict>
+</plist>
