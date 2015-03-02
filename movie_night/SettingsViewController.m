@@ -7,6 +7,8 @@
 //
 
 #import "SettingsViewController.h"
+#import <Parse/Parse.h>
+#import "LoginViewController.h"
 
 @interface SettingsViewController ()
 
@@ -17,7 +19,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    settingsArray = [[NSArray alloc]initWithObjects:@"Change Profile Picture", @"Change Username", @"Change Full Name", @"Add Friends From Facebook", @"Add Friends From Contacts", @"Sign Out", nil];
+    settingsArray = [[NSArray alloc]initWithObjects:@"Change Profile Picture", @"Change Username", @"Change Full Name", @"Add Friends From Facebook", @"Add Friends From Contacts", nil];
     [_settingsTable setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
 }
 
@@ -25,6 +27,22 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+- (void)logoutButtonAction:(id)sender  {
+    
+
+    NSIndexPath *selectedIndexPath = [_settingsTable indexPathForSelectedRow];
+    NSLog(@"Row: %@", selectedIndexPath);
+    
+
+    [PFUser logOut]; 
+    
+    [self performSegueWithIdentifier:@"loginSegue" sender:self];
+    // Return to Login view controller
+    //LoginViewController *lvc = [[LoginViewController alloc]init];
+    //[self presentViewController:lvc animated:YES completion:nil];
+    //[self.navigationController popToRootViewControllerAnimated:YES];
+}
+#pragma mark  - TableView
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return [settingsArray count];
 }

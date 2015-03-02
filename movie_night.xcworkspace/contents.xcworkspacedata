@@ -2,9 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:movie_night/clipperboard-25.png">
-   </FileRef>
-   <FileRef
       location = "group:movie_night.xcodeproj">
    </FileRef>
    <FileRef

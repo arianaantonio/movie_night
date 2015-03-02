@@ -11,4 +11,11 @@
 
 @interface LoginViewController : UIViewController
 
+
+@property (nonatomic, strong) IBOutlet UITextField *usernameField;
+@property (nonatomic, strong) IBOutlet UITextField *passwordField;
+
+-(IBAction)loginWithFacebook:(id)sender;
+-(IBAction)loginWithUsername:(id)sender;
+
 @end

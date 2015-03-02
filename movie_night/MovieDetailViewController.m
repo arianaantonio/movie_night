@@ -20,19 +20,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    /*QuicksandDash-Regular
-     Quicksand-Italic
-     QuicksandDash-Regular
-     Quicksand-LightItalic
-     Quicksand-Light
-     Quicksand-BoldItalic
-     Quicksand-Bold
-     Quicksand-Regular */
-    
-    // Do any additional setup after loading the view.
     
     toggle = @"";
-   // NSLog(@"Selected: %@", self.selectedMovie.movie_title);
     self.navBar.title = self.selectedMovie.movie_title;
     
     NSString *movie_id = self.selectedMovie.movie_TMDB_id;

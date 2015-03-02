@@ -10,4 +10,13 @@
 
 @interface SignUpViewController : UIViewController
 
+@property (nonatomic, strong) IBOutlet UITextField *usernameField;
+@property (nonatomic, strong) IBOutlet UITextField *passwordField;
+@property (nonatomic, strong) IBOutlet UITextField *password2Field;
+@property (nonatomic, strong) IBOutlet UITextField *emailField;
+@property (nonatomic, strong) IBOutlet UITextField *fullNameField;
+@property (nonatomic, strong) IBOutlet UILabel *errorLabel;
+
+-(IBAction)signUpClicked:(id)sender;
+
 @end

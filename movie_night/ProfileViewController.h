@@ -21,7 +21,13 @@
 @property (nonatomic, strong) IBOutlet UITableView *listTableView;
 @property (nonatomic, strong) IBOutlet UISegmentedControl *listSegment;
 @property (nonatomic, strong) IBOutlet UIBarButtonItem *settingsButton;
+@property (nonatomic, strong) IBOutlet UINavigationItem *navBar;
+@property (nonatomic, strong) IBOutlet UILabel *nameLabel;
+@property (nonatomic, strong) IBOutlet UIImageView *profilePicView;
+@property (nonatomic, strong) IBOutlet UIButton *uploadPhoto;
 
 -(IBAction)segmentSelected:(id)sender;
+-(IBAction)logoutButtonAction:(id)sender;
+-(IBAction)uploadPhoto:(id)sender;
 
 @end

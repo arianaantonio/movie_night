@@ -15,4 +15,6 @@
 
 @property (nonatomic, strong) IBOutlet UITableView *settingsTable;
 
+
+-(IBAction)logoutButtonAction:(id)sender;
 @end

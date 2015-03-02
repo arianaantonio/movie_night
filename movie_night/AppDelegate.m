@@ -7,6 +7,9 @@
 //
 
 #import "AppDelegate.h"
+#import <Parse/Parse.h>
+#import <ParseFacebookUtils/PFFacebookUtils.h>
+//#import <FacebookSDK/FacebookSDK.h>
 
 @interface AppDelegate ()
 
@@ -17,7 +20,37 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+    [Parse setApplicationId:@"IASTyOSCs3IoFTnmNU7JcBQ4ZoDzTVb1ESK8jwSW"
+                  clientKey:@"FvfYcrED2qanfxBb7XE87BXGiWquIW2iJvZKORFj"];
+    [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
+    
+    PFUser *currentUser = [PFUser currentUser];
+    if (currentUser) {
+        // do stuff with the user
+        self.window.rootViewController = [self.window.rootViewController.storyboard instantiateViewControllerWithIdentifier:@"tabBarController"];
+    } else {
+        // show the signup or login screen
+        self.window.rootViewController = [self.window.rootViewController.storyboard instantiateViewControllerWithIdentifier:@"loginViewController"];
+    }
+    
     return YES;
+}
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication
+         annotation:(id)annotation {
+    return [FBAppCall handleOpenURL:url
+                  sourceApplication:sourceApplication
+                        withSession:[PFFacebookUtils session]];
+}
+
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+    [FBAppCall handleDidBecomeActiveWithSession:[PFFacebookUtils session]];
+}
+
+- (void)applicationWillTerminate:(UIApplication *)application {
+    [[PFFacebookUtils session] close];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
@@ -33,14 +66,14 @@
 - (void)applicationWillEnterForeground:(UIApplication *)application {
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
 }
-
+/*
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-}
+    
+    // Logs 'install' and 'app activate' App Events.
+    [FBAppEvents activateApp];
+}*/
 
-- (void)applicationWillTerminate:(UIApplication *)application {
-    // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-}
 +(void)downloadDataFromURL:(NSURL *)url withCompletionHandler:(void (^)(NSData *))completionHandler{
     // Instantiate a session configuration object.
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
@@ -74,4 +107,8 @@
     // Resume the task.
     [task resume];
 }
+- (BOOL) application:(UIApplication *)application handleOpenURL:(NSURL *)url {
+    return [PFFacebookUtils session];
+}
+
 @end
