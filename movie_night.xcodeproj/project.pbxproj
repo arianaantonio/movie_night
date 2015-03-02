@@ -82,10 +82,9 @@
 		41EC05C71AA3D961000193DD /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 41EC05C61AA3D961000193DD /* libsqlite3.dylib */; };
 		41EC05C91AA3DA47000193DD /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41EC05C81AA3DA47000193DD /* CoreLocation.framework */; };
 		41EC05CB1AA3DAB0000193DD /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 41EC05CA1AA3DAB0000193DD /* libz.dylib */; };
-		41EC05CF1AA3E9EB000193DD /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41EC05CE1AA3E9EB000193DD /* FacebookSDK.framework */; };
 		41EC05D11AA3EEB7000193DD /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41EC05D01AA3EEB7000193DD /* Social.framework */; };
-		41EC05D31AA43AF6000193DD /* FBUserSettingsViewResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 41EC05D21AA43AF6000193DD /* FBUserSettingsViewResources.bundle */; };
 		41EC05D51AA464AA000193DD /* Ninja.png in Resources */ = {isa = PBXBuildFile; fileRef = 41EC05D41AA464AA000193DD /* Ninja.png */; };
+		84EC27BB1AA518F00082487A /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84EC27BA1AA518F00082487A /* FacebookSDK.framework */; };
 		C726AC0397404FC0BF054C63 /* libPods-movie_night.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 24581BE1738646F5BDF70277 /* libPods-movie_night.a */; };
 /* End PBXBuildFile section */
 
@@ -198,10 +197,9 @@
 		41EC05C61AA3D961000193DD /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		41EC05C81AA3DA47000193DD /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		41EC05CA1AA3DAB0000193DD /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
-		41EC05CE1AA3E9EB000193DD /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../Documents/FacebookSDK/FacebookSDK.framework; sourceTree = "<group>"; };
 		41EC05D01AA3EEB7000193DD /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
-		41EC05D21AA43AF6000193DD /* FBUserSettingsViewResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = FBUserSettingsViewResources.bundle; path = ../../Documents/FacebookSDK/FacebookSDK.framework/Versions/A/Resources/FBUserSettingsViewResources.bundle; sourceTree = "<group>"; };
 		41EC05D41AA464AA000193DD /* Ninja.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Ninja.png; sourceTree = "<group>"; };
+		84EC27BA1AA518F00082487A /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
 		86740D99C39E40C7B42C87FA /* Pods-movie_night.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-movie_night.xcconfig"; path = "Pods/Pods-movie_night.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -215,6 +213,7 @@
 				41EC05C91AA3DA47000193DD /* CoreLocation.framework in Frameworks */,
 				41EC05C71AA3D961000193DD /* libsqlite3.dylib in Frameworks */,
 				41EC05C51AA3D94B000193DD /* SystemConfiguration.framework in Frameworks */,
+				84EC27BB1AA518F00082487A /* FacebookSDK.framework in Frameworks */,
 				41EC05C31AA3D93D000193DD /* StoreKit.framework in Frameworks */,
 				41EC05BF1AA3D92A000193DD /* Security.framework in Frameworks */,
 				41EC05BD1AA3D922000193DD /* QuartzCore.framework in Frameworks */,
@@ -226,7 +225,6 @@
 				41EC05121A907593000193DD /* CoreGraphics.framework in Frameworks */,
 				41EC05101A907587000193DD /* MobileCoreServices.framework in Frameworks */,
 				C726AC0397404FC0BF054C63 /* libPods-movie_night.a in Frameworks */,
-				41EC05CF1AA3E9EB000193DD /* FacebookSDK.framework in Frameworks */,
 				41EC05B51AA3D6ED000193DD /* ParseFacebookUtils.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -387,10 +385,9 @@
 		E3EA5A6558F5455F8FB6F76B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				41EC05D21AA43AF6000193DD /* FBUserSettingsViewResources.bundle */,
 				41EC05D01AA3EEB7000193DD /* Social.framework */,
-				41EC05CE1AA3E9EB000193DD /* FacebookSDK.framework */,
 				41EC05CA1AA3DAB0000193DD /* libz.dylib */,
+				84EC27BA1AA518F00082487A /* FacebookSDK.framework */,
 				41EC05C81AA3DA47000193DD /* CoreLocation.framework */,
 				41EC05C61AA3D961000193DD /* libsqlite3.dylib */,
 				41EC05171A9075B3000193DD /* Foundation.framework */,
@@ -504,7 +501,6 @@
 				41EC058C1A9C41C6000193DD /* profilepic6.jpg in Resources */,
 				41EC05881A9C41C6000193DD /* profilepic2.jpg in Resources */,
 				41EC05381A91D796000193DD /* movieReel.png in Resources */,
-				41EC05D31AA43AF6000193DD /* FBUserSettingsViewResources.bundle in Resources */,
 				41EC05431A945210000193DD /* play-48.png in Resources */,
 				41EC05721A9B091F000193DD /* nonstop.jpg in Resources */,
 				41EC055A1A9463E8000193DD /* Quicksand-Regular.otf in Resources */,
