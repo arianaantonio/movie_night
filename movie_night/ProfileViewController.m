@@ -10,6 +10,7 @@
 #import "SWRevealViewController.h"
 #import <Parse/Parse.h>
 #import <ParseFacebookUtils/PFFacebookUtils.h>
+#import <Parse/Parse.h>
 
 @interface ProfileViewController ()
 
@@ -26,6 +27,7 @@
     
     //check for current user
     PFUser *currentUser = [PFUser currentUser];
+    userId = currentUser.objectId;
     if (currentUser &&
         [PFFacebookUtils isLinkedWithUser:[PFUser currentUser]]) {
         [self loadData];
@@ -132,15 +134,130 @@
     movie10.movie_cast = @"Chris Pratt";
     movie10.movie_plot_overview = @"An all Lego animated movie about finding yourself in a big and complicated world";
     movie10.movie_director = @"Phil Lord";
-    
-    movieArray = [[NSMutableArray alloc]initWithObjects:movie1, movie2, movie3, movie4, movie5, movie6, movie7, movie8, movie9, movie10, nil];
-    
-    favoritesArray = [[NSMutableArray alloc]initWithObjects:movie9, movie6, movie1, movie8, movie2, movie4, movie10, movie5, movie3, movie7, nil];
-    
+
+                      
     wantToSeeArray = [[NSMutableArray alloc]initWithObjects:movie3, movie9, movie6, movie10, movie2, movie8, movie4, movie7, movie5, movie1, nil];
     
+    favoritesArray = [[NSMutableArray alloc]init];
+    movieArray = [[NSMutableArray alloc]init];
+    //[self refreshView];
+       /*
+    PFQuery *query1 = [PFQuery queryWithClassName:@"Reviews"];
+    [query1 whereKey:@"userID" equalTo:userId];
+    [query1 whereKey:@"isFavorite" equalTo:[NSNumber numberWithBool:YES]];
+    [query1 orderByDescending:@"createdAt"];
+    [query1 findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        
+        if (!error) {
+            
+            NSString *movieTitle = @"";
+            NSString *rating = @"";
+            
+            for (PFObject *object in objects) {
+                NSLog(@"%@", object.objectId);
+                
+                //get object data returned
+                rating = [object objectForKey:@"rating"];
+                movieTitle = [object objectForKey:@"movieTitle"];
+                MovieClass *tmpMovie = [[MovieClass alloc]init];
+                tmpMovie.movie_title = movieTitle;
+                tmpMovie.user_rating = rating;
+                [favoritesArray addObject:tmpMovie];
+            }
+        }
+    }];*/
+    
+    /*
+    PFQuery *query2 = [PFQuery queryWithClassName:@"Reviews"];
+    [query2 whereKey:@"userID" equalTo:userId];
+    [query2 orderByDescending:@"createdAt"];
+    [query2 findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        
+        if (!error) {
+            
+          
+            NSString *movieTitle = @"";
+            NSString *rating = @"";
+            
+            for (PFObject *object in objects) {
+                NSLog(@"%@", object.objectId);
+                
+                //get object data returned
+                rating = [object objectForKey:@"rating"];
+                movieTitle = [object objectForKey:@"movieTitle"];
+                MovieClass *tmpMovie = [[MovieClass alloc]init];
+                tmpMovie.movie_title = movieTitle;
+                tmpMovie.user_rating = rating;
+                [movieArray addObject:tmpMovie];
+            }
+        }
+    }];*/
+}
+-(void)refreshView {
+    
+    [movieArray removeAllObjects];
+    [favoritesArray removeAllObjects];
+    
+    PFQuery *query1 = [PFQuery queryWithClassName:@"Reviews"];
+    [query1 whereKey:@"userID" equalTo:userId];
+    [query1 whereKey:@"isFavorite" equalTo:[NSNumber numberWithBool:YES]];
+    [query1 orderByDescending:@"createdAt"];
+    [query1 findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        
+        if (!error) {
+            
+            NSString *movieTitle = @"";
+            NSString *rating = @"";
+            
+            for (PFObject *object in objects) {
+                NSLog(@"%@", object.objectId);
+                
+                //get object data returned
+                rating = [object objectForKey:@"rating"];
+                movieTitle = [object objectForKey:@"movieTitle"];
+                MovieClass *tmpMovie = [[MovieClass alloc]init];
+                tmpMovie.movie_title = movieTitle;
+                tmpMovie.user_rating = rating;
+                [favoritesArray addObject:tmpMovie];
+                
+                [_listTableView reloadData];
+            }
+        }
+    }];
+    
+    
+    PFQuery *query2 = [PFQuery queryWithClassName:@"Reviews"];
+    [query2 whereKey:@"userID" equalTo:userId];
+    [query2 orderByDescending:@"createdAt"];
+    [query2 findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        
+        if (!error) {
+            
+            NSString *movieTitle = @"";
+            NSString *rating = @"";
+            
+            for (PFObject *object in objects) {
+                NSLog(@"%@", object.objectId);
+                
+                //get object data returned
+                rating = [object objectForKey:@"rating"];
+                movieTitle = [object objectForKey:@"movieTitle"];
+                MovieClass *tmpMovie = [[MovieClass alloc]init];
+                tmpMovie.movie_title = movieTitle;
+                tmpMovie.user_rating = rating;
+                [movieArray addObject:tmpMovie];
+                
+                [_listTableView reloadData];
+            }
+        }
+    }];
     
 }
+-(void)viewDidAppear:(BOOL)animated {
+    [self refreshView];
+    
+}
+
 //load user data to populate UI
 -(void)loadData {
 

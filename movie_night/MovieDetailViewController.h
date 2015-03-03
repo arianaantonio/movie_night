@@ -14,7 +14,10 @@
 
 @interface MovieDetailViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 {
+    NSString *numStars;
     NSString *toggle;
+    BOOL isFave;
+    NSString *movie_id;
 }
 
 @property (nonatomic, strong) IBOutlet UILabel *movie_title_label;
@@ -23,6 +26,7 @@
 @property (nonatomic, strong) IBOutlet UILabel *cast_label;
 @property (nonatomic, strong) IBOutlet UILabel *director_label;
 @property (nonatomic, strong) IBOutlet UITextView *plot_label;
+@property (nonatomic, strong) IBOutlet UITextView *reviewView;
 @property (nonatomic, strong) IBOutlet UILabel *genre_label;
 @property (nonatomic, strong) IBOutlet UIImageView *poster_image;
 @property (nonatomic, strong) IBOutlet UINavigationItem *navBar;
@@ -30,6 +34,11 @@
 @property (nonatomic, strong) IBOutlet UIButton *trailerButton;
 @property (nonatomic, strong) IBOutlet UIButton *favButton;
 @property (nonatomic, strong) IBOutlet UIImageView *heartImageView;
+@property (nonatomic, strong) IBOutlet UIButton *star1Button;
+@property (nonatomic, strong) IBOutlet UIButton *star2Button;
+@property (nonatomic, strong) IBOutlet UIButton *star3Button;
+@property (nonatomic, strong) IBOutlet UIButton *star4Button;
+@property (nonatomic, strong) IBOutlet UIButton *star5Button;
 
 -(IBAction)clickedFavorite:(id)sender;
 -(IBAction)clickedTariler:(id)sender;

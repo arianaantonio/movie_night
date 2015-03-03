@@ -25,5 +25,7 @@
 @property (nonatomic, strong) NSString *username;
 @property (nonatomic, strong) NSString *user_review;
 @property (nonatomic, strong) NSString *user_photo;
+@property (nonatomic, strong) NSNumber *user_is_fave;
+@property (nonatomic, strong) NSString *user_review_objectId;
 
 @end

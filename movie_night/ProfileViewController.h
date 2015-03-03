@@ -16,6 +16,7 @@
     NSMutableArray *movieArray;
     NSMutableArray *wantToSeeArray;
     NSMutableArray *favoritesArray;
+    NSString *userId;
 }
 
 @property (nonatomic, strong) IBOutlet UITableView *listTableView;
