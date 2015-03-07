@@ -198,6 +198,7 @@
     [movieArray removeAllObjects];
     [favoritesArray removeAllObjects];
     
+    /*
     PFQuery *query1 = [PFQuery queryWithClassName:@"Reviews"];
     [query1 whereKey:@"userID" equalTo:userId];
     [query1 whereKey:@"isFavorite" equalTo:[NSNumber numberWithBool:YES]];
@@ -215,15 +216,17 @@
                 //get object data returned
                 rating = [object objectForKey:@"rating"];
                 movieTitle = [object objectForKey:@"movieTitle"];
+                UIImage *moviePoster = [UIImage imageWithData:[(PFFile *)object[@"moviePoster"]getData]];
                 MovieClass *tmpMovie = [[MovieClass alloc]init];
                 tmpMovie.movie_title = movieTitle;
                 tmpMovie.user_rating = rating;
+                tmpMovie.movie_poster_file = moviePoster;
                 [favoritesArray addObject:tmpMovie];
                 
                 [_listTableView reloadData];
             }
         }
-    }];
+    }];*/
     
     
     PFQuery *query2 = [PFQuery queryWithClassName:@"Reviews"];
@@ -235,17 +238,28 @@
             
             NSString *movieTitle = @"";
             NSString *rating = @"";
+            NSNumber *isFave;
+            UIImage *moviePoster;
+            NSString *movieID = @"";
             
             for (PFObject *object in objects) {
                 NSLog(@"%@", object.objectId);
                 
                 //get object data returned
                 rating = [object objectForKey:@"rating"];
+                moviePoster = [UIImage imageWithData:[(PFFile *)object[@"moviePoster"]getData]];
                 movieTitle = [object objectForKey:@"movieTitle"];
+                isFave = [object objectForKey:@"isFavorite"];
+                movieID = [object objectForKey:@"movieID"];
                 MovieClass *tmpMovie = [[MovieClass alloc]init];
                 tmpMovie.movie_title = movieTitle;
                 tmpMovie.user_rating = rating;
+                tmpMovie.movie_poster_file = moviePoster;
+                tmpMovie.movie_TMDB_id = movieID;
                 [movieArray addObject:tmpMovie];
+                if ([isFave intValue] == 1) {
+                    [favoritesArray addObject:tmpMovie];
+                }
                 
                 [_listTableView reloadData];
             }
@@ -255,7 +269,6 @@
 }
 -(void)viewDidAppear:(BOOL)animated {
     [self refreshView];
-    
 }
 
 //load user data to populate UI
@@ -272,8 +285,24 @@
     NSDictionary *userDict = [userArray firstObject];
     NSString *username = [userDict objectForKey:@"username"];
     NSString *fullName = [userDict objectForKey:@"full_name"];
+    friendsArray = [[NSArray alloc]initWithArray:[userDict objectForKey:@"friends"]];
+    [_followingButton setTitle:[NSString stringWithFormat:@"Friends: %lu", (unsigned long)[friendsArray count]] forState:UIControlStateNormal];
+  //  [_friendsCountLabel setText:[NSString stringWithFormat:@"Friends: %lu", (unsigned long)[friendsArray count]]];
     UIImage *image = [UIImage imageWithData:[(PFFile *)userDict[@"profile_pic"] getData]];
     
+    __block int reviewsCount;
+    PFQuery *countQuery = [PFQuery queryWithClassName:@"Reviews"];
+    [countQuery whereKey:@"userID" equalTo:currentUser.objectId];
+    [countQuery countObjectsInBackgroundWithBlock:^(int count, NSError *error) {
+        if (!error) {
+            // The count request succeeded. Log the count
+            NSLog(@"Sean has played %d games", count);
+            reviewsCount = count;
+        } else {
+            reviewsCount = 0;
+        }
+        [_reviewsCountLabel setText:[NSString stringWithFormat:@"Reviews: %i", reviewsCount]];
+    }];
     if (image == nil) {
         _profilePicView.image = [UIImage imageNamed:@"Ninja.png"];
         [_uploadPhoto setHidden:NO];
@@ -282,8 +311,8 @@
     }
     
     //set uielements
-    [_nameLabel setText:username];
-    self.navBar.title = fullName;
+    [_nameLabel setText:fullName];
+    self.navBar.title = username;
 
 }
 //upload a profile pic
@@ -436,7 +465,7 @@
         }
         
         UIImageView *posterView = (UIImageView *) [cell viewWithTag:1];
-        UIImage *posterImage = [UIImage imageNamed:currentMovie.movie_poster];
+        UIImage *posterImage = currentMovie.movie_poster_file;
         posterView.image = posterImage;
         
         UILabel *titleLabel = (UILabel *) [cell viewWithTag:2];

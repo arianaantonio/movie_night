@@ -11,12 +11,13 @@
 #import "MovieDetailViewController.h"
 #import "SWRevealViewController.h"
 
-@interface ProfileViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
+@interface ProfileViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UIImagePickerControllerDelegate>
 {
     NSMutableArray *movieArray;
     NSMutableArray *wantToSeeArray;
     NSMutableArray *favoritesArray;
     NSString *userId;
+    NSArray *friendsArray;
 }
 
 @property (nonatomic, strong) IBOutlet UITableView *listTableView;
@@ -26,6 +27,10 @@
 @property (nonatomic, strong) IBOutlet UILabel *nameLabel;
 @property (nonatomic, strong) IBOutlet UIImageView *profilePicView;
 @property (nonatomic, strong) IBOutlet UIButton *uploadPhoto;
+@property (nonatomic, strong) IBOutlet UIButton *followingButton;
+@property (nonatomic, strong) IBOutlet UIButton *followersButton;
+//@property (nonatomic, strong) IBOutlet UILabel *friendsCountLabel;
+@property (nonatomic, strong) IBOutlet UILabel *reviewsCountLabel;
 
 -(IBAction)segmentSelected:(id)sender;
 -(IBAction)logoutButtonAction:(id)sender;

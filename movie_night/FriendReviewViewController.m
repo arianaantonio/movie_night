@@ -13,16 +13,20 @@
 @end
 
 @implementation FriendReviewViewController
+@synthesize scrollView, commentField;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     commentArray = [[NSMutableArray alloc]init];
+    [commentField setDelegate:self];
+    [self registerForKeyboardNotifications];
     
-    UIImage *profilePicImage = [UIImage imageNamed:self.selectedReview.user_photo];
+    
+    UIImage *profilePicImage = self.selectedReview.user_photo_file;
     _profilePic.image = profilePicImage;
     
-    UIImage *posterImage = [UIImage imageNamed:self.selectedReview.movie_poster];
+    UIImage *posterImage = self.selectedReview.movie_poster_file;
     _posterView.image = posterImage;
     
     _titleLabel.text = [NSString stringWithFormat:@"%@ has rated %@:", self.selectedReview.username, self.selectedReview.movie_title];
@@ -82,12 +86,52 @@
     
     
 }
+//set up textfield so return button closes keyboard
+-(BOOL)textFieldShouldReturn:(UITextField*)textField {
+
+    [textField resignFirstResponder];
+    return NO;
+}
+//register keyboard to receive notifications
+- (void)registerForKeyboardNotifications {
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWasShown:) name:UIKeyboardDidShowNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillBeHidden:) name:UIKeyboardWillHideNotification object:nil];
+}
+//call when keyboard is shown
+- (void)keyboardWasShown:(NSNotification*)aNotification {
+    
+    NSDictionary* info = [aNotification userInfo];
+    CGSize kbSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    
+    UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, kbSize.height, 0.0);
+    scrollView.contentInset = contentInsets;
+    scrollView.scrollIndicatorInsets = contentInsets;
+    
+    //scroll view to bottem field so keyboard doesn't hide it
+    CGRect aRect = self.view.frame;
+    aRect.size.height -= kbSize.height;
+    
+    if (!CGRectContainsPoint(aRect, commentField.frame.origin) ) {
+        
+        [self.scrollView scrollRectToVisible:commentField.frame animated:YES];
+    }
+}
+//when keyboard is hidden
+- (void)keyboardWillBeHidden:(NSNotification*)aNotification {
+    
+    //sroll view down when keyboard is hidden to regular dimensions
+    UIEdgeInsets contentInsets = UIEdgeInsetsZero;
+    scrollView.contentInset = contentInsets;
+    scrollView.scrollIndicatorInsets = contentInsets;
+}
 -(void)onPostComment:(id)sender {
-    NSString *comment = [_commentField text];
+    NSString *comment = [commentField text];
     NSDictionary *commentDict = [NSDictionary dictionaryWithObjectsAndKeys:comment, @"comment", nil];
     [commentArray addObject:commentDict];
     [_commentTable reloadData];
-    [_commentField setText:@""];
+    [commentField setText:@""];
 }
 #pragma mark TableView
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {

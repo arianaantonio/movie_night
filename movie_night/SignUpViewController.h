@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface SignUpViewController : UIViewController
+@interface SignUpViewController : UIViewController <UITextFieldDelegate>
 
 @property (nonatomic, strong) IBOutlet UITextField *usernameField;
 @property (nonatomic, strong) IBOutlet UITextField *passwordField;
@@ -16,6 +16,7 @@
 @property (nonatomic, strong) IBOutlet UITextField *emailField;
 @property (nonatomic, strong) IBOutlet UITextField *fullNameField;
 @property (nonatomic, strong) IBOutlet UILabel *errorLabel;
+@property (nonatomic, strong) IBOutlet UIScrollView *scrollView;
 
 -(IBAction)signUpClicked:(id)sender;
 

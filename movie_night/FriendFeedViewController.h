@@ -10,9 +10,14 @@
 #import "MovieClass.h"
 #import "FriendReviewViewController.h"
 
-@interface FriendFeedViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
+@interface FriendFeedViewController : UITableViewController <UITableViewDataSource, UITableViewDelegate>
 {
-    NSArray *feedArray;
+    NSMutableArray *feedArray;
+    UIView *refreshLoadingView;
+    UIView *refreshColorView;
+    UIImageView *compass_spinner;
+    BOOL isRefreshIconsOverlap;
+    BOOL isRefreshAnimating;
 }
 
 @property (nonatomic, strong) IBOutlet UITableView *feedTableView;

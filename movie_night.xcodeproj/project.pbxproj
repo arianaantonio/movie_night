@@ -84,6 +84,14 @@
 		41EC05CB1AA3DAB0000193DD /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 41EC05CA1AA3DAB0000193DD /* libz.dylib */; };
 		41EC05D11AA3EEB7000193DD /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41EC05D01AA3EEB7000193DD /* Social.framework */; };
 		41EC05D51AA464AA000193DD /* Ninja.png in Resources */ = {isa = PBXBuildFile; fileRef = 41EC05D41AA464AA000193DD /* Ninja.png */; };
+		41F9BD401AA67DEA008FA16C /* AddContactsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41F9BD3F1AA67DEA008FA16C /* AddContactsViewController.m */; };
+		41F9BD421AA67FC9008FA16C /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41F9BD411AA67FC9008FA16C /* AddressBook.framework */; };
+		41F9BD441AA68070008FA16C /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41F9BD431AA68070008FA16C /* AddressBookUI.framework */; };
+		41F9BD471AA825B0008FA16C /* AddFriendsFromSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41F9BD461AA825B0008FA16C /* AddFriendsFromSettingsViewController.m */; };
+		41F9BD4A1AA83985008FA16C /* WhereFriendsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41F9BD491AA83985008FA16C /* WhereFriendsViewController.m */; };
+		41F9BD4C1AA98AA2008FA16C /* moviereelSpinner.png in Resources */ = {isa = PBXBuildFile; fileRef = 41F9BD4B1AA98AA2008FA16C /* moviereelSpinner.png */; };
+		41F9BD4E1AAA9940008FA16C /* playButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 41F9BD4D1AAA9940008FA16C /* playButton.png */; };
+		41F9BD511AAAA4A8008FA16C /* FollowersTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41F9BD501AAAA4A8008FA16C /* FollowersTableViewController.m */; };
 		84EC27BB1AA518F00082487A /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84EC27BA1AA518F00082487A /* FacebookSDK.framework */; };
 		C726AC0397404FC0BF054C63 /* libPods-movie_night.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 24581BE1738646F5BDF70277 /* libPods-movie_night.a */; };
 /* End PBXBuildFile section */
@@ -199,6 +207,18 @@
 		41EC05CA1AA3DAB0000193DD /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		41EC05D01AA3EEB7000193DD /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		41EC05D41AA464AA000193DD /* Ninja.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Ninja.png; sourceTree = "<group>"; };
+		41F9BD3E1AA67DEA008FA16C /* AddContactsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddContactsViewController.h; sourceTree = "<group>"; };
+		41F9BD3F1AA67DEA008FA16C /* AddContactsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddContactsViewController.m; sourceTree = "<group>"; };
+		41F9BD411AA67FC9008FA16C /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
+		41F9BD431AA68070008FA16C /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
+		41F9BD451AA825B0008FA16C /* AddFriendsFromSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddFriendsFromSettingsViewController.h; sourceTree = "<group>"; };
+		41F9BD461AA825B0008FA16C /* AddFriendsFromSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddFriendsFromSettingsViewController.m; sourceTree = "<group>"; };
+		41F9BD481AA83985008FA16C /* WhereFriendsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WhereFriendsViewController.h; sourceTree = "<group>"; };
+		41F9BD491AA83985008FA16C /* WhereFriendsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WhereFriendsViewController.m; sourceTree = "<group>"; };
+		41F9BD4B1AA98AA2008FA16C /* moviereelSpinner.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = moviereelSpinner.png; sourceTree = "<group>"; };
+		41F9BD4D1AAA9940008FA16C /* playButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = playButton.png; sourceTree = "<group>"; };
+		41F9BD4F1AAAA4A8008FA16C /* FollowersTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FollowersTableViewController.h; sourceTree = "<group>"; };
+		41F9BD501AAAA4A8008FA16C /* FollowersTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FollowersTableViewController.m; sourceTree = "<group>"; };
 		84EC27BA1AA518F00082487A /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
 		86740D99C39E40C7B42C87FA /* Pods-movie_night.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-movie_night.xcconfig"; path = "Pods/Pods-movie_night.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -208,6 +228,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				41F9BD441AA68070008FA16C /* AddressBookUI.framework in Frameworks */,
+				41F9BD421AA67FC9008FA16C /* AddressBook.framework in Frameworks */,
 				41EC05D11AA3EEB7000193DD /* Social.framework in Frameworks */,
 				41EC05CB1AA3DAB0000193DD /* libz.dylib in Frameworks */,
 				41EC05C91AA3DA47000193DD /* CoreLocation.framework in Frameworks */,
@@ -282,6 +304,14 @@
 				41EC059F1A9EF9DC000193DD /* LoginViewController.m */,
 				41EC05A11A9EFA1B000193DD /* SignUpViewController.h */,
 				41EC05A21A9EFA1B000193DD /* SignUpViewController.m */,
+				41F9BD3E1AA67DEA008FA16C /* AddContactsViewController.h */,
+				41F9BD3F1AA67DEA008FA16C /* AddContactsViewController.m */,
+				41F9BD481AA83985008FA16C /* WhereFriendsViewController.h */,
+				41F9BD491AA83985008FA16C /* WhereFriendsViewController.m */,
+				41F9BD451AA825B0008FA16C /* AddFriendsFromSettingsViewController.h */,
+				41F9BD461AA825B0008FA16C /* AddFriendsFromSettingsViewController.m */,
+				41F9BD4F1AAAA4A8008FA16C /* FollowersTableViewController.h */,
+				41F9BD501AAAA4A8008FA16C /* FollowersTableViewController.m */,
 				41EC04EA1A907040000193DD /* Main.storyboard */,
 				41EC051E1A90A9E3000193DD /* MovieClass.h */,
 				41EC051F1A90A9E3000193DD /* MovieClass.m */,
@@ -325,6 +355,8 @@
 		41EC05391A92EE90000193DD /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				41F9BD4D1AAA9940008FA16C /* playButton.png */,
+				41F9BD4B1AA98AA2008FA16C /* moviereelSpinner.png */,
 				41EC059C1A9EF6A0000193DD /* previous-32.png */,
 				41EC058F1A9ECF28000193DD /* settings_filled-32.png */,
 				41EC05901A9ECF28000193DD /* settings-32.png */,
@@ -385,6 +417,8 @@
 		E3EA5A6558F5455F8FB6F76B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				41F9BD431AA68070008FA16C /* AddressBookUI.framework */,
+				41F9BD411AA67FC9008FA16C /* AddressBook.framework */,
 				41EC05D01AA3EEB7000193DD /* Social.framework */,
 				41EC05CA1AA3DAB0000193DD /* libz.dylib */,
 				84EC27BA1AA518F00082487A /* FacebookSDK.framework */,
@@ -513,12 +547,14 @@
 				41EC05751A9B09B8000193DD /* Need_For_Speed_New_Oficial_Poster_JPosters.jpg in Resources */,
 				41EC05691A9AFE38000193DD /* whiplash.jpg in Resources */,
 				41EC04EC1A907040000193DD /* Main.storyboard in Resources */,
+				41F9BD4E1AAA9940008FA16C /* playButton.png in Resources */,
 				41EC05361A91D51B000193DD /* clipperboard-25.png in Resources */,
 				41EC05651A9AFE38000193DD /* americansniper.jpg in Resources */,
 				41EC05551A9463D6000193DD /* Quicksand-Bold.otf in Resources */,
 				41EC05911A9ECF28000193DD /* settings_filled-32.png in Resources */,
 				41EC05581A9463E1000193DD /* Quicksand-Light.otf in Resources */,
 				41EC05671A9AFE38000193DD /* selma.jpg in Resources */,
+				41F9BD4C1AA98AA2008FA16C /* moviereelSpinner.png in Resources */,
 				41EC04EE1A907040000193DD /* Images.xcassets in Resources */,
 				41EC05D51AA464AA000193DD /* Ninja.png in Resources */,
 				41EC05681A9AFE38000193DD /* taken3.jpg in Resources */,
@@ -597,8 +633,12 @@
 				41EC059B1A9EEC62000193DD /* SettingsViewController.m in Sources */,
 				41EC04E91A907040000193DD /* SearchViewController.m in Sources */,
 				41EC04E61A907040000193DD /* AppDelegate.m in Sources */,
+				41F9BD401AA67DEA008FA16C /* AddContactsViewController.m in Sources */,
 				41EC053C1A92EEB6000193DD /* ProfileViewController.m in Sources */,
+				41F9BD511AAAA4A8008FA16C /* FollowersTableViewController.m in Sources */,
+				41F9BD471AA825B0008FA16C /* AddFriendsFromSettingsViewController.m in Sources */,
 				41EC05201A90A9E3000193DD /* MovieClass.m in Sources */,
+				41F9BD4A1AA83985008FA16C /* WhereFriendsViewController.m in Sources */,
 				41EC05951A9ED9B2000193DD /* WriteReviewViewController.m in Sources */,
 				41EC04E31A907040000193DD /* main.m in Sources */,
 				41EC05A31A9EFA1B000193DD /* SignUpViewController.m in Sources */,

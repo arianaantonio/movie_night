@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "MovieClass.h"
 
-@interface FriendReviewViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
+@interface FriendReviewViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
 {
     NSMutableArray *commentArray;
 }
@@ -26,6 +26,7 @@
 @property (nonatomic, strong) IBOutlet UITextView *reviewField;
 @property (nonatomic, strong) IBOutlet UITextField *commentField;
 @property (nonatomic, strong) IBOutlet UITableView *commentTable;
+@property (nonatomic, strong) IBOutlet UIScrollView *scrollView;
 
 @property (nonatomic, strong) NSString *browse;
 

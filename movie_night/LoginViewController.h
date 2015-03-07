@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "FriendFeedViewController.h"
 
-@interface LoginViewController : UIViewController
+@interface LoginViewController : UIViewController <UITextFieldDelegate>
 
 
 @property (nonatomic, strong) IBOutlet UITextField *usernameField;

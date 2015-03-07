@@ -8,6 +8,7 @@
 
 #import "WriteReviewViewController.h"
 #import <Parse/Parse.h>
+#import "MovieDetailViewController.h"
 
 @interface WriteReviewViewController ()
 
@@ -78,9 +79,9 @@
         }
 
     }
-    if (self.moviePassed.user_is_fave != nil) {
+    if (self.moviePassed.user_is_fave !=nil) {
         UIImage *heart;
-        if (self.moviePassed.user_is_fave) {
+        if ([self.moviePassed.user_is_fave intValue] == 0) {
             heart = [UIImage imageNamed:@"like_outline-48.png"];
         } else {
             heart = [UIImage imageNamed:@"hearts-48.png"];
@@ -107,7 +108,12 @@
     
     //get current user
     PFUser *currentUser = [PFUser currentUser];
-    //NSString *objectId =
+    
+    //get poster and convert to PFFile for uploading
+    NSString *posterURL = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/w185%@", self.moviePassed.movie_poster];
+    UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:posterURL]]];
+    NSData *imageData = UIImageJPEGRepresentation(image, 0.8);
+    PFFile *imageFile = [PFFile fileWithName:@"img" data:imageData];
     
     //check if review contains Parse object id, if not, save as new
     if ([self.moviePassed.user_review_objectId isEqualToString:@""]|| self.moviePassed.user_review_objectId == nil) {
@@ -118,6 +124,7 @@
         newReview[@"rating"] = numStars;
         newReview[@"userID"] = currentUser.objectId;
         newReview[@"movieID"] = movieId;
+        newReview[@"moviePoster"] = imageFile;
         newReview[@"dateReleased"] = date;
         newReview[@"movieTitle"] = self.moviePassed.movie_title;
         newReview[@"isFavorite"] =  [NSNumber numberWithBool:isFave];
@@ -134,6 +141,7 @@
             updateReview[@"rating"] = numStars;
             updateReview[@"userID"] = currentUser.objectId;
             updateReview[@"movieID"] = movieId;
+            updateReview[@"moviePoster"] = imageFile;
             updateReview[@"dateReleased"] = date;
             updateReview[@"movieTitle"] = self.moviePassed.movie_title;
             updateReview[@"isFavorite"] =  [NSNumber numberWithBool:isFave] ;
@@ -141,7 +149,10 @@
             
         }];
     }
-    
+    //setting object for unwind segue back to detail view
+    self.moviePassed.user_review = review;
+    self.moviePassed.user_rating = numStars;
+    self.moviePassed.user_is_fave = [NSNumber numberWithBool:isFave];
     [self performSegueWithIdentifier:@"unwindSegue" sender:self];
     
 }
@@ -215,14 +226,14 @@
             break;
     }
 }
-/*
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    MovieDetailViewController *mvc = [segue destinationViewController];
+    mvc.selectedMovie = self.moviePassed;
 }
-*/
+
 
 @end

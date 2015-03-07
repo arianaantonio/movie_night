@@ -7,6 +7,7 @@
 //
 
 #import "FriendFeedViewController.h"
+#import <Parse/Parse.h>
 
 @interface FriendFeedViewController ()
 
@@ -19,92 +20,152 @@
     // Do any additional setup after loading the view.
     self.navigationItem.titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"movie_night_logo.png"]];
     
-    MovieClass *friend1 = [[MovieClass alloc]init];
-    friend1.username = @"lttl32";
-    friend1.user_review = @"Really loved this movie";
-    friend1.user_rating = @"5";
-    friend1.movie_poster = @"gravity.jpg";
-    friend1.movie_title = @"Gravity";
-    friend1.user_photo = @"profilepic1.jpg";
-    
-    MovieClass *friend2 = [[MovieClass alloc]init];
-    friend2.username = @"beccagirl";
-    friend2.user_rating = @"2";
-    friend2.user_photo = @"profilepic3.jpg";
-    friend2.user_review = @"Not worth the price of the ticket";
-    friend2.movie_title = @"Taken 3";
-    friend2.movie_poster = @"taken3.jpg";
-    
-    MovieClass *friend3 = [[MovieClass alloc]init];
-    friend3.username = @"jason33";
-    friend3.user_rating = @"2";
-    friend3.user_photo = @"profilepic2.jpg";
-    friend3.user_review = @"Not great but not terrible either. Liam is fun.";
-    friend3.movie_title = @"Non-Stop";
-    friend3.movie_poster = @"nonstop.jpg";
-    
-    MovieClass *friend4 = [[MovieClass alloc]init];
-    friend4.username = @"faeryqueen21";
-    friend4.user_rating = @"3";
-    friend4.user_photo = @"profilepic6.jpg";
-    friend4.user_review = @"Not worth the price of the ticket";
-    friend4.movie_title = @"Need For Speed";
-    friend4.movie_poster = @"Need_For_Speed_New_Oficial_Poster_JPosters.jpg";
-    
-    MovieClass *friend5 = [[MovieClass alloc]init];
-    friend5.username = @"ryanmovieguy";
-    friend5.user_rating = @"5";
-    friend5.user_photo = @"profilepic4.jpg";
-    friend5.user_review = @"Loved it!! Great action flick with lots of intensity.";
-    friend5.movie_title = @"Taken 3";
-    friend5.movie_poster = @"taken3.jpg";
-    
-    MovieClass *friend6 = [[MovieClass alloc]init];
-    friend6.username = @"beccagirl";
-    friend6.user_rating = @"5";
-    friend6.user_photo = @"profilepic3.jpg";
-    friend6.user_review = @"Best movie ever! Can't get the music out of my head!";
-    friend6.movie_title = @"Frozen";
-    friend6.movie_poster = @"frozen.jpg";
-    
-    MovieClass *friend7 = [[MovieClass alloc]init];
-    friend7.username = @"filmbuff24";
-    friend7.user_rating = @"3";
-    friend7.user_photo = @"profilepic5.jpg";
-    friend7.user_review = @"Acting was good but found the movie a bit overrated. And what's with the fake baby?!";
-    friend7.movie_title = @"Americna Sniper";
-    friend7.movie_poster = @"americansniper.jpg";
-    
-    MovieClass *friend8 = [[MovieClass alloc]init];
-    friend8.username = @"jason33";
-    friend8.user_rating = @"4";
-    friend8.user_photo = @"profilepic2.jpg";
-    friend8.user_review = @"Really enjoyable movie and surpsingly funny! Left with a big smile on my face.";
-    friend8.movie_title = @"The Lego Movie";
-    friend8.movie_poster = @"the-lego-movie-poster-full-photo.jpg";
-    
-    MovieClass *friend9 = [[MovieClass alloc]init];
-    friend9.username = @"faeryqueen21";
-    friend9.user_rating = @"4";
-    friend9.user_photo = @"profilepic6.jpg";
-    friend9.user_review = @"Great movie with excellant acting but by the end I was really OVER drumming.";
-    friend9.movie_title = @"Whiplash";
-    friend9.movie_poster = @"whiplash.jpg";
-    
-    MovieClass *friend10 = [[MovieClass alloc]init];
-    friend10.username = @"ryanmovieguy";
-    friend10.user_rating = @"5";
-    friend10.user_photo = @"profilepic5.jpg";
-    friend10.user_review = @"Such a classic! One of my favorite movies ever.";
-    friend10.movie_title = @"Back To The Future";
-    friend10.movie_poster = @"back-to-the-future.jpg";
-    
-    feedArray = [[NSArray alloc]initWithObjects:friend1, friend10, friend2, friend3, friend4, friend5, friend6, friend7, friend8, friend9, nil];
+    feedArray = [[NSMutableArray alloc]init];
     
     
+    [self refreshFeed];
+    [self setupRefreshControl];
     
 }
+#pragma mark - Refreshing
+//refresh the friend feed
+-(void)refreshFeed {
+    
+    PFUser *currentUser = [PFUser currentUser];
+    
+    //get users friends
+    PFQuery *query = [PFUser query];
+    [query whereKey:@"objectId" equalTo:currentUser.objectId];
+    NSArray *userArray = [query findObjects];
+    NSDictionary *userDict = [userArray firstObject];
+    NSArray *friendsArray = [[NSArray alloc]initWithArray:[userDict objectForKey:@"friends"]];
+    
+    //get reviews that contain friends userIDs
+    PFQuery *reviewsQuery = [PFQuery queryWithClassName:@"Reviews"];
+    [reviewsQuery whereKey:@"userID" containedIn:friendsArray];
+    [reviewsQuery findObjectsInBackgroundWithBlock:^(NSArray *reviews, NSError *error) {
+        
+        for (PFObject *object in reviews) {
+            
+            //get user info
+            PFQuery *userInfo = [PFUser query];
+            [userInfo whereKey:@"objectId" equalTo:[object objectForKey:@"userID"]];
+            [userInfo findObjectsInBackgroundWithBlock:^(NSArray *friends, NSError *error) {
+            
+            
+            //NSArray *friendArray = [userInfo findObjects];
+            NSDictionary *friendDict = [friends firstObject];
+            NSString *friendName = [friendDict objectForKey:@"username"];
+            UIImage *profilePic = [UIImage imageWithData:[(PFFile *)friendDict[@"profile_pic"]getData]];
+            
+            //get review info
+            NSString *userReview = [object objectForKey:@"review"];
+            NSString *userRating = [object objectForKey:@"rating"];
+            NSString *movieTitle = [object objectForKey:@"movieTitle"];
+            UIImage *moviePoster = [UIImage imageWithData:[(PFFile *)object[@"moviePoster"]getData]];
+            NSString *movieID = [object objectForKey:@"movieID"];
+            
+            //set to tmp class
+            MovieClass *tmpMovie = [[MovieClass alloc]init];
+            tmpMovie.username = friendName;
+            tmpMovie.user_photo_file = profilePic;
+            tmpMovie.user_review = userReview;
+            tmpMovie.user_rating = userRating;
+            tmpMovie.movie_title = movieTitle;
+            tmpMovie.movie_poster_file = moviePoster;
+            tmpMovie.movie_TMDB_id = movieID;
+            
+            //add to array
+            [feedArray addObject:tmpMovie];
+            
+            //reload table
+            [_feedTableView reloadData];
+            }];
+        }
+    }];
+}
+- (void)setupRefreshControl
+{
+    // Programmatically inserting a UIRefreshControl
+    self.refreshControl = [[UIRefreshControl alloc] init];
+    NSMutableAttributedString *refreshString = [[NSMutableAttributedString alloc] initWithString:@"Refreshing Reviews..."];
+    self.refreshControl.attributedTitle = refreshString;
+    
+    
+    // Setup the loading view, which will hold the moving graphics
+    refreshLoadingView = [[UIView alloc] initWithFrame:self.refreshControl.bounds];
+    refreshLoadingView.backgroundColor = [UIColor clearColor];
+    
+    // Create the graphic image views
 
+    compass_spinner = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"moviereelSpinner.png"]];
+    compass_spinner.contentMode = UIViewContentModeScaleAspectFit;
+    compass_spinner.contentMode = UIViewContentModeCenter;
+   
+   // CGFloat center = self.refreshControl.frame.origin.x/2;
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGFloat screenWidth = screenRect.size.width/2;
+  
+    [compass_spinner setFrame:CGRectMake(screenWidth-25, self.refreshControl.frame.origin.y+5, compass_spinner.frame.size.width, compass_spinner.frame.size.height)];
+     UILabel *refreshLabel = [[UILabel alloc]initWithFrame:CGRectMake(screenWidth-125, compass_spinner.frame.origin.y+55, 250.0f, 40.0f)];
+    refreshLabel.text = @"Refreshing Reviews...";
+    refreshLabel.textColor = [UIColor whiteColor];
+  //  compass_spinner.frame = CGRectMake(refreshLoadingView.bounds.size.height, refreshLoadingView.bounds.size.width/2, 50.0f, 50.0f);
+    /*
+    if (compass_spinner.bounds.size.width > ((UIImage*)imagesArray[i]).size.width && compass_spinner.bounds.size.height > ((UIImage*)imagesArray[i]).size.height) {
+        compass_spinner.contentMode = UIViewContentModeScaleAspectFit;
+    }*/
+    
+    // Add the graphics to the loading view
+   // [refreshLoadingView addSubview:compass_background];
+    [refreshLoadingView addSubview:compass_spinner];
+    // Clip so the graphics don't stick out
+    refreshLoadingView.clipsToBounds = YES;
+    // Hide the original spinner icon
+   // self.refreshControl.tintColor = [UIColor clearColor];
+  // [refreshLoadingView addSubview:refreshLabel];
+    [self.refreshControl addSubview:refreshLoadingView];
+    // Initalize flags
+    isRefreshIconsOverlap = NO;
+    isRefreshAnimating = NO;
+    // When activated, invoke our refresh function
+    [self.refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
+}
+- (void)refresh:(id)sender{
+    
+    // -- DO SOMETHING AWESOME (... or just wait 3 seconds) --
+    // This is where you'll make requests to an API, reload data, or process information
+    [self animateRefreshView];
+    double delayInSeconds = 3.0;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+        NSLog(@"DONE");
+        // When done requesting/reloading/processing invoke endRefreshing, to close the control
+        [self.refreshControl endRefreshing];
+    });
+    // -- FINISHED SOMETHING AWESOME, WOO! --
+}
+- (void)animateRefreshView
+{
+   
+    // Flag that we are animating
+    isRefreshAnimating = YES;
+    [UIView animateWithDuration:0.3
+                          delay:0
+                        options:UIViewAnimationOptionCurveLinear
+                     animations:^{
+                         // Rotate the spinner by M_PI_2 = PI/2 = 90 degrees
+                         [compass_spinner setTransform:CGAffineTransformRotate(compass_spinner.transform, M_PI_2)];
+                     }
+                     completion:^(BOOL finished) {
+                         // If still refreshing, keep spinning, else reset
+                         if (self.refreshControl.isRefreshing) {
+                             [self animateRefreshView];
+                         }else{
+                            // [self resetAnimation];
+                         }
+                     }];
+}
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -122,15 +183,15 @@
     {
         
         UIImageView *posterView = (UIImageView *) [cell viewWithTag:9];
-        UIImage *posterImage = [UIImage imageNamed:currentMovie.movie_poster];
-        posterView.image = posterImage;
+        //UIImage *posterImage = [UIImage imageNamed:currentMovie.movie_poster];
+        posterView.image = currentMovie.movie_poster_file;
         
         UILabel *titleLabel = (UILabel *) [cell viewWithTag:2];
         titleLabel.text = [NSString stringWithFormat:@"%@ rated %@:", currentMovie.username, currentMovie.movie_title];
         
         UIImageView *profilePicView = (UIImageView *) [cell viewWithTag:1];
-        UIImage *picImage = [UIImage imageNamed:currentMovie.user_photo];
-        profilePicView.image = picImage;
+       // UIImage *picImage = [UIImage imageNamed:currentMovie.user_photo];
+        profilePicView.image = currentMovie.user_photo_file;
         
         UILabel *reviewLabel = (UILabel *) [cell viewWithTag:8];
         reviewLabel.text = currentMovie.user_review;

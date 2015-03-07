@@ -14,16 +14,68 @@
 @end
 
 @implementation SignUpViewController
-@synthesize usernameField, passwordField, password2Field, emailField, fullNameField, errorLabel;
+@synthesize usernameField, passwordField, password2Field, emailField, fullNameField, errorLabel, scrollView;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    [password2Field setDelegate:self];
+    [self.view endEditing:YES];
+    [[[UIApplication sharedApplication] keyWindow] endEditing:YES];
+    [self registerForKeyboardNotifications];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+//set up textfield so return button puts focus on the next textfield
+-(BOOL)textFieldShouldReturn:(UITextField*)textField {
+    
+    NSInteger nextTag = textField.tag + 1;
+    UIResponder* nextResponder = [textField.superview viewWithTag:nextTag];
+    
+    //responder to next responder until reaching the last, then resign
+    if (nextResponder) {
+        [nextResponder becomeFirstResponder];
+    } else {
+        [textField resignFirstResponder];
+    }
+    return NO;
+}
+//register keyboard to receive notifications
+- (void)registerForKeyboardNotifications {
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWasShown:) name:UIKeyboardDidShowNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillBeHidden:) name:UIKeyboardWillHideNotification object:nil];
+}
+//call when keyboard is shown
+- (void)keyboardWasShown:(NSNotification*)aNotification {
+    
+    NSDictionary* info = [aNotification userInfo];
+    CGSize kbSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    
+    UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, kbSize.height, 0.0);
+    scrollView.contentInset = contentInsets;
+    scrollView.scrollIndicatorInsets = contentInsets;
+    
+    //scroll view to bottem field so keyboard doesn't hide it
+    CGRect aRect = self.view.frame;
+    aRect.size.height -= kbSize.height;
+    
+    if (!CGRectContainsPoint(aRect, password2Field.frame.origin) ) {
+        
+        [self.scrollView scrollRectToVisible:password2Field.frame animated:YES];
+    }
+}
+//when keyboard is hidden
+- (void)keyboardWillBeHidden:(NSNotification*)aNotification {
+    
+    //sroll view down when keyboard is hidden to regular dimensions
+    UIEdgeInsets contentInsets = UIEdgeInsetsZero;
+    scrollView.contentInset = contentInsets;
+    scrollView.scrollIndicatorInsets = contentInsets;
 }
 //clicked sign up
 -(IBAction)signUpClicked:(id)sender {
@@ -73,7 +125,7 @@
         [user signUpInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
             if (!error) {
                 //Send user to main app
-                [self performSegueWithIdentifier:@"signUpSegue" sender:self];
+                [self performSegueWithIdentifier:@"addContactsSegue" sender:self];
             } else {
                 NSString *errorString = [error userInfo][@"error"];
                 NSLog(@"Error: %@", errorString);
@@ -91,6 +143,18 @@
     NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegex];
     return [emailTest evaluateWithObject:emailStr];
 }
+//resign keyboard
+/*
+-(BOOL) textFieldShouldReturn:(UITextField *)textField{
+    
+    [usernameField resignFirstResponder];
+    [password2Field resignFirstResponder];
+    [passwordField resignFirstResponder];
+    [emailField resignFirstResponder];
+    [fullNameField resignFirstResponder];
+    
+    return YES;
+}*/
 /*
 #pragma mark - Navigation
 
