@@ -31,5 +31,6 @@
 @property (nonatomic, strong) NSString *user_review_objectId;
 @property (nonatomic, strong) UIImage *movie_poster_file;
 @property (nonatomic, strong) NSString *userID;
+@property (nonatomic, strong) NSString *user_full_name;
 
 @end

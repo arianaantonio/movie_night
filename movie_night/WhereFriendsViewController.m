@@ -30,15 +30,22 @@
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    AddFriendsFromSettingsViewController *affsvc = [segue destinationViewController];
     
-    if ([sender tag] ==1) {
-        affsvc.searchType = @"contacts";
+    if ([[segue identifier]isEqualToString:@"addFriends"]) {
+        AddFriendsFromSettingsViewController *affsvc = [segue destinationViewController];
+        
+        if ([sender tag] ==1) {
+            affsvc.searchType = @"contacts";
+        } else {
+            affsvc.searchType = @"facebook";
+        }
     } else {
-        affsvc.searchType = @"facebook";
+        
     }
     
 }
+-(IBAction)prepareForUnwind:(UIStoryboardSegue *)segue {
 
+}
 
 @end

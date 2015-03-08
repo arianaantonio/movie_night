@@ -18,55 +18,9 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    /*
-    for (NSString* family in [UIFont familyNames])
-    {
-        NSLog(@"%@", family);
-        
-        for (NSString* name in [UIFont fontNamesForFamilyName: family])
-        {
-            NSLog(@"  %@", name);
-        }
-    }*/
-    
     movieSearchArray = [[NSMutableArray alloc]init];
     [_searchBar setDelegate:self];
     self.navigationItem.titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"movie_night_logo.png"]];
-
-    /*
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://api.themoviedb.org/3/search/movie?api_key=086941b3fdbf6f475d06a19773f6eb65&query=%@", @"the+lord+of+the+rings"]];
-    //http://api.themoviedb.org/3/search/movie?api_key=###&query=The+Hobbit:+The+Desolation+of+Smaug
-
-    [AppDelegate downloadDataFromURL:url withCompletionHandler:^(NSData *data) {
-        // Check if any data returned.
-        if (data != nil) {
-            NSError *error;
-            NSMutableDictionary *returnedDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
-           // NSLog(@"%@", returnedDict);
-            NSArray *array = [returnedDict objectForKey:@"results"];
-            for (int i = 0; i < [array count]; i++) {
-                
-                MovieClass *newMovie = [[MovieClass alloc]init];
-                newMovie.movie_title = [[array objectAtIndex:i]objectForKey:@"title"];
-                NSString *dateString = [[array objectAtIndex:i]objectForKey:@"release_date"];
-                NSDateFormatter *df = [[NSDateFormatter alloc]init];
-                [df setDateFormat:@"yyyy-MM-dd"];
-                NSDate *date = [df dateFromString:dateString];
-                [df setDateFormat:@"MMM dd, yyyy"];
-                dateString = [df stringFromDate:date];
-                
-                newMovie.movie_date = dateString;
-                newMovie.movie_poster = [[array objectAtIndex:i]objectForKey:@"poster_path"];
-                newMovie.movie_TMDB_id = [[array objectAtIndex:i]objectForKey:@"id"];
-                
-                [movieSearchArray addObject:newMovie];
-                [_searchTable reloadData];
-            }
-            if (error != nil) {
-                NSLog(@"%@", [error localizedDescription]);
-            }
-        }
-    }];*/
 }
 #pragma mark  - API Call
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {

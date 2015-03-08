@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		41BEEBD71AABE0B400FA593F /* SearchUsersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41BEEBD61AABE0B400FA593F /* SearchUsersViewController.m */; };
 		41EC04E31A907040000193DD /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 41EC04E21A907040000193DD /* main.m */; };
 		41EC04E61A907040000193DD /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 41EC04E51A907040000193DD /* AppDelegate.m */; };
 		41EC04E91A907040000193DD /* SearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41EC04E81A907040000193DD /* SearchViewController.m */; };
@@ -109,6 +110,8 @@
 
 /* Begin PBXFileReference section */
 		24581BE1738646F5BDF70277 /* libPods-movie_night.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-movie_night.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		41BEEBD51AABE0B400FA593F /* SearchUsersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchUsersViewController.h; sourceTree = "<group>"; };
+		41BEEBD61AABE0B400FA593F /* SearchUsersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchUsersViewController.m; sourceTree = "<group>"; };
 		41EC04DD1A907040000193DD /* movie_night.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = movie_night.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		41EC04E11A907040000193DD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		41EC04E21A907040000193DD /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -287,6 +290,7 @@
 		41EC04DF1A907040000193DD /* movie_night */ = {
 			isa = PBXGroup;
 			children = (
+				41EC04EA1A907040000193DD /* Main.storyboard */,
 				41EC04E41A907040000193DD /* AppDelegate.h */,
 				41EC04E51A907040000193DD /* AppDelegate.m */,
 				41EC04E71A907040000193DD /* SearchViewController.h */,
@@ -317,7 +321,8 @@
 				41F9BD501AAAA4A8008FA16C /* FollowersTableViewController.m */,
 				41F9BD521AAAE4CC008FA16C /* FriendProfileViewController.h */,
 				41F9BD531AAAE4CC008FA16C /* FriendProfileViewController.m */,
-				41EC04EA1A907040000193DD /* Main.storyboard */,
+				41BEEBD51AABE0B400FA593F /* SearchUsersViewController.h */,
+				41BEEBD61AABE0B400FA593F /* SearchUsersViewController.m */,
 				41EC051E1A90A9E3000193DD /* MovieClass.h */,
 				41EC051F1A90A9E3000193DD /* MovieClass.m */,
 				41EC054C1A946374000193DD /* Resources */,
@@ -648,6 +653,7 @@
 				41EC04E31A907040000193DD /* main.m in Sources */,
 				41EC05A31A9EFA1B000193DD /* SignUpViewController.m in Sources */,
 				41F9BD541AAAE4CC008FA16C /* FriendProfileViewController.m in Sources */,
+				41BEEBD71AABE0B400FA593F /* SearchUsersViewController.m in Sources */,
 				41EC05AB1A9F0D94000193DD /* HCYoutubeParser.m in Sources */,
 				41EC05981A9EE2C8000193DD /* SWRevealViewController.m in Sources */,
 			);

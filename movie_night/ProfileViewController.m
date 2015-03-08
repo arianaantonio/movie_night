@@ -138,6 +138,7 @@
     [movieArray removeAllObjects];
     [favoritesArray removeAllObjects];
     
+    //get user reviews
     PFQuery *query2 = [PFQuery queryWithClassName:@"Reviews"];
     [query2 whereKey:@"userID" equalTo:userId];
     [query2 orderByDescending:@"createdAt"];
@@ -226,6 +227,7 @@
         [_uploadPhoto setHidden:NO];
     } else {
         _profilePicView.image = image;
+        [_uploadPhoto setHidden:YES];
     }
     
     //set uielements

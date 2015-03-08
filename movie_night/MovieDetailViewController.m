@@ -473,6 +473,74 @@
 //refresh view when coming back from write review
 -(IBAction)prepareForUnwind:(UIStoryboardSegue *)segue {
     [self refreshView];
+    NSString *rating = self.selectedMovie.user_rating;
+    NSString *review = self.selectedMovie.user_review;
+    NSNumber *isFavorite = self.selectedMovie.user_is_fave;
+
+//check if favorite and set heart image accordingly
+if ([isFavorite intValue] == 1) {
+    toggle = @"1";
+    [self clickedFavorite:self];
+} else {
+    toggle = @"0";
+    [self clickedFavorite:self];
+}
+
+//set review text
+[_reviewView setText:review];
+
+//set star data
+int starsSaved = [rating intValue];
+UIImage *filledStar = [UIImage imageNamed:@"star-48.png"];
+UIImage *emptyStar = [UIImage imageNamed:@"star-50.png"];
+
+//set stars based on reviews
+switch (starsSaved) {
+    case 1:
+        numStars = @"1";
+        [_star1Button setImage:filledStar forState:UIControlStateNormal];
+        [_star2Button setImage:emptyStar forState:UIControlStateNormal];
+        [_star3Button setImage:emptyStar forState:UIControlStateNormal];
+        [_star4Button setImage:emptyStar forState:UIControlStateNormal];
+        [_star5Button setImage:emptyStar forState:UIControlStateNormal];
+        break;
+    case 2:
+        numStars = @"2";
+        [_star1Button setImage:filledStar forState:UIControlStateNormal];
+        [_star2Button setImage:filledStar forState:UIControlStateNormal];
+        [_star3Button setImage:emptyStar forState:UIControlStateNormal];
+        [_star4Button setImage:emptyStar forState:UIControlStateNormal];
+        [_star5Button setImage:emptyStar forState:UIControlStateNormal];
+        break;
+    case 3:
+        numStars = @"3";
+        [_star1Button setImage:filledStar forState:UIControlStateNormal];
+        [_star2Button setImage:filledStar forState:UIControlStateNormal];
+        [_star3Button setImage:filledStar forState:UIControlStateNormal];
+        [_star4Button setImage:emptyStar forState:UIControlStateNormal];
+        [_star5Button setImage:emptyStar forState:UIControlStateNormal];
+        break;
+    case 4:
+        numStars = @"4";
+        [_star1Button setImage:filledStar forState:UIControlStateNormal];
+        [_star2Button setImage:filledStar forState:UIControlStateNormal];
+        [_star3Button setImage:filledStar forState:UIControlStateNormal];
+        [_star4Button setImage:filledStar forState:UIControlStateNormal];
+        [_star5Button setImage:emptyStar forState:UIControlStateNormal];
+        break;
+    case 5:
+        numStars = @"5";
+        [_star1Button setImage:filledStar forState:UIControlStateNormal];
+        [_star2Button setImage:filledStar forState:UIControlStateNormal];
+        [_star3Button setImage:filledStar forState:UIControlStateNormal];
+        [_star4Button setImage:filledStar forState:UIControlStateNormal];
+        [_star5Button setImage:filledStar forState:UIControlStateNormal];
+        break;
+    default:
+        break;
+}
+
+
 }
 //segue to write review and send movie object
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
