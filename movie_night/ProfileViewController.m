@@ -11,6 +11,7 @@
 #import <Parse/Parse.h>
 #import <ParseFacebookUtils/PFFacebookUtils.h>
 #import <Parse/Parse.h>
+#import "FollowersTableViewController.h"
 
 @interface ProfileViewController ()
 
@@ -24,16 +25,6 @@
     [super viewDidLoad];
     
     [_uploadPhoto setHidden:YES];
-    
-    //check for current user
-    PFUser *currentUser = [PFUser currentUser];
-    userId = currentUser.objectId;
-    if (currentUser &&
-        [PFFacebookUtils isLinkedWithUser:[PFUser currentUser]]) {
-        [self loadData];
-    } else if (currentUser) {
-        [self loadData];
-    }
     
     //init reveal controller for settings
     SWRevealViewController *revealViewController = self.revealViewController;
@@ -140,94 +131,12 @@
     
     favoritesArray = [[NSMutableArray alloc]init];
     movieArray = [[NSMutableArray alloc]init];
-    //[self refreshView];
-       /*
-    PFQuery *query1 = [PFQuery queryWithClassName:@"Reviews"];
-    [query1 whereKey:@"userID" equalTo:userId];
-    [query1 whereKey:@"isFavorite" equalTo:[NSNumber numberWithBool:YES]];
-    [query1 orderByDescending:@"createdAt"];
-    [query1 findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        
-        if (!error) {
-            
-            NSString *movieTitle = @"";
-            NSString *rating = @"";
-            
-            for (PFObject *object in objects) {
-                NSLog(@"%@", object.objectId);
-                
-                //get object data returned
-                rating = [object objectForKey:@"rating"];
-                movieTitle = [object objectForKey:@"movieTitle"];
-                MovieClass *tmpMovie = [[MovieClass alloc]init];
-                tmpMovie.movie_title = movieTitle;
-                tmpMovie.user_rating = rating;
-                [favoritesArray addObject:tmpMovie];
-            }
-        }
-    }];*/
-    
-    /*
-    PFQuery *query2 = [PFQuery queryWithClassName:@"Reviews"];
-    [query2 whereKey:@"userID" equalTo:userId];
-    [query2 orderByDescending:@"createdAt"];
-    [query2 findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        
-        if (!error) {
-            
-          
-            NSString *movieTitle = @"";
-            NSString *rating = @"";
-            
-            for (PFObject *object in objects) {
-                NSLog(@"%@", object.objectId);
-                
-                //get object data returned
-                rating = [object objectForKey:@"rating"];
-                movieTitle = [object objectForKey:@"movieTitle"];
-                MovieClass *tmpMovie = [[MovieClass alloc]init];
-                tmpMovie.movie_title = movieTitle;
-                tmpMovie.user_rating = rating;
-                [movieArray addObject:tmpMovie];
-            }
-        }
-    }];*/
+
 }
 -(void)refreshView {
     
     [movieArray removeAllObjects];
     [favoritesArray removeAllObjects];
-    
-    /*
-    PFQuery *query1 = [PFQuery queryWithClassName:@"Reviews"];
-    [query1 whereKey:@"userID" equalTo:userId];
-    [query1 whereKey:@"isFavorite" equalTo:[NSNumber numberWithBool:YES]];
-    [query1 orderByDescending:@"createdAt"];
-    [query1 findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        
-        if (!error) {
-            
-            NSString *movieTitle = @"";
-            NSString *rating = @"";
-            
-            for (PFObject *object in objects) {
-                NSLog(@"%@", object.objectId);
-                
-                //get object data returned
-                rating = [object objectForKey:@"rating"];
-                movieTitle = [object objectForKey:@"movieTitle"];
-                UIImage *moviePoster = [UIImage imageWithData:[(PFFile *)object[@"moviePoster"]getData]];
-                MovieClass *tmpMovie = [[MovieClass alloc]init];
-                tmpMovie.movie_title = movieTitle;
-                tmpMovie.user_rating = rating;
-                tmpMovie.movie_poster_file = moviePoster;
-                [favoritesArray addObject:tmpMovie];
-                
-                [_listTableView reloadData];
-            }
-        }
-    }];*/
-    
     
     PFQuery *query2 = [PFQuery queryWithClassName:@"Reviews"];
     [query2 whereKey:@"userID" equalTo:userId];
@@ -265,10 +174,21 @@
             }
         }
     }];
-    
 }
+//load and refresh data whenever we come back to the profile screen
 -(void)viewDidAppear:(BOOL)animated {
+    //check for current user
+    PFUser *currentUser = [PFUser currentUser];
+    userId = currentUser.objectId;
+    
     [self refreshView];
+    
+    if (currentUser &&
+        [PFFacebookUtils isLinkedWithUser:[PFUser currentUser]]) {
+        [self loadData];
+    } else if (currentUser) {
+        [self loadData];
+    }
 }
 
 //load user data to populate UI
@@ -286,7 +206,7 @@
     NSString *username = [userDict objectForKey:@"username"];
     NSString *fullName = [userDict objectForKey:@"full_name"];
     friendsArray = [[NSArray alloc]initWithArray:[userDict objectForKey:@"friends"]];
-    [_followingButton setTitle:[NSString stringWithFormat:@"Friends: %lu", (unsigned long)[friendsArray count]] forState:UIControlStateNormal];
+    [_followingButton setTitle:[NSString stringWithFormat:@"Following: %lu", (unsigned long)[friendsArray count]] forState:UIControlStateNormal];
   //  [_friendsCountLabel setText:[NSString stringWithFormat:@"Friends: %lu", (unsigned long)[friendsArray count]]];
     UIImage *image = [UIImage imageWithData:[(PFFile *)userDict[@"profile_pic"] getData]];
     
@@ -295,8 +215,6 @@
     [countQuery whereKey:@"userID" equalTo:currentUser.objectId];
     [countQuery countObjectsInBackgroundWithBlock:^(int count, NSError *error) {
         if (!error) {
-            // The count request succeeded. Log the count
-            NSLog(@"Sean has played %d games", count);
             reviewsCount = count;
         } else {
             reviewsCount = 0;
@@ -313,6 +231,12 @@
     //set uielements
     [_nameLabel setText:fullName];
     self.navBar.title = username;
+    
+    PFQuery *followersQuery = [PFUser query];
+    [followersQuery whereKey:@"friends" equalTo:userId];
+    NSArray *followersFoundArray = [followersQuery findObjects];
+    NSLog(@"Followers: %@", followersFoundArray);
+    [_followersButton setTitle:[NSString stringWithFormat:@"Followers: %lu", (unsigned long)[followersFoundArray count]] forState:UIControlStateNormal];
 
 }
 //upload a profile pic
@@ -481,26 +405,35 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
 
-    MovieDetailViewController *vc = [segue destinationViewController];
-    UITableViewCell *cell = (UITableViewCell*)sender;
-    NSIndexPath *indexPath = [_listTableView indexPathForCell:cell];
     
-    MovieClass *currentMovie;
-    switch ([_listSegment selectedSegmentIndex]) {
-        case 0:
-            currentMovie = [movieArray objectAtIndex:indexPath.row];
-            break;
-        case 1:
-            currentMovie = [favoritesArray objectAtIndex:indexPath.row];
-            break;
-        case 2:
-            currentMovie = [wantToSeeArray objectAtIndex:indexPath.row];
-            break;
-        default:
-            currentMovie = [movieArray objectAtIndex:indexPath.row];
-            break;
+    if ([[segue identifier]isEqualToString:@"movieDetail"]) {
+        MovieDetailViewController *vc = [segue destinationViewController];
+        UITableViewCell *cell = (UITableViewCell*)sender;
+        NSIndexPath *indexPath = [_listTableView indexPathForCell:cell];
+        
+        MovieClass *currentMovie;
+        switch ([_listSegment selectedSegmentIndex]) {
+            case 0:
+                currentMovie = [movieArray objectAtIndex:indexPath.row];
+                break;
+            case 1:
+                currentMovie = [favoritesArray objectAtIndex:indexPath.row];
+                break;
+            case 2:
+                currentMovie = [wantToSeeArray objectAtIndex:indexPath.row];
+                break;
+            default:
+                currentMovie = [movieArray objectAtIndex:indexPath.row];
+                break;
+        }
+        vc.selectedMovie = currentMovie;
+    } else if ([[segue identifier]isEqualToString:@"following"]) {
+        FollowersTableViewController *fvc = [segue destinationViewController];
+        fvc.selectionType = @"following";
+    } else {
+        FollowersTableViewController *fvc = [segue destinationViewController];
+        fvc.selectionType = @"followers";
     }
-    vc.selectedMovie = currentMovie;
 }
 
 @end

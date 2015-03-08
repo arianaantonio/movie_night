@@ -14,8 +14,7 @@
 {
     NSMutableArray *feedArray;
     UIView *refreshLoadingView;
-    UIView *refreshColorView;
-    UIImageView *compass_spinner;
+    UIImageView *spinningIcon;
     BOOL isRefreshIconsOverlap;
     BOOL isRefreshAnimating;
 }

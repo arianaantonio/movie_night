@@ -17,11 +17,17 @@
     NSString *numStars;
     NSString *toggle;
     BOOL isFave;
+    NSString *userId;
     NSString *movie_id;
+    NSMutableArray *friendsReviews;
+    MovieClass *friendReviewData;
+    NSString *movie_title;
+    UIImage *movie_poster_image;
 }
 
 @property (nonatomic, strong) IBOutlet UILabel *movie_title_label;
 @property (nonatomic, strong) IBOutlet MovieClass *selectedMovie;
+@property (nonatomic, strong) IBOutlet NSString *passed_movie_id;
 @property (nonatomic, strong) IBOutlet UILabel *date_label;
 @property (nonatomic, strong) IBOutlet UILabel *cast_label;
 @property (nonatomic, strong) IBOutlet UILabel *director_label;

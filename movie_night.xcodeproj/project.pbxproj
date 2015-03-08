@@ -92,6 +92,7 @@
 		41F9BD4C1AA98AA2008FA16C /* moviereelSpinner.png in Resources */ = {isa = PBXBuildFile; fileRef = 41F9BD4B1AA98AA2008FA16C /* moviereelSpinner.png */; };
 		41F9BD4E1AAA9940008FA16C /* playButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 41F9BD4D1AAA9940008FA16C /* playButton.png */; };
 		41F9BD511AAAA4A8008FA16C /* FollowersTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41F9BD501AAAA4A8008FA16C /* FollowersTableViewController.m */; };
+		41F9BD541AAAE4CC008FA16C /* FriendProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41F9BD531AAAE4CC008FA16C /* FriendProfileViewController.m */; };
 		84EC27BB1AA518F00082487A /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84EC27BA1AA518F00082487A /* FacebookSDK.framework */; };
 		C726AC0397404FC0BF054C63 /* libPods-movie_night.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 24581BE1738646F5BDF70277 /* libPods-movie_night.a */; };
 /* End PBXBuildFile section */
@@ -219,6 +220,8 @@
 		41F9BD4D1AAA9940008FA16C /* playButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = playButton.png; sourceTree = "<group>"; };
 		41F9BD4F1AAAA4A8008FA16C /* FollowersTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FollowersTableViewController.h; sourceTree = "<group>"; };
 		41F9BD501AAAA4A8008FA16C /* FollowersTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FollowersTableViewController.m; sourceTree = "<group>"; };
+		41F9BD521AAAE4CC008FA16C /* FriendProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriendProfileViewController.h; sourceTree = "<group>"; };
+		41F9BD531AAAE4CC008FA16C /* FriendProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriendProfileViewController.m; sourceTree = "<group>"; };
 		84EC27BA1AA518F00082487A /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
 		86740D99C39E40C7B42C87FA /* Pods-movie_night.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-movie_night.xcconfig"; path = "Pods/Pods-movie_night.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -312,6 +315,8 @@
 				41F9BD461AA825B0008FA16C /* AddFriendsFromSettingsViewController.m */,
 				41F9BD4F1AAAA4A8008FA16C /* FollowersTableViewController.h */,
 				41F9BD501AAAA4A8008FA16C /* FollowersTableViewController.m */,
+				41F9BD521AAAE4CC008FA16C /* FriendProfileViewController.h */,
+				41F9BD531AAAE4CC008FA16C /* FriendProfileViewController.m */,
 				41EC04EA1A907040000193DD /* Main.storyboard */,
 				41EC051E1A90A9E3000193DD /* MovieClass.h */,
 				41EC051F1A90A9E3000193DD /* MovieClass.m */,
@@ -642,6 +647,7 @@
 				41EC05951A9ED9B2000193DD /* WriteReviewViewController.m in Sources */,
 				41EC04E31A907040000193DD /* main.m in Sources */,
 				41EC05A31A9EFA1B000193DD /* SignUpViewController.m in Sources */,
+				41F9BD541AAAE4CC008FA16C /* FriendProfileViewController.m in Sources */,
 				41EC05AB1A9F0D94000193DD /* HCYoutubeParser.m in Sources */,
 				41EC05981A9EE2C8000193DD /* SWRevealViewController.m in Sources */,
 			);

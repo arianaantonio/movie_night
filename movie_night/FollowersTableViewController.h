@@ -11,7 +11,11 @@
 @interface FollowersTableViewController : UITableViewController <UITableViewDataSource, UITableViewDelegate>
 {
     NSMutableArray *followersArray;
+    NSString *userID;
 }
 
 @property (nonatomic, strong) IBOutlet UITableView *followersTable;
+@property (nonatomic, strong) NSString *selectionType;
+@property (nonatomic, strong) IBOutlet UINavigationItem *navBar;
+
 @end

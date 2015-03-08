@@ -7,6 +7,9 @@
 //
 
 #import "FriendReviewViewController.h"
+#import "MovieDetailViewController.h"
+#import "FriendProfileViewController.h"
+#import <Parse/Parse.h>
 
 @interface FriendReviewViewController ()
 
@@ -22,17 +25,23 @@
     [commentField setDelegate:self];
     [self registerForKeyboardNotifications];
     
-    
     UIImage *profilePicImage = self.selectedReview.user_photo_file;
     _profilePic.image = profilePicImage;
     
     UIImage *posterImage = self.selectedReview.movie_poster_file;
-    _posterView.image = posterImage;
+    if (posterImage != nil) {
+        _posterView.image = posterImage;
+    } else {
+        _posterView.image = self.moviePosterPassed;
+    }
     
-    _titleLabel.text = [NSString stringWithFormat:@"%@ has rated %@:", self.selectedReview.username, self.selectedReview.movie_title];
-    
+    [_usernameButton setTitle:self.selectedReview.username forState:UIControlStateNormal];
+    if (self.selectedReview.movie_title != nil) {
+        [_movieTitleButton setTitle:self.selectedReview.movie_title forState:UIControlStateNormal];
+    } else {
+        [_movieTitleButton setTitle:self.movieTitlePassed forState:UIControlStateNormal];
+    }
     _reviewField.text = self.selectedReview.user_review;
-    
     NSString *rating = self.selectedReview.user_rating;
     
     NSString *filledStar = @"star-48.png";
@@ -167,14 +176,26 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    
+    //if segueing to movie detail controller
+    if ([[segue identifier] isEqualToString:@"movieDetail"]) {
+        MovieDetailViewController *mdvc = [segue destinationViewController];
+        mdvc.passed_movie_id = self.selectedReview.movie_TMDB_id;
+        mdvc.selectedMovie = self.selectedReview;
+    }
+    //else segueing to friend profile page
+    else {
+        FriendProfileViewController *fpvc = [segue destinationViewController];
+        fpvc.userIdPassed = self.selectedReview.userID;
+        NSLog(@"User id : %@, Passed: %@", self.selectedReview.userID, fpvc.userIdPassed);
+    }
+    
 }
-*/
+
 
 @end

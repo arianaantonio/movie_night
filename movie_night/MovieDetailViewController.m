@@ -11,6 +11,7 @@
 #import <UIKit/UIKit.h>
 #import <MediaPlayer/MediaPlayer.h> 
 #import "WriteReviewViewController.h"
+#import "FriendReviewViewController.h"
 
 @interface MovieDetailViewController ()
 
@@ -24,29 +25,20 @@
     //set default values for toggling favorites
     toggle = @"1";
     isFave = NO;
+    friendsReviews = [[NSMutableArray alloc]init];
+    PFUser *currentUser = [PFUser currentUser];
+    userId = currentUser.objectId;
     
     [self refreshView];
 }
-//refresh the view with pass over data
+//refresh the view with passed over data
 -(void)refreshView {
     self.navBar.title = self.selectedMovie.movie_title;
     
     //set movie id
     movie_id = self.selectedMovie.movie_TMDB_id;
     
-    /*
-    if (movie_id == nil) {
-        [_trailerButton setHidden:YES];
-        UIImage *posterJPG = [UIImage imageNamed:self.selectedMovie.movie_poster];
-        _poster_image.image = posterJPG;
-        _movie_title_label.text = self.selectedMovie.movie_title;
-        _plot_label.text = self.selectedMovie.movie_plot_overview;
-        _director_label.text = [NSString stringWithFormat:@"Directed By: %@", self.selectedMovie.movie_director];
-        _cast_label.text = [NSString stringWithFormat:@"Starring: %@",self.selectedMovie.movie_cast];
-        _date_label.text = self.selectedMovie.movie_date;
-        
-    } else {*/
-        
+        ///----GETTING MOVIE INFO====///
         //get the movie details from the API
         NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://api.themoviedb.org/3/movie/%@?api_key=086941b3fdbf6f475d06a19773f6eb65&append_to_response=credits,videos", movie_id]];
         
@@ -121,6 +113,7 @@
                 //set labels from returned data
                 // NSLog(@"%@", returnedDict);
                 _movie_title_label.text = self.selectedMovie.movie_title;
+                movie_title = self.selectedMovie.movie_title;
                 _movie_title_label.font = [UIFont fontWithName:@"Quicksand-Bold" size:16];
                 _plot_label.text = self.selectedMovie.movie_plot_overview;
                 _plot_label.font = [UIFont fontWithName:@"Quicksand-Regular" size:14];
@@ -148,15 +141,15 @@
                 NSString *posterURL = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/w185%@", self.selectedMovie.movie_poster];
                 UIImage *posterJPG = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:posterURL]]];
                 _poster_image.image = posterJPG;
+                friendReviewData.movie_poster_file = posterJPG;
                 //https://www.youtube.com/watch?v=SUXWAEX2jlg
                 [self.view setNeedsDisplay];
                 
             }
         }];
-   // }
+   
+    ///----GETTING USER REVIEW INFO====///
     //check if user has left info for this movie
-    PFUser *currentUser = [PFUser currentUser];
-    NSString *userId = currentUser.objectId;
     NSString *movieIDStr = [NSString stringWithFormat:@"%@", movie_id];
     NSLog(@"User: %@, Movie: %@", userId, movie_id);
     [_reviewView setText:@"Write Review:"];
@@ -183,79 +176,133 @@
                 review = [object objectForKey:@"review"];
                 isFavorite = [object objectForKey:@"isFavorite"];
                 objectID = object.objectId;
-            }
-            if ([rating isEqualToString:@""] && ![self.selectedMovie.user_review isEqualToString:@""]) {
-                rating = self.selectedMovie.user_rating;
-                review = self.selectedMovie.user_review;
-                isFavorite = self.selectedMovie.user_is_fave;
-            }
-            //check if favorite and set heart image accordingly
-            if ([isFavorite intValue] == 1) {
-                toggle = @"1";
-                [self clickedFavorite:self];
-            } else {
-                toggle = @"0";
-                [self clickedFavorite:self];
-            }
-            
-            //set review text
-            [_reviewView setText:review];
-            
-            //set star data
-            int starsSaved = [rating intValue];
-            UIImage *filledStar = [UIImage imageNamed:@"star-48.png"];
-            UIImage *emptyStar = [UIImage imageNamed:@"star-50.png"];
-            
-            //set stars based on reviews
-            switch (starsSaved) {
-                case 1:
-                    numStars = @"1";
-                    [_star1Button setImage:filledStar forState:UIControlStateNormal];
-                    [_star2Button setImage:emptyStar forState:UIControlStateNormal];
-                    [_star3Button setImage:emptyStar forState:UIControlStateNormal];
-                    [_star4Button setImage:emptyStar forState:UIControlStateNormal];
-                    [_star5Button setImage:emptyStar forState:UIControlStateNormal];
-                    break;
-                case 2:
-                    numStars = @"2";
-                    [_star1Button setImage:filledStar forState:UIControlStateNormal];
-                    [_star2Button setImage:filledStar forState:UIControlStateNormal];
-                    [_star3Button setImage:emptyStar forState:UIControlStateNormal];
-                    [_star4Button setImage:emptyStar forState:UIControlStateNormal];
-                    [_star5Button setImage:emptyStar forState:UIControlStateNormal];
-                    break;
-                case 3:
-                    numStars = @"3";
-                    [_star1Button setImage:filledStar forState:UIControlStateNormal];
-                    [_star2Button setImage:filledStar forState:UIControlStateNormal];
-                    [_star3Button setImage:filledStar forState:UIControlStateNormal];
-                    [_star4Button setImage:emptyStar forState:UIControlStateNormal];
-                    [_star5Button setImage:emptyStar forState:UIControlStateNormal];
-                    break;
-                case 4:
-                    numStars = @"4";
-                    [_star1Button setImage:filledStar forState:UIControlStateNormal];
-                    [_star2Button setImage:filledStar forState:UIControlStateNormal];
-                    [_star3Button setImage:filledStar forState:UIControlStateNormal];
-                    [_star4Button setImage:filledStar forState:UIControlStateNormal];
-                    [_star5Button setImage:emptyStar forState:UIControlStateNormal];
-                    break;
-                case 5:
-                    numStars = @"5";
-                    [_star1Button setImage:filledStar forState:UIControlStateNormal];
-                    [_star2Button setImage:filledStar forState:UIControlStateNormal];
-                    [_star3Button setImage:filledStar forState:UIControlStateNormal];
-                    [_star4Button setImage:filledStar forState:UIControlStateNormal];
-                    [_star5Button setImage:filledStar forState:UIControlStateNormal];
-                    break;
-                default:
-                    break;
+                
+                if ([rating isEqualToString:@""] && ![self.selectedMovie.user_review isEqualToString:@""]) {
+                    rating = self.selectedMovie.user_rating;
+                    review = self.selectedMovie.user_review;
+                    isFavorite = self.selectedMovie.user_is_fave;
+                }
+                //check if favorite and set heart image accordingly
+                if ([isFavorite intValue] == 1) {
+                    toggle = @"1";
+                    [self clickedFavorite:self];
+                } else {
+                    toggle = @"0";
+                    [self clickedFavorite:self];
+                }
+                
+                //set review text
+                [_reviewView setText:review];
+                
+                //set star data
+                int starsSaved = [rating intValue];
+                UIImage *filledStar = [UIImage imageNamed:@"star-48.png"];
+                UIImage *emptyStar = [UIImage imageNamed:@"star-50.png"];
+                
+                //set stars based on reviews
+                switch (starsSaved) {
+                    case 1:
+                        numStars = @"1";
+                        [_star1Button setImage:filledStar forState:UIControlStateNormal];
+                        [_star2Button setImage:emptyStar forState:UIControlStateNormal];
+                        [_star3Button setImage:emptyStar forState:UIControlStateNormal];
+                        [_star4Button setImage:emptyStar forState:UIControlStateNormal];
+                        [_star5Button setImage:emptyStar forState:UIControlStateNormal];
+                        break;
+                    case 2:
+                        numStars = @"2";
+                        [_star1Button setImage:filledStar forState:UIControlStateNormal];
+                        [_star2Button setImage:filledStar forState:UIControlStateNormal];
+                        [_star3Button setImage:emptyStar forState:UIControlStateNormal];
+                        [_star4Button setImage:emptyStar forState:UIControlStateNormal];
+                        [_star5Button setImage:emptyStar forState:UIControlStateNormal];
+                        break;
+                    case 3:
+                        numStars = @"3";
+                        [_star1Button setImage:filledStar forState:UIControlStateNormal];
+                        [_star2Button setImage:filledStar forState:UIControlStateNormal];
+                        [_star3Button setImage:filledStar forState:UIControlStateNormal];
+                        [_star4Button setImage:emptyStar forState:UIControlStateNormal];
+                        [_star5Button setImage:emptyStar forState:UIControlStateNormal];
+                        break;
+                    case 4:
+                        numStars = @"4";
+                        [_star1Button setImage:filledStar forState:UIControlStateNormal];
+                        [_star2Button setImage:filledStar forState:UIControlStateNormal];
+                        [_star3Button setImage:filledStar forState:UIControlStateNormal];
+                        [_star4Button setImage:filledStar forState:UIControlStateNormal];
+                        [_star5Button setImage:emptyStar forState:UIControlStateNormal];
+                        break;
+                    case 5:
+                        numStars = @"5";
+                        [_star1Button setImage:filledStar forState:UIControlStateNormal];
+                        [_star2Button setImage:filledStar forState:UIControlStateNormal];
+                        [_star3Button setImage:filledStar forState:UIControlStateNormal];
+                        [_star4Button setImage:filledStar forState:UIControlStateNormal];
+                        [_star5Button setImage:filledStar forState:UIControlStateNormal];
+                        break;
+                    default:
+                        break;
+                }
             }
             //set data to be passed over
             self.selectedMovie.user_review = review;
             self.selectedMovie.user_rating = rating;
             self.selectedMovie.user_is_fave = isFavorite;
             self.selectedMovie.user_review_objectId = objectID;
+            
+        }
+    }];
+    ///----GETTING USER FRIEND REVIEW INFO====///
+    //get current users friends
+    PFQuery *query = [PFUser query];
+    [query whereKey:@"objectId" equalTo:userId];
+    NSArray *userArray = [query findObjects];
+    NSDictionary *userDict = [userArray firstObject];
+    NSArray *friendsArray = [[NSArray alloc]initWithArray:[userDict objectForKey:@"friends"]];
+    
+    [friendsReviews removeAllObjects];
+    
+    //get reviews that contain friends userIDs and current movie id
+    PFQuery *reviewsQuery = [PFQuery queryWithClassName:@"Reviews"];
+    [reviewsQuery whereKey:@"userID" containedIn:friendsArray];
+    [reviewsQuery whereKey:@"movieID" equalTo:movieIDStr];
+    [reviewsQuery findObjectsInBackgroundWithBlock:^(NSArray *reviews, NSError *error) {
+        
+        NSString *friendID = @"";
+        NSString *friendRating = @"";
+        NSString *friendReview = @"";
+        
+        //get info about friends review
+        for (PFObject *object in reviews) {
+            NSLog(@"Object : %@", object);
+            
+            //Get friend review info
+            friendID = [object objectForKey:@"userID"];
+            friendRating = [object objectForKey:@"rating"];
+            friendReview = [object objectForKey:@"review"];
+            
+            //Get friend user info
+            PFQuery *friendQuery = [PFUser query];
+            [friendQuery whereKey:@"objectId" equalTo:friendID];
+            NSArray *friendUserArray = [friendQuery findObjects];
+            NSDictionary *friendUserDict = [friendUserArray firstObject];
+            NSLog(@"Friend array: %@, Friend Dict: %@", friendUserArray, friendUserDict);
+            NSString *friendUsername = [friendUserDict objectForKey:@"username"];
+            UIImage *friendProfilePic = [UIImage imageWithData:[(PFFile *)friendUserDict[@"profile_pic"]getData]];
+            
+            friendReviewData = [[MovieClass alloc]init];
+            friendReviewData.userID = friendID;
+            friendReviewData.user_rating = friendRating;
+            friendReviewData.user_review = friendReview;
+            friendReviewData.username = friendUsername;
+            friendReviewData.user_photo_file = friendProfilePic;
+            friendReviewData.movie_TMDB_id = self.selectedMovie.movie_TMDB_id;
+          //  friendReviewData.movie_title = movie_title;
+          //  friendReviewData.movie_poster_file = movie_poster_image;
+            
+            [friendsReviews addObject:friendReviewData];
+            [_friendsReviewsTable reloadData];
         }
     }];
 }
@@ -344,12 +391,83 @@
 
 #pragma mark - TableView
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 1;
+    return [friendsReviews count];
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"reviewCell" forIndexPath:indexPath];
-    return cell;
+    MovieClass *tmpDict = [friendsReviews objectAtIndex:indexPath.row];
+    if (cell != nil)
+    {
+        
+        UILabel *reviewLabel = (UILabel *) [cell viewWithTag:8];
+        reviewLabel.text = [tmpDict user_review];
+        
+        UIImageView *profilePicView = (UIImageView *) [cell viewWithTag:1];
+        profilePicView.image = [tmpDict user_photo_file];
+        
+        UILabel *usernameLabel = (UILabel *) [cell viewWithTag:2];
+        usernameLabel.text = [NSString stringWithFormat:@"%@ Rated:", [tmpDict username]];
+        
+        UIImageView *star1 = (UIImageView *) [cell viewWithTag:3];
+        UIImageView *star2 = (UIImageView *) [cell viewWithTag:4];
+        UIImageView *star3 = (UIImageView *) [cell viewWithTag:5];
+        UIImageView *star4 = (UIImageView *) [cell viewWithTag:6];
+        UIImageView *star5 = (UIImageView *) [cell viewWithTag:7];
+        
+        UIImage *star1Image;
+        UIImage *star2Image;
+        UIImage *star3Image;
+        UIImage *star4Image;
+        UIImage *star5Image;
+        
+        NSString *filledStar = @"star-48.png";
+        NSString *emptyStar = @"star-50.png";
+        
+        if ([[tmpDict user_rating] isEqual:@"1"]) {
+            star1Image = [UIImage imageNamed:filledStar];
+            star2Image = [UIImage imageNamed:emptyStar];
+            star3Image = [UIImage imageNamed:emptyStar];
+            star4Image = [UIImage imageNamed:emptyStar];
+            star5Image = [UIImage imageNamed:emptyStar];
+        } else if ([[tmpDict user_rating] isEqual:@"2"]) {
+            star1Image = [UIImage imageNamed:filledStar];
+            star2Image = [UIImage imageNamed:filledStar];
+            star3Image = [UIImage imageNamed:emptyStar];
+            star4Image = [UIImage imageNamed:emptyStar];
+            star5Image = [UIImage imageNamed:emptyStar];
+        } else if ([[tmpDict user_rating] isEqual:@"3"]) {
+            star1Image = [UIImage imageNamed:filledStar];
+            star2Image = [UIImage imageNamed:filledStar];
+            star3Image = [UIImage imageNamed:filledStar];
+            star4Image = [UIImage imageNamed:emptyStar];
+            star5Image = [UIImage imageNamed:emptyStar];
+            
+        } else if ([[tmpDict user_rating] isEqual:@"4"]) {
+            star1Image = [UIImage imageNamed:filledStar];
+            star2Image = [UIImage imageNamed:filledStar];
+            star3Image = [UIImage imageNamed:filledStar];
+            star4Image = [UIImage imageNamed:filledStar];
+            star5Image = [UIImage imageNamed:emptyStar];
+            
+        } else {
+            star1Image = [UIImage imageNamed:filledStar];
+            star2Image = [UIImage imageNamed:filledStar];
+            star3Image = [UIImage imageNamed:filledStar];
+            star4Image = [UIImage imageNamed:filledStar];
+            star5Image = [UIImage imageNamed:filledStar];
+            
+        }
+        star1.image = star1Image;
+        star2.image = star2Image;
+        star3.image = star3Image;
+        star4.image = star4Image;
+        star5.image = star5Image;
+        
+        return cell;
+    }
+
+    return nil;
 }
 #pragma mark - Navigation
 //refresh view when coming back from write review
@@ -359,9 +477,22 @@
 //segue to write review and send movie object
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     
-    WriteReviewViewController *wrvc = [segue destinationViewController];
-    wrvc.movieID = movie_id;
-    wrvc.moviePassed = self.selectedMovie;
+    if ([[segue identifier]isEqualToString:@"review"]) {
+        WriteReviewViewController *wrvc = [segue destinationViewController];
+        wrvc.movieID = movie_id;
+        wrvc.moviePassed = self.selectedMovie;
+    } else {
+        UITableViewCell *cell = (UITableViewCell*)sender;
+        NSIndexPath *indexPath = [_friendsReviewsTable indexPathForCell:cell];
+        
+        NSString *movieTitleToPass = _movie_title_label.text;
+        UIImage *moviePosterToPass = _poster_image.image;
+        FriendReviewViewController *frvc = [segue destinationViewController];
+        frvc.selectedReview = [friendsReviews objectAtIndex:indexPath.row];
+        frvc.moviePosterPassed = moviePosterToPass;
+        frvc.movieTitlePassed = movieTitleToPass;
+        
+    }
 }
 
 

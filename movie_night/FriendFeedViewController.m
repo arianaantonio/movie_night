@@ -22,7 +22,6 @@
     
     feedArray = [[NSMutableArray alloc]init];
     
-    
     [self refreshFeed];
     [self setupRefreshControl];
     
@@ -51,118 +50,95 @@
             PFQuery *userInfo = [PFUser query];
             [userInfo whereKey:@"objectId" equalTo:[object objectForKey:@"userID"]];
             [userInfo findObjectsInBackgroundWithBlock:^(NSArray *friends, NSError *error) {
+                
+                
+                //NSArray *friendArray = [userInfo findObjects];
+                NSDictionary *friendDict = [friends firstObject];
+                NSString *friendName = [friendDict objectForKey:@"username"];
+                UIImage *profilePic = [UIImage imageWithData:[(PFFile *)friendDict[@"profile_pic"]getData]];
+                NSLog(@"Friend: %@", friendDict);
+                NSString *friendID = [object objectForKey:@"userID"];
+                
+                //get review info
+                NSString *userReview = [object objectForKey:@"review"];
+                NSString *userRating = [object objectForKey:@"rating"];
+                NSString *movieTitle = [object objectForKey:@"movieTitle"];
+                UIImage *moviePoster = [UIImage imageWithData:[(PFFile *)object[@"moviePoster"]getData]];
+                NSString *movieID = [object objectForKey:@"movieID"];
+                
+                //set to tmp class
+                MovieClass *tmpMovie = [[MovieClass alloc]init];
+                tmpMovie.username = friendName;
+                tmpMovie.user_photo_file = profilePic;
+                tmpMovie.user_review = userReview;
+                tmpMovie.user_rating = userRating;
+                tmpMovie.movie_title = movieTitle;
+                tmpMovie.movie_poster_file = moviePoster;
+                tmpMovie.movie_TMDB_id = movieID;
+                tmpMovie.userID = friendID;
+                
+                //add to array
+                [feedArray addObject:tmpMovie];
             
-            
-            //NSArray *friendArray = [userInfo findObjects];
-            NSDictionary *friendDict = [friends firstObject];
-            NSString *friendName = [friendDict objectForKey:@"username"];
-            UIImage *profilePic = [UIImage imageWithData:[(PFFile *)friendDict[@"profile_pic"]getData]];
-            
-            //get review info
-            NSString *userReview = [object objectForKey:@"review"];
-            NSString *userRating = [object objectForKey:@"rating"];
-            NSString *movieTitle = [object objectForKey:@"movieTitle"];
-            UIImage *moviePoster = [UIImage imageWithData:[(PFFile *)object[@"moviePoster"]getData]];
-            NSString *movieID = [object objectForKey:@"movieID"];
-            
-            //set to tmp class
-            MovieClass *tmpMovie = [[MovieClass alloc]init];
-            tmpMovie.username = friendName;
-            tmpMovie.user_photo_file = profilePic;
-            tmpMovie.user_review = userReview;
-            tmpMovie.user_rating = userRating;
-            tmpMovie.movie_title = movieTitle;
-            tmpMovie.movie_poster_file = moviePoster;
-            tmpMovie.movie_TMDB_id = movieID;
-            
-            //add to array
-            [feedArray addObject:tmpMovie];
-            
-            //reload table
-            [_feedTableView reloadData];
+                //reload table
+                [_feedTableView reloadData];
+                [self.refreshControl endRefreshing];
             }];
         }
     }];
 }
 - (void)setupRefreshControl
 {
-    // Programmatically inserting a UIRefreshControl
+    //Create refresh control
     self.refreshControl = [[UIRefreshControl alloc] init];
     NSMutableAttributedString *refreshString = [[NSMutableAttributedString alloc] initWithString:@"Refreshing Reviews..."];
     self.refreshControl.attributedTitle = refreshString;
     
-    
-    // Setup the loading view, which will hold the moving graphics
+    //Create view for image
     refreshLoadingView = [[UIView alloc] initWithFrame:self.refreshControl.bounds];
     refreshLoadingView.backgroundColor = [UIColor clearColor];
     
-    // Create the graphic image views
-
-    compass_spinner = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"moviereelSpinner.png"]];
-    compass_spinner.contentMode = UIViewContentModeScaleAspectFit;
-    compass_spinner.contentMode = UIViewContentModeCenter;
-   
-   // CGFloat center = self.refreshControl.frame.origin.x/2;
+    //Create image and center it in view
+    spinningIcon = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"moviereelSpinner.png"]];
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     CGFloat screenWidth = screenRect.size.width/2;
-  
-    [compass_spinner setFrame:CGRectMake(screenWidth-25, self.refreshControl.frame.origin.y+5, compass_spinner.frame.size.width, compass_spinner.frame.size.height)];
-     UILabel *refreshLabel = [[UILabel alloc]initWithFrame:CGRectMake(screenWidth-125, compass_spinner.frame.origin.y+55, 250.0f, 40.0f)];
-    refreshLabel.text = @"Refreshing Reviews...";
-    refreshLabel.textColor = [UIColor whiteColor];
-  //  compass_spinner.frame = CGRectMake(refreshLoadingView.bounds.size.height, refreshLoadingView.bounds.size.width/2, 50.0f, 50.0f);
-    /*
-    if (compass_spinner.bounds.size.width > ((UIImage*)imagesArray[i]).size.width && compass_spinner.bounds.size.height > ((UIImage*)imagesArray[i]).size.height) {
-        compass_spinner.contentMode = UIViewContentModeScaleAspectFit;
-    }*/
+    [spinningIcon setFrame:CGRectMake(screenWidth-25, self.refreshControl.frame.origin.y+5, spinningIcon.frame.size.width, spinningIcon.frame.size.height)];
     
-    // Add the graphics to the loading view
-   // [refreshLoadingView addSubview:compass_background];
-    [refreshLoadingView addSubview:compass_spinner];
-    // Clip so the graphics don't stick out
+    //add image to view
+    [refreshLoadingView addSubview:spinningIcon];
     refreshLoadingView.clipsToBounds = YES;
-    // Hide the original spinner icon
+   
    // self.refreshControl.tintColor = [UIColor clearColor];
-  // [refreshLoadingView addSubview:refreshLabel];
     [self.refreshControl addSubview:refreshLoadingView];
-    // Initalize flags
+    
+    //Set flags
     isRefreshIconsOverlap = NO;
     isRefreshAnimating = NO;
-    // When activated, invoke our refresh function
+    
+    //Set refresh selector
     [self.refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
 }
 - (void)refresh:(id)sender{
     
-    // -- DO SOMETHING AWESOME (... or just wait 3 seconds) --
-    // This is where you'll make requests to an API, reload data, or process information
     [self animateRefreshView];
-    double delayInSeconds = 3.0;
-    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-        NSLog(@"DONE");
-        // When done requesting/reloading/processing invoke endRefreshing, to close the control
-        [self.refreshControl endRefreshing];
-    });
-    // -- FINISHED SOMETHING AWESOME, WOO! --
+    [self refreshFeed];
 }
 - (void)animateRefreshView
 {
-   
-    // Flag that we are animating
+    //Set to animating
     isRefreshAnimating = YES;
     [UIView animateWithDuration:0.3
                           delay:0
                         options:UIViewAnimationOptionCurveLinear
                      animations:^{
-                         // Rotate the spinner by M_PI_2 = PI/2 = 90 degrees
-                         [compass_spinner setTransform:CGAffineTransformRotate(compass_spinner.transform, M_PI_2)];
+                         // Rotate the icon
+                         [spinningIcon setTransform:CGAffineTransformRotate(spinningIcon.transform, M_PI_2)];
                      }
                      completion:^(BOOL finished) {
-                         // If still refreshing, keep spinning, else reset
+                         //refresh until call is done
                          if (self.refreshControl.isRefreshing) {
                              [self animateRefreshView];
                          }else{
-                            // [self resetAnimation];
                          }
                      }];
 }
