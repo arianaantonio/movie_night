@@ -20,6 +20,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     toggle = @"1";
+    numStars = @"0";
     isFave = NO;
     
     if (![self.moviePassed.user_review isEqualToString:@""]) {
@@ -128,6 +129,7 @@
         newReview[@"dateReleased"] = date;
         newReview[@"movieTitle"] = self.moviePassed.movie_title;
         newReview[@"isFavorite"] =  [NSNumber numberWithBool:isFave];
+        newReview[@"isWantToSee"] = [NSNumber numberWithBool:NO];
         [newReview saveInBackground];
     }
     //if there is a previous Parse object id, update review
@@ -144,7 +146,8 @@
             updateReview[@"moviePoster"] = imageFile;
             updateReview[@"dateReleased"] = date;
             updateReview[@"movieTitle"] = self.moviePassed.movie_title;
-            updateReview[@"isFavorite"] =  [NSNumber numberWithBool:isFave] ;
+            updateReview[@"isFavorite"] =  [NSNumber numberWithBool:isFave];
+            updateReview[@"isWantToSee"] = [NSNumber numberWithBool:NO];
             [updateReview saveInBackground];
             
         }];
@@ -154,7 +157,6 @@
     self.moviePassed.user_rating = numStars;
     self.moviePassed.user_is_fave = [NSNumber numberWithBool:isFave];
     [self performSegueWithIdentifier:@"unwindSegue" sender:self];
-    
 }
 //clicked favorite button
 -(void)clickedFavorite:(id)sender {
@@ -223,6 +225,7 @@
             [_star5Button setImage:filledStar forState:UIControlStateNormal];
             break;
         default:
+            numStars = @"0";;
             break;
     }
 }

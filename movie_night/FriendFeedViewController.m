@@ -42,6 +42,7 @@
     //get reviews that contain friends userIDs
     PFQuery *reviewsQuery = [PFQuery queryWithClassName:@"Reviews"];
     [reviewsQuery whereKey:@"userID" containedIn:friendsArray];
+    [reviewsQuery orderByDescending:@"createdAt"];
     [reviewsQuery findObjectsInBackgroundWithBlock:^(NSArray *reviews, NSError *error) {
         
         for (PFObject *object in reviews) {

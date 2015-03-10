@@ -25,6 +25,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     [passwordField setDelegate:self];
+    [_forgotPasswordView setHidden:YES];
     
     /*
     CFErrorRef *error = nil;
@@ -187,8 +188,6 @@
             } else {
                 NSLog(@"user logged in w/Facebook");
        
-                
-            
             
             //getting profile pic and upload file to parse
             PFQuery *query = [PFUser query];
@@ -226,61 +225,64 @@
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
     NSLog(@"Entered: %@",[[alertView textFieldAtIndex:0] text]);
     
-    PFQuery *query = [PFUser query];
-    [query whereKey:@"username" equalTo:[[alertView textFieldAtIndex:0] text]];
-    [query countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
-        if(number > 0) {
-            NSLog(@"Username exists");
-            UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Username already exists. Please choose a new one." delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Submit", nil];
-            alert.alertViewStyle = UIAlertViewStylePlainTextInput;
-            [alert show];
-        } else {
-            //segue to tabViewController
-            [FBRequestConnection startForMeWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-                if (!error) {
-                    NSDictionary<FBGraphUser> *me = (NSDictionary<FBGraphUser> *)result;
-                    // Store the Facebook Id
-                    [[PFUser currentUser]setObject:me.objectID forKey:@"fbId"];
-                    [[PFUser currentUser]setObject:me.name forKey:@"full_name"];
-                    [[PFUser currentUser]setObject:[me objectForKey:@"email"] forKey:@"email"];
-                    [[PFUser currentUser]setObject:[[alertView textFieldAtIndex:0]text] forKey:@"username"];
-                    [[PFUser currentUser] saveInBackground];
-                    
-                    PFUser *user = [PFUser currentUser];
-                    //getting profile pic and upload file to parse
-                    PFQuery *query = [PFUser query];
-                    [query whereKey:@"objectId" equalTo:user.objectId];
-                    NSArray *userReturned = [query findObjects];
-                    NSLog(@"User: %@", [userReturned firstObject]);
-                    NSDictionary *userDict = [userReturned firstObject];
-                    NSString *facebookID = [userDict objectForKey:@"fbId"];
-                    NSURL *pictureURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large&return_ssl_resources=1", facebookID]];
-                    
-                    NSURLRequest *urlRequest = [NSURLRequest requestWithURL:pictureURL];
-                    
-                    //get image from facebook
-                    [NSURLConnection sendAsynchronousRequest:urlRequest
-                                                       queue:[NSOperationQueue mainQueue]
-                                           completionHandler:
-                     ^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-                         if (connectionError == nil && data != nil) {
-                             //set profile pic
-                             
-                             //save image to parse as PFFile
-                             UIImage *image = [UIImage imageWithData:data];
-                             NSData *imageData = UIImagePNGRepresentation(image);
-                             PFFile *imageFile = [PFFile fileWithName:@"img" data:imageData];
-                             [[PFUser currentUser]setObject:imageFile forKey:@"profile_pic"];
-                             [[PFUser currentUser]saveInBackground];
-                             
-                         }
-                     }];
+    if ([[[alertView textFieldAtIndex:0]text] isEqualToString:@"(null)"]) {
         
-                    [self performSegueWithIdentifier:@"tabSegue" sender:self];
-                }
-            }];
-        }
-    }];
+        PFQuery *query = [PFUser query];
+        [query whereKey:@"username" equalTo:[[alertView textFieldAtIndex:0] text]];
+        [query countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
+            if(number > 0) {
+                NSLog(@"Username exists");
+                UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Username already exists. Please choose a new one." delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Submit", nil];
+                alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+                [alert show];
+            } else {
+                //segue to tabViewController
+                [FBRequestConnection startForMeWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+                    if (!error) {
+                        NSDictionary<FBGraphUser> *me = (NSDictionary<FBGraphUser> *)result;
+                        // Store the Facebook Id
+                        [[PFUser currentUser]setObject:me.objectID forKey:@"fbId"];
+                        [[PFUser currentUser]setObject:me.name forKey:@"full_name"];
+                        [[PFUser currentUser]setObject:[me objectForKey:@"email"] forKey:@"email"];
+                        [[PFUser currentUser]setObject:[[alertView textFieldAtIndex:0]text] forKey:@"username"];
+                        [[PFUser currentUser] saveInBackground];
+                        
+                        PFUser *user = [PFUser currentUser];
+                        //getting profile pic and upload file to parse
+                        PFQuery *query = [PFUser query];
+                        [query whereKey:@"objectId" equalTo:user.objectId];
+                        NSArray *userReturned = [query findObjects];
+                        NSLog(@"User: %@", [userReturned firstObject]);
+                        NSDictionary *userDict = [userReturned firstObject];
+                        NSString *facebookID = [userDict objectForKey:@"fbId"];
+                        NSURL *pictureURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large&return_ssl_resources=1", facebookID]];
+                        
+                        NSURLRequest *urlRequest = [NSURLRequest requestWithURL:pictureURL];
+                        
+                        //get image from facebook
+                        [NSURLConnection sendAsynchronousRequest:urlRequest
+                                                           queue:[NSOperationQueue mainQueue]
+                                               completionHandler:
+                         ^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                             if (connectionError == nil && data != nil) {
+                                 //set profile pic
+                                 
+                                 //save image to parse as PFFile
+                                 UIImage *image = [UIImage imageWithData:data];
+                                 NSData *imageData = UIImagePNGRepresentation(image);
+                                 PFFile *imageFile = [PFFile fileWithName:@"img" data:imageData];
+                                 [[PFUser currentUser]setObject:imageFile forKey:@"profile_pic"];
+                                 [[PFUser currentUser]saveInBackground];
+                                 
+                             }
+                         }];
+                        
+                        [self performSegueWithIdentifier:@"tabSegue" sender:self];
+                    }
+                }];
+            }
+        }];
+    }
 }
 //login with username and password
 -(IBAction)loginWithUsername:(id)sender {
@@ -314,6 +316,25 @@
 
     }
     
+}
+//show reset password view
+-(IBAction)forgotPassword:(id)sender {
+    [_forgotPasswordView setHidden:NO];
+}
+-(void)resetPassword:(id)sender {
+    
+    
+    if ([sender tag] == 1) {
+        
+        NSString *email = [_emailField text];
+        [PFUser requestPasswordResetForEmailInBackground:email];
+        [_forgotPasswordView setHidden:YES];
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Success!" message:@"You have been sent an email to reset your password" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    } else {
+        [_forgotPasswordView setHidden:YES];
+    }
+    [_emailField setText:@""];
 }
 /*
 #pragma mark - Navigation

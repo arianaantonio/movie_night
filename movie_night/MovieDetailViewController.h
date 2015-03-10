@@ -23,6 +23,9 @@
     MovieClass *friendReviewData;
     NSString *movie_title;
     UIImage *movie_poster_image;
+    BOOL userHasReviewed;
+    BOOL isWantToSee;
+    NSString *reviewId;
 }
 
 @property (nonatomic, strong) IBOutlet UILabel *movie_title_label;
@@ -45,8 +48,10 @@
 @property (nonatomic, strong) IBOutlet UIButton *star3Button;
 @property (nonatomic, strong) IBOutlet UIButton *star4Button;
 @property (nonatomic, strong) IBOutlet UIButton *star5Button;
+@property (nonatomic, strong) IBOutlet UIButton *wantToSeeButton;
 
 -(IBAction)clickedFavorite:(id)sender;
 -(IBAction)clickedTariler:(id)sender;
+-(IBAction)clickedWantToSee:(id)sender;
 
 @end

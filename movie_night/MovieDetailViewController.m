@@ -167,15 +167,22 @@
             NSString *review = @"";
             NSNumber *isFavorite;
             NSString *objectID = @"";
+            NSNumber *doesWantToSee;
             
             for (PFObject *object in objects) {
                 NSLog(@"%@", object.objectId);
+                if ([objects count] > 0) {
+                    userHasReviewed = YES;
+                }
                 
                 //get object data returned
                 rating = [object objectForKey:@"rating"];
                 review = [object objectForKey:@"review"];
                 isFavorite = [object objectForKey:@"isFavorite"];
+                doesWantToSee = [object objectForKey:@"isWantToSee"];
                 objectID = object.objectId;
+                reviewId = object.objectId;
+                isWantToSee = [object objectForKey:@"isWantToSee"];
                 
                 if ([rating isEqualToString:@""] && ![self.selectedMovie.user_review isEqualToString:@""]) {
                     rating = self.selectedMovie.user_rating;
@@ -189,6 +196,12 @@
                 } else {
                     toggle = @"0";
                     [self clickedFavorite:self];
+                }
+                //check if user has clicked want to see before
+                if ([doesWantToSee intValue] == 1) {
+                    [_wantToSeeButton setImage:[UIImage imageNamed:@"blueButton.png"] forState:UIControlStateNormal];
+                } else {
+                    [_wantToSeeButton setImage:[UIImage imageNamed:@"grayButton.png"] forState:UIControlStateNormal];
                 }
                 
                 //set review text
@@ -388,7 +401,47 @@
             break;
     }
 }
-
+-(IBAction)clickedWantToSee:(id)sender {
+    if (!isWantToSee) {
+        [_wantToSeeButton setImage:[UIImage imageNamed:@"blueButton.png"] forState:UIControlStateNormal];
+        isWantToSee = YES;
+    } else {
+        [_wantToSeeButton setImage:[UIImage imageNamed:@"grayButton.png"] forState:UIControlStateNormal];
+        isWantToSee = NO;
+    }
+    
+    if (userHasReviewed) {
+        
+        PFQuery *query = [PFQuery queryWithClassName:@"Reviews"];
+        
+        // Retrieve the object by id and update
+        [query getObjectInBackgroundWithId:reviewId block:^(PFObject *updateReview, NSError *error) {
+            
+            updateReview[@"isWantToSee"] =  [NSNumber numberWithBool:isWantToSee];
+            [updateReview saveInBackground];
+            
+        }];
+        
+    } else {
+        NSDateFormatter *df = [[NSDateFormatter alloc]init];
+        [df setDateFormat:@"MMM dd, yyyy"];
+        NSDate *date = [df dateFromString:self.selectedMovie.movie_date];
+        NSString *posterURL = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/w185%@", self.selectedMovie.movie_poster];
+        UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:posterURL]]];
+        NSData *imageData = UIImageJPEGRepresentation(image, 0.8);
+        PFFile *imageFile = [PFFile fileWithName:@"img" data:imageData];
+        
+        PFObject *newWant = [PFObject objectWithClassName:@"Reviews"];
+        newWant[@"isWantToSee"] =  [NSNumber numberWithBool:isWantToSee];
+        newWant[@"userID"] = userId;
+        newWant[@"movieID"] = movie_id;
+        newWant[@"moviePoster"] = imageFile;
+        newWant[@"dateReleased"] = date;
+        newWant[@"movieTitle"] = self.selectedMovie.movie_title;
+        [newWant saveInBackground];
+    }
+    
+}
 #pragma mark - TableView
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return [friendsReviews count];
@@ -477,70 +530,71 @@
     NSString *review = self.selectedMovie.user_review;
     NSNumber *isFavorite = self.selectedMovie.user_is_fave;
 
-//check if favorite and set heart image accordingly
-if ([isFavorite intValue] == 1) {
-    toggle = @"1";
-    [self clickedFavorite:self];
-} else {
-    toggle = @"0";
-    [self clickedFavorite:self];
-}
-
-//set review text
-[_reviewView setText:review];
-
-//set star data
-int starsSaved = [rating intValue];
-UIImage *filledStar = [UIImage imageNamed:@"star-48.png"];
-UIImage *emptyStar = [UIImage imageNamed:@"star-50.png"];
-
-//set stars based on reviews
-switch (starsSaved) {
-    case 1:
-        numStars = @"1";
-        [_star1Button setImage:filledStar forState:UIControlStateNormal];
-        [_star2Button setImage:emptyStar forState:UIControlStateNormal];
-        [_star3Button setImage:emptyStar forState:UIControlStateNormal];
-        [_star4Button setImage:emptyStar forState:UIControlStateNormal];
-        [_star5Button setImage:emptyStar forState:UIControlStateNormal];
-        break;
-    case 2:
-        numStars = @"2";
-        [_star1Button setImage:filledStar forState:UIControlStateNormal];
-        [_star2Button setImage:filledStar forState:UIControlStateNormal];
-        [_star3Button setImage:emptyStar forState:UIControlStateNormal];
-        [_star4Button setImage:emptyStar forState:UIControlStateNormal];
-        [_star5Button setImage:emptyStar forState:UIControlStateNormal];
-        break;
-    case 3:
-        numStars = @"3";
-        [_star1Button setImage:filledStar forState:UIControlStateNormal];
-        [_star2Button setImage:filledStar forState:UIControlStateNormal];
-        [_star3Button setImage:filledStar forState:UIControlStateNormal];
-        [_star4Button setImage:emptyStar forState:UIControlStateNormal];
-        [_star5Button setImage:emptyStar forState:UIControlStateNormal];
-        break;
-    case 4:
-        numStars = @"4";
-        [_star1Button setImage:filledStar forState:UIControlStateNormal];
-        [_star2Button setImage:filledStar forState:UIControlStateNormal];
-        [_star3Button setImage:filledStar forState:UIControlStateNormal];
-        [_star4Button setImage:filledStar forState:UIControlStateNormal];
-        [_star5Button setImage:emptyStar forState:UIControlStateNormal];
-        break;
-    case 5:
-        numStars = @"5";
-        [_star1Button setImage:filledStar forState:UIControlStateNormal];
-        [_star2Button setImage:filledStar forState:UIControlStateNormal];
-        [_star3Button setImage:filledStar forState:UIControlStateNormal];
-        [_star4Button setImage:filledStar forState:UIControlStateNormal];
-        [_star5Button setImage:filledStar forState:UIControlStateNormal];
-        break;
-    default:
-        break;
-}
-
-
+    //check if favorite and set heart image accordingly
+    if ([isFavorite intValue] == 1) {
+        toggle = @"1";
+        [self clickedFavorite:self];
+    } else {
+        toggle = @"0";
+        [self clickedFavorite:self];
+    }
+    
+    //set review text
+    [_reviewView setText:review];
+    
+    //set button to grey since user reviewed movie
+    [_wantToSeeButton setImage:[UIImage imageNamed:@"grayButton.png"] forState:UIControlStateNormal];
+    
+    //set star data
+    int starsSaved = [rating intValue];
+    UIImage *filledStar = [UIImage imageNamed:@"star-48.png"];
+    UIImage *emptyStar = [UIImage imageNamed:@"star-50.png"];
+    
+    //set stars based on reviews
+    switch (starsSaved) {
+        case 1:
+            numStars = @"1";
+            [_star1Button setImage:filledStar forState:UIControlStateNormal];
+            [_star2Button setImage:emptyStar forState:UIControlStateNormal];
+            [_star3Button setImage:emptyStar forState:UIControlStateNormal];
+            [_star4Button setImage:emptyStar forState:UIControlStateNormal];
+            [_star5Button setImage:emptyStar forState:UIControlStateNormal];
+            break;
+        case 2:
+            numStars = @"2";
+            [_star1Button setImage:filledStar forState:UIControlStateNormal];
+            [_star2Button setImage:filledStar forState:UIControlStateNormal];
+            [_star3Button setImage:emptyStar forState:UIControlStateNormal];
+            [_star4Button setImage:emptyStar forState:UIControlStateNormal];
+            [_star5Button setImage:emptyStar forState:UIControlStateNormal];
+            break;
+        case 3:
+            numStars = @"3";
+            [_star1Button setImage:filledStar forState:UIControlStateNormal];
+            [_star2Button setImage:filledStar forState:UIControlStateNormal];
+            [_star3Button setImage:filledStar forState:UIControlStateNormal];
+            [_star4Button setImage:emptyStar forState:UIControlStateNormal];
+            [_star5Button setImage:emptyStar forState:UIControlStateNormal];
+            break;
+        case 4:
+            numStars = @"4";
+            [_star1Button setImage:filledStar forState:UIControlStateNormal];
+            [_star2Button setImage:filledStar forState:UIControlStateNormal];
+            [_star3Button setImage:filledStar forState:UIControlStateNormal];
+            [_star4Button setImage:filledStar forState:UIControlStateNormal];
+            [_star5Button setImage:emptyStar forState:UIControlStateNormal];
+            break;
+        case 5:
+            numStars = @"5";
+            [_star1Button setImage:filledStar forState:UIControlStateNormal];
+            [_star2Button setImage:filledStar forState:UIControlStateNormal];
+            [_star3Button setImage:filledStar forState:UIControlStateNormal];
+            [_star4Button setImage:filledStar forState:UIControlStateNormal];
+            [_star5Button setImage:filledStar forState:UIControlStateNormal];
+            break;
+        default:
+            break;
+    }
 }
 //segue to write review and send movie object
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {

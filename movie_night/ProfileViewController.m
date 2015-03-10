@@ -127,8 +127,9 @@
     movie10.movie_director = @"Phil Lord";
 
                       
-    wantToSeeArray = [[NSMutableArray alloc]initWithObjects:movie3, movie9, movie6, movie10, movie2, movie8, movie4, movie7, movie5, movie1, nil];
+   // wantToSeeArray = [[NSMutableArray alloc]initWithObjects:movie3, movie9, movie6, movie10, movie2, movie8, movie4, movie7, movie5, movie1, nil];
     
+    wantToSeeArray = [[NSMutableArray alloc]init];
     favoritesArray = [[NSMutableArray alloc]init];
     movieArray = [[NSMutableArray alloc]init];
 
@@ -137,6 +138,7 @@
     
     [movieArray removeAllObjects];
     [favoritesArray removeAllObjects];
+    [wantToSeeArray removeAllObjects];
     
     //get user reviews
     PFQuery *query2 = [PFQuery queryWithClassName:@"Reviews"];
@@ -151,6 +153,8 @@
             NSNumber *isFave;
             UIImage *moviePoster;
             NSString *movieID = @"";
+            NSNumber *isWantToSee;
+            NSDate *dateReleased;
             
             for (PFObject *object in objects) {
                 NSLog(@"%@", object.objectId);
@@ -161,16 +165,24 @@
                 movieTitle = [object objectForKey:@"movieTitle"];
                 isFave = [object objectForKey:@"isFavorite"];
                 movieID = [object objectForKey:@"movieID"];
+                isWantToSee = [object objectForKey:@"isWantToSee"];
+                dateReleased = [object objectForKey:@"dateReleased"];
                 MovieClass *tmpMovie = [[MovieClass alloc]init];
                 tmpMovie.movie_title = movieTitle;
                 tmpMovie.user_rating = rating;
                 tmpMovie.movie_poster_file = moviePoster;
                 tmpMovie.movie_TMDB_id = movieID;
+                NSDateFormatter *df = [[NSDateFormatter alloc]init];
+                [df setDateFormat:@"MMM dd, yyyy"];
+                NSString *date = [df stringFromDate:dateReleased];
+                tmpMovie.movie_date = date;
                 [movieArray addObject:tmpMovie];
                 if ([isFave intValue] == 1) {
                     [favoritesArray addObject:tmpMovie];
                 }
-                
+                if ([isWantToSee intValue] ==1) {
+                    [wantToSeeArray addObject:tmpMovie];
+                }
                 [_listTableView reloadData];
             }
         }
