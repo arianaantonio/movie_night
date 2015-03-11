@@ -142,6 +142,12 @@
     
     [toAddArray addObject:[[contactArray objectAtIndex:[sender tag]]objectForKey:@"userID"]];
     [sender setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+    
+    PFObject *newActivity = [PFObject objectWithClassName:@"Activity"];
+    newActivity[@"activityType"] = @"follow";
+    newActivity[@"fromUser"] = currentUserId;
+    newActivity[@"toUser"] = [[contactArray objectAtIndex:[sender tag]]objectForKey:@"userID"];
+    [newActivity saveInBackground];
 }
 -(IBAction)clickedDone:(id)sender {
    

@@ -29,9 +29,21 @@
     userId = currentUser.objectId;
     reviewId = self.selectedReview.user_review_objectId;
     
+    if (self.selectedReview.movie_poster_file == nil) {
+        [self getReviewWithoutPassedData];
+    } else {
+        [self getReviewWithPassedData];
+    }
+    
+    [self getComments];
+    
+}
+-(void)getReviewWithPassedData {
+    //set friend profile pic
     UIImage *profilePicImage = self.selectedReview.user_photo_file;
     _profilePic.image = profilePicImage;
     
+    //set poster
     UIImage *posterImage = self.selectedReview.movie_poster_file;
     if (posterImage != nil) {
         _posterView.image = posterImage;
@@ -46,6 +58,8 @@
         [_movieTitleButton setTitle:self.movieTitlePassed forState:UIControlStateNormal];
     }
     _reviewField.text = self.selectedReview.user_review;
+    
+    //set stars
     NSString *rating = self.selectedReview.user_rating;
     
     NSString *filledStar = @"star-48.png";
@@ -95,9 +109,90 @@
     _star3.image = star3Image;
     _star4.image = star4Image;
     _star5.image = star5Image;
+}
+-(void)getReviewWithoutPassedData {
     
-    [self getComments];
+    self.selectedReview.userID = userId;
+    PFQuery *reviewQuery = [PFQuery queryWithClassName:@"Reviews"];
+    [reviewQuery whereKey:@"objectId" equalTo:reviewId];
     
+    [reviewQuery findObjectsInBackgroundWithBlock:^(NSArray *reviews, NSError *error) {
+        
+        for (PFObject *object in reviews) {
+            
+            //set poster
+            UIImage *posterImage = [UIImage imageWithData:[(PFFile *)object[@"moviePoster"]getData]];
+            _posterView.image = posterImage;
+            self.selectedReview.movie_TMDB_id = [object objectForKey:@"movieID"];
+            
+            PFQuery *user = [PFUser query];
+            [user whereKey:@"objectId" equalTo:userId];
+            NSArray *userArray = [user findObjects];
+            NSDictionary *userDict = [userArray firstObject];
+            
+            //set friend profile pic
+            UIImage *profilePicImage = [UIImage imageWithData:[(PFFile *)userDict[@"profile_pic"]getData]];;
+            _profilePic.image = profilePicImage;
+            
+            [_usernameButton setTitle:[userDict objectForKey:@"username"] forState:UIControlStateNormal];
+            [_movieTitleButton setTitle:[object objectForKey:@"movieTitle"] forState:UIControlStateNormal];
+            
+            _reviewField.text = [object objectForKey:@"review"];
+            
+            //set stars
+            NSNumber *ratingNum = [object objectForKey:@"rating"];
+            NSString *rating = [NSString stringWithFormat:@"%@", ratingNum];
+            
+            NSString *filledStar = @"star-48.png";
+            NSString *emptyStar = @"star-50.png";
+            
+            UIImage *star1Image;
+            UIImage *star2Image;
+            UIImage *star3Image;
+            UIImage *star4Image;
+            UIImage *star5Image;
+            
+            if ([rating isEqual:@"1"]) {
+                star1Image = [UIImage imageNamed:filledStar];
+                star2Image = [UIImage imageNamed:emptyStar];
+                star3Image = [UIImage imageNamed:emptyStar];
+                star4Image = [UIImage imageNamed:emptyStar];
+                star5Image = [UIImage imageNamed:emptyStar];
+            } else if ([rating isEqual:@"2"]) {
+                star1Image = [UIImage imageNamed:filledStar];
+                star2Image = [UIImage imageNamed:filledStar];
+                star3Image = [UIImage imageNamed:emptyStar];
+                star4Image = [UIImage imageNamed:emptyStar];
+                star5Image = [UIImage imageNamed:emptyStar];
+            } else if ([rating isEqual:@"3"]) {
+                star1Image = [UIImage imageNamed:filledStar];
+                star2Image = [UIImage imageNamed:filledStar];
+                star3Image = [UIImage imageNamed:filledStar];
+                star4Image = [UIImage imageNamed:emptyStar];
+                star5Image = [UIImage imageNamed:emptyStar];
+                
+            } else if ([rating isEqual:@"4"]) {
+                star1Image = [UIImage imageNamed:filledStar];
+                star2Image = [UIImage imageNamed:filledStar];
+                star3Image = [UIImage imageNamed:filledStar];
+                star4Image = [UIImage imageNamed:filledStar];
+                star5Image = [UIImage imageNamed:emptyStar];
+                
+            } else {
+                star1Image = [UIImage imageNamed:filledStar];
+                star2Image = [UIImage imageNamed:filledStar];
+                star3Image = [UIImage imageNamed:filledStar];
+                star4Image = [UIImage imageNamed:filledStar];
+                star5Image = [UIImage imageNamed:filledStar];
+            }
+            _star1.image = star1Image;
+            _star2.image = star2Image;
+            _star3.image = star3Image;
+            _star4.image = star4Image;
+            _star5.image = star5Image;
+            
+        }
+    }];
 }
 //get previous comments from parse
 -(void)getComments {
@@ -116,6 +211,7 @@
             NSString *prevUserId = [object objectForKey:@"fromUser"];
             commenterId = [object objectForKey:@"fromUser"];
             
+            //get info about user who left comment
             PFQuery *userQuery = [PFUser query];
             [userQuery whereKey:@"objectId" equalTo:prevUserId];
             NSArray *usersArray = [userQuery findObjects];
@@ -124,6 +220,7 @@
             NSString *prevUsername = [userDict objectForKey:@"username"];
             UIImage *image = [UIImage imageWithData:[(PFFile *)userDict[@"profile_pic"] getData]];
 
+            //put comments in table
             NSDictionary *tmpDict = [[NSDictionary alloc]initWithObjectsAndKeys:prevComment, @"comment", prevUsername, @"username", image, @"profile_pic", commenterId, @"userId", nil];
             [commentArray addObject:tmpDict];
             [_commentTable reloadData];
@@ -170,8 +267,10 @@
     scrollView.contentInset = contentInsets;
     scrollView.scrollIndicatorInsets = contentInsets;
 }
+//when user posts a comment
 -(void)onPostComment:(id)sender {
     NSString *comment = [commentField text];
+    [commentField resignFirstResponder];
     
     if (![comment isEqualToString:@""]) {
         
@@ -192,15 +291,11 @@
         newComment[@"movieTitle"] = self.selectedReview.movie_title;
         [newComment saveInBackground];
     }
-    
 }
 #pragma mark TableView
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return [commentArray count];
 }
-
-
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"commentCell" forIndexPath:indexPath];
@@ -227,8 +322,6 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation

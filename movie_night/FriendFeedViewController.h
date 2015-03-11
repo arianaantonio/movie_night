@@ -17,6 +17,7 @@
     UIImageView *spinningIcon;
     BOOL isRefreshIconsOverlap;
     BOOL isRefreshAnimating;
+    NSString *userId;
 }
 
 @property (nonatomic, strong) IBOutlet UITableView *feedTableView;

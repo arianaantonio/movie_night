@@ -322,7 +322,6 @@
     
     ///----COLLATING MOVIE RATINGS====///
     //get all ratings for this movie
-    
     PFQuery *ratingsQuery = [PFQuery queryWithClassName:@"Reviews"];
     [ratingsQuery whereKey:@"movieID" equalTo:movieIDStr];
     
@@ -345,13 +344,19 @@
         }
         int ratingsInt = 0;
         
+        //make sure there are at least 10 ratings to be more accurate
         if ([ratingsArray count] > 9) {
+            
+            //loop through ratings and add them together
             for (int i = 0; i < [ratingsArray count]; i++) {
                 ratingsInt += [[ratingsArray objectAtIndex:i]intValue];
             }
+            
+            //divide for average and round result
             int ratingsTotal = (int)roundf(ratingsInt/[ratingsArray count]);
             NSLog(@"Rating total: %i, Average: %i", ratingsInt,ratingsTotal);
             
+            //set stars
             switch (ratingsTotal) {
                 case 1:
                     _totalStar1View.image = filledStar;
@@ -393,6 +398,7 @@
             }
             
         } else {
+            //if not enough reviews, show not enough label
             [_notEnoughLabel setHidden:NO];
         }
     }];

@@ -21,10 +21,48 @@
     self.navigationItem.titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"movie_night_logo.png"]];
     
     feedArray = [[NSMutableArray alloc]init];
+    PFUser *currentUser = [PFUser currentUser];
+    userId = currentUser.objectId;
     
     [self refreshFeed];
     [self setupRefreshControl];
+    [self checkForNewActivity];
     
+}
+
+-(void)checkForNewActivity {
+    
+    NSDate *date = [[NSDate alloc]init];
+    NSDateFormatter *df = [[NSDateFormatter alloc]init];
+    [df setDateFormat:@"MMM dd, yyyy, hh:mm"];
+    NSString *timeStamp = [df stringFromDate:date];
+    date = [df dateFromString:timeStamp];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSDate *lastUpdate = [defaults objectForKey:@"lastUpdate"];
+  // // NSDate *lastUpdate = [df dateFromString:@"Mar 11, 2015, 01:14"];
+   // NSDate *lastUpdate = [df dateFromString:@"2015-03-09 00:00:00 PST"];
+    if (lastUpdate == nil) {
+        lastUpdate = date;
+    }
+    
+    
+    PFQuery *updateQuery = [PFQuery queryWithClassName:@"Activity"];
+    [updateQuery whereKey:@"toUser" equalTo:userId];
+    //[updateQuery whereKey:@"createdAt" greaterThan:lastUpdate];
+    [updateQuery whereKey:@"createdAt" greaterThan:lastUpdate];
+    [updateQuery orderByDescending:@"createdAt"];
+    [updateQuery countObjectsInBackgroundWithBlock:^(int count, NSError *error) {
+        if (!error) {
+            if (count > 0) {
+                [[self.tabBarController.tabBar.items objectAtIndex:2] setBadgeValue:[NSString stringWithFormat:@"%i", count]];
+            }
+        } else {
+            // The request failed
+        }
+    }];
+    
+    [defaults setObject:date forKey:@"lastUpdate"];
 }
 #pragma mark - Refreshing
 //refresh the friend feed
