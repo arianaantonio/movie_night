@@ -155,8 +155,8 @@
     NSLog(@"User: %@, Movie: %@", userId, movie_id);
     [_reviewView setText:@"Write Review:"];
     
-    UIImage *filledStar = [UIImage imageNamed:@"star-48.png"];
-    UIImage *emptyStar = [UIImage imageNamed:@"star-50.png"];
+    UIImage *filledStar = [UIImage imageNamed:@"christmas_star-48.png"];
+    UIImage *emptyStar = [UIImage imageNamed:@"outline_star-48.png"];
     
     //query parse for movie data
     PFQuery *query2 = [PFQuery queryWithClassName:@"Reviews"];
@@ -437,8 +437,8 @@
 }
 //change star images based on which one was clicked
 -(void)clickStar:(id)sender {
-    UIImage *filledStar = [UIImage imageNamed:@"star-48.png"];
-    UIImage *emptyStar = [UIImage imageNamed:@"star-50.png"];
+    UIImage *filledStar = [UIImage imageNamed:@"christmas_star-48.png"];
+    UIImage *emptyStar = [UIImage imageNamed:@"outline_star-48.png"];
     
     //set star images
     switch ([sender tag]) {
@@ -559,8 +559,8 @@
         UIImage *star4Image;
         UIImage *star5Image;
         
-        NSString *filledStar = @"star-48.png";
-        NSString *emptyStar = @"star-50.png";
+        NSString *filledStar = @"christmas_star-48.png";
+        NSString *emptyStar = @"outline_star-48.png";
         
         if ([[tmpDict user_rating] isEqual:@"1"]) {
             star1Image = [UIImage imageNamed:filledStar];
@@ -632,8 +632,8 @@
     
     //set star data
     int starsSaved = [rating intValue];
-    UIImage *filledStar = [UIImage imageNamed:@"star-48.png"];
-    UIImage *emptyStar = [UIImage imageNamed:@"star-50.png"];
+    UIImage *filledStar = [UIImage imageNamed:@"christmas_star-48.png"];
+    UIImage *emptyStar = [UIImage imageNamed:@"outline_star-48.png"];
     
     //set stars based on reviews
     switch (starsSaved) {

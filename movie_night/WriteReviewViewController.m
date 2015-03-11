@@ -9,6 +9,8 @@
 #import "WriteReviewViewController.h"
 #import <Parse/Parse.h>
 #import "MovieDetailViewController.h"
+#import <FacebookSDK/FacebookSDK.h>
+#import "AppDelegate.h"
 
 @interface WriteReviewViewController ()
 
@@ -30,8 +32,8 @@
         
         int reviewInt = [self.moviePassed.user_rating intValue];
         
-        UIImage *filledStar = [UIImage imageNamed:@"star-48.png"];
-        UIImage *emptyStar = [UIImage imageNamed:@"star-50.png"];
+        UIImage *filledStar = [UIImage imageNamed:@"christmas_star-48.png"];
+        UIImage *emptyStar = [UIImage imageNamed:@"outline_star-48.png"];
         
         //set star images
         switch (reviewInt) {
@@ -179,8 +181,8 @@
 }
 //change star images based on which one was clicked
 -(void)clickStar:(id)sender {
-    UIImage *filledStar = [UIImage imageNamed:@"star-48.png"];
-    UIImage *emptyStar = [UIImage imageNamed:@"star-50.png"];
+    UIImage *filledStar = [UIImage imageNamed:@"christmas_star-48.png"];
+    UIImage *emptyStar = [UIImage imageNamed:@"outline_star-48.png"];
     
     //set star images
     switch ([sender tag]) {
@@ -229,7 +231,46 @@
             break;
     }
 }
-
+//share to facebook
+-(void)clickedFacebookShare:(id)sender {
+    
+    //make sure user is signed in to facebook
+    if (![FBDialogs canPresentOSIntegratedShareDialogWithSession:[FBSession activeSession]]) {
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"To share on Facebook your account must by registed in the iPhone settings" delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [alert show];
+        return;
+    }
+    NSString *review = [_reviewView text];
+    
+    NSString *facebookText = @"";
+    //if rating with no review
+    if (![numStars isEqualToString:@"0"] && [review isEqualToString:@""]) {
+        facebookText = [NSString stringWithFormat:@"I've rated %@ %@ stars on the Movie Night app for iPhone", self.moviePassed.movie_title, numStars];
+    }
+    //if review with no rating
+    else if ([numStars isEqualToString:@"0"] && ![review isEqualToString:@""]) {
+        facebookText = [NSString stringWithFormat:@"I've reviewed %@ on the Movie Night app for iPhone: %@", self.moviePassed.movie_title, review];
+    }
+    //else if there's both
+    else if (![numStars isEqualToString:@"0"] && ![review isEqualToString:@""]) {
+        facebookText = [NSString stringWithFormat:@"I've rated %@ %@ stars on the Movie Night app for iPone and left a review: %@", self.moviePassed.movie_title, numStars, review];
+    }
+    //if both empty return without facebook session
+    else {
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"Please rate the movie or write a review to share" delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [alert show];
+        return;
+    }
+    
+    
+    // Get the AppDelegate, so that we can get the root controller for the FBDialog
+    AppDelegate *mainDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    [FBDialogs presentOSIntegratedShareDialogModallyFrom:mainDelegate.window.rootViewController
+                                             initialText:facebookText
+                                                   image:nil
+                                                     url:nil
+                                                 handler:nil];
+}
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation

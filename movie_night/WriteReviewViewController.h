@@ -30,5 +30,6 @@
 -(IBAction)clickStar:(id)sender;
 -(IBAction)clickedSave:(id)sender;
 -(IBAction)clickedFavorite:(id)sender;
+-(IBAction)clickedFacebookShare:(id)sender;
 
 @end

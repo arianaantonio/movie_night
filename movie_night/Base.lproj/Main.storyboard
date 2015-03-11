@@ -876,7 +876,7 @@
                                                     <constraint firstAttribute="height" constant="26" id="m2j-b1-8uT"/>
                                                 </constraints>
                                             </imageView>
-                                            <imageView userInteractionEnabled="NO" tag="5" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="star-50.png" translatesAutoresizingMaskIntoConstraints="NO" id="6TX-vR-rm4">
+                                            <imageView userInteractionEnabled="NO" tag="5" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="outline_star-48.png" translatesAutoresizingMaskIntoConstraints="NO" id="6TX-vR-rm4">
                                                 <rect key="frame" x="163" y="42" width="25" height="26"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="25" id="FIF-H5-40o"/>
@@ -888,13 +888,13 @@
                                                     <constraint firstAttribute="width" constant="25" id="D3E-Bt-Ncq"/>
                                                 </constraints>
                                             </imageView>
-                                            <imageView userInteractionEnabled="NO" tag="7" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="star-50.png" translatesAutoresizingMaskIntoConstraints="NO" id="lu7-PJ-jX0">
+                                            <imageView userInteractionEnabled="NO" tag="7" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="christmas_star-48.png" translatesAutoresizingMaskIntoConstraints="NO" id="lu7-PJ-jX0">
                                                 <rect key="frame" x="215" y="42" width="25" height="26"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="25" id="Bh0-mO-AlZ"/>
                                                 </constraints>
                                             </imageView>
-                                            <imageView userInteractionEnabled="NO" tag="6" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="star-50.png" translatesAutoresizingMaskIntoConstraints="NO" id="LG9-Uo-qp6">
+                                            <imageView userInteractionEnabled="NO" tag="6" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="outline_star-48.png" translatesAutoresizingMaskIntoConstraints="NO" id="LG9-Uo-qp6">
                                                 <rect key="frame" x="189" y="42" width="25" height="26"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="25" id="uOp-c8-1QL"/>
@@ -3289,6 +3289,9 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <action selector="clickedFacebookShare:" destination="lTr-8b-3Gf" eventType="touchUpInside" id="z5c-5l-1w2"/>
+                                </connections>
                             </button>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="iAd.png" translatesAutoresizingMaskIntoConstraints="NO" id="4GL-dk-bL3">
                                 <rect key="frame" x="0.0" y="448" width="601" height="44"/>
@@ -3495,6 +3498,7 @@
     <resources>
         <image name="Ninja.png" width="183" height="183"/>
         <image name="audience-104.png" width="104" height="104"/>
+        <image name="christmas_star-48.png" width="48" height="48"/>
         <image name="clapperboard-26.png" width="26" height="26"/>
         <image name="clipperboard-25.png" width="25" height="25"/>
         <image name="clipperboard-50.png" width="25" height="25"/>
@@ -3503,6 +3507,7 @@
         <image name="iAd.png" width="272" height="39"/>
         <image name="like_outline-48.png" width="48" height="48"/>
         <image name="movieReel.png" width="480" height="800"/>
+        <image name="outline_star-48.png" width="48" height="48"/>
         <image name="playButton.png" width="90" height="90"/>
         <image name="popular_topic_filled-25.png" width="25" height="25"/>
         <image name="previous-32.png" width="20" height="20"/>
@@ -3516,10 +3521,10 @@
     <inferredMetricsTieBreakers>
         <segue reference="NdD-dH-ks2"/>
         <segue reference="lJB-xy-MrC"/>
-        <segue reference="kZR-87-tpM"/>
         <segue reference="lM3-kv-TAF"/>
+        <segue reference="kTt-jg-zYa"/>
+        <segue reference="MRu-h9-dR8"/>
         <segue reference="k82-Bc-qsh"/>
-        <segue reference="CI0-Vd-fhO"/>
         <segue reference="Xua-aC-MgM"/>
         <segue reference="y4B-tZ-bPZ"/>
     </inferredMetricsTieBreakers>

@@ -225,8 +225,8 @@
         UIImage *star4Image;
         UIImage *star5Image;
         
-        NSString *filledStar = @"star-48.png";
-        NSString *emptyStar = @"star-50.png";
+        NSString *filledStar = @"christmas_star-48.png";
+        NSString *emptyStar = @"outline_star-48.png";
         
         if ([currentMovie.user_rating isEqual:@"1"]) {
             star1Image = [UIImage imageNamed:filledStar];

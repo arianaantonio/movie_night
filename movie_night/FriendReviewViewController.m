@@ -62,8 +62,8 @@
     //set stars
     NSString *rating = self.selectedReview.user_rating;
     
-    NSString *filledStar = @"star-48.png";
-    NSString *emptyStar = @"star-50.png";
+    NSString *filledStar = @"christmas_star-48.png";
+    NSString *emptyStar = @"outline_star-48.png";
     
     UIImage *star1Image;
     UIImage *star2Image;
@@ -143,8 +143,8 @@
             NSNumber *ratingNum = [object objectForKey:@"rating"];
             NSString *rating = [NSString stringWithFormat:@"%@", ratingNum];
             
-            NSString *filledStar = @"star-48.png";
-            NSString *emptyStar = @"star-50.png";
+            NSString *filledStar = @"christmas_star-48.png";
+            NSString *emptyStar = @"outline_star-48.png";
             
             UIImage *star1Image;
             UIImage *star2Image;

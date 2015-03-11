@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		41379C601AAFFB4500E93321 /* NotificationsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41379C5F1AAFFB4500E93321 /* NotificationsViewController.m */; };
+		41379C631AB0480F00E93321 /* christmas_star-48.png in Resources */ = {isa = PBXBuildFile; fileRef = 41379C611AB0480F00E93321 /* christmas_star-48.png */; };
+		41379C641AB0480F00E93321 /* rating-48.png in Resources */ = {isa = PBXBuildFile; fileRef = 41379C621AB0480F00E93321 /* rating-48.png */; };
+		41379C661AB0495F00E93321 /* christmas_star-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 41379C651AB0495F00E93321 /* christmas_star-50.png */; };
+		41379C681AB04A7100E93321 /* outline_star-48.png in Resources */ = {isa = PBXBuildFile; fileRef = 41379C671AB04A7100E93321 /* outline_star-48.png */; };
 		41BEEBD71AABE0B400FA593F /* SearchUsersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41BEEBD61AABE0B400FA593F /* SearchUsersViewController.m */; };
 		41E0C8331AAFF88400B13336 /* chat-26.png in Resources */ = {isa = PBXBuildFile; fileRef = 41E0C82D1AAFF88400B13336 /* chat-26.png */; };
 		41E0C8341AAFF88400B13336 /* collaboration-26.png in Resources */ = {isa = PBXBuildFile; fileRef = 41E0C82E1AAFF88400B13336 /* collaboration-26.png */; };
@@ -104,6 +108,10 @@
 		24581BE1738646F5BDF70277 /* libPods-movie_night.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-movie_night.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		41379C5E1AAFFB4500E93321 /* NotificationsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationsViewController.h; sourceTree = "<group>"; };
 		41379C5F1AAFFB4500E93321 /* NotificationsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotificationsViewController.m; sourceTree = "<group>"; };
+		41379C611AB0480F00E93321 /* christmas_star-48.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "christmas_star-48.png"; sourceTree = "<group>"; };
+		41379C621AB0480F00E93321 /* rating-48.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "rating-48.png"; sourceTree = "<group>"; };
+		41379C651AB0495F00E93321 /* christmas_star-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "christmas_star-50.png"; sourceTree = "<group>"; };
+		41379C671AB04A7100E93321 /* outline_star-48.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "outline_star-48.png"; sourceTree = "<group>"; };
 		41BEEBD51AABE0B400FA593F /* SearchUsersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchUsersViewController.h; sourceTree = "<group>"; };
 		41BEEBD61AABE0B400FA593F /* SearchUsersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchUsersViewController.m; sourceTree = "<group>"; };
 		41E0C82D1AAFF88400B13336 /* chat-26.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "chat-26.png"; sourceTree = "<group>"; };
@@ -351,6 +359,10 @@
 		41EC05391A92EE90000193DD /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				41379C671AB04A7100E93321 /* outline_star-48.png */,
+				41379C651AB0495F00E93321 /* christmas_star-50.png */,
+				41379C611AB0480F00E93321 /* christmas_star-48.png */,
+				41379C621AB0480F00E93321 /* rating-48.png */,
 				41E0C82D1AAFF88400B13336 /* chat-26.png */,
 				41E0C82E1AAFF88400B13336 /* collaboration-26.png */,
 				41E0C82F1AAFF88400B13336 /* my_topic_filled-25.png */,
@@ -522,13 +534,17 @@
 				41EC05381A91D796000193DD /* movieReel.png in Resources */,
 				41EC05431A945210000193DD /* play-48.png in Resources */,
 				41EC055A1A9463E8000193DD /* Quicksand-Regular.otf in Resources */,
+				41379C631AB0480F00E93321 /* christmas_star-48.png in Resources */,
 				41EC05341A91D1C0000193DD /* collaboration-25.png in Resources */,
 				41EC05791A9C28A8000193DD /* home-26.png in Resources */,
 				41EC054B1A9452BC000193DD /* star-50.png in Resources */,
 				41EC05321A91C7EE000193DD /* search-50.png in Resources */,
 				41EC04EC1A907040000193DD /* Main.storyboard in Resources */,
+				41379C681AB04A7100E93321 /* outline_star-48.png in Resources */,
+				41379C641AB0480F00E93321 /* rating-48.png in Resources */,
 				41E0C8381AAFF88400B13336 /* popular_topic-26.png in Resources */,
 				41F9BD4E1AAA9940008FA16C /* playButton.png in Resources */,
+				41379C661AB0495F00E93321 /* christmas_star-50.png in Resources */,
 				41EC05551A9463D6000193DD /* Quicksand-Bold.otf in Resources */,
 				41EC05911A9ECF28000193DD /* settings_filled-32.png in Resources */,
 				41EC05581A9463E1000193DD /* Quicksand-Light.otf in Resources */,
