@@ -29,6 +29,7 @@
 #pragma mark - Refreshing
 //refresh the friend feed
 -(void)refreshFeed {
+    [feedArray removeAllObjects];
     
     PFUser *currentUser = [PFUser currentUser];
     
@@ -77,6 +78,7 @@
                 tmpMovie.movie_poster_file = moviePoster;
                 tmpMovie.movie_TMDB_id = movieID;
                 tmpMovie.userID = friendID;
+                tmpMovie.user_review_objectId = object.objectId;
                 
                 //add to array
                 [feedArray addObject:tmpMovie];

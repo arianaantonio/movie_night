@@ -28,6 +28,7 @@
     friendsReviews = [[NSMutableArray alloc]init];
     PFUser *currentUser = [PFUser currentUser];
     userId = currentUser.objectId;
+    [_notEnoughLabel setHidden:YES];
     
     [self refreshView];
 }
@@ -154,6 +155,8 @@
     NSLog(@"User: %@, Movie: %@", userId, movie_id);
     [_reviewView setText:@"Write Review:"];
     
+    UIImage *filledStar = [UIImage imageNamed:@"star-48.png"];
+    UIImage *emptyStar = [UIImage imageNamed:@"star-50.png"];
     
     //query parse for movie data
     PFQuery *query2 = [PFQuery queryWithClassName:@"Reviews"];
@@ -209,8 +212,6 @@
                 
                 //set star data
                 int starsSaved = [rating intValue];
-                UIImage *filledStar = [UIImage imageNamed:@"star-48.png"];
-                UIImage *emptyStar = [UIImage imageNamed:@"star-50.png"];
                 
                 //set stars based on reviews
                 switch (starsSaved) {
@@ -318,6 +319,84 @@
             [_friendsReviewsTable reloadData];
         }
     }];
+    
+    ///----COLLATING MOVIE RATINGS====///
+    //get all ratings for this movie
+    
+    PFQuery *ratingsQuery = [PFQuery queryWithClassName:@"Reviews"];
+    [ratingsQuery whereKey:@"movieID" equalTo:movieIDStr];
+    
+    [ratingsQuery findObjectsInBackgroundWithBlock:^(NSArray *reviews, NSError *error) {
+
+        NSString *ratings = @"";
+        NSNumber *ratingsNum;
+        NSMutableArray *ratingsArray = [[NSMutableArray alloc]init];
+        
+        //get info about friends review
+        for (PFObject *object in reviews) {
+            
+            ratings = [object objectForKey:@"rating"];
+            
+            //convert rating to a number so it can be added
+            NSNumberFormatter *nf = [[NSNumberFormatter alloc] init];
+            nf.numberStyle = NSNumberFormatterDecimalStyle;
+            ratingsNum = [nf numberFromString:ratings];
+            [ratingsArray addObject:ratingsNum];
+        }
+        int ratingsInt = 0;
+        
+        if ([ratingsArray count] > 9) {
+            for (int i = 0; i < [ratingsArray count]; i++) {
+                ratingsInt += [[ratingsArray objectAtIndex:i]intValue];
+            }
+            int ratingsTotal = (int)roundf(ratingsInt/[ratingsArray count]);
+            NSLog(@"Rating total: %i, Average: %i", ratingsInt,ratingsTotal);
+            
+            switch (ratingsTotal) {
+                case 1:
+                    _totalStar1View.image = filledStar;
+                    _totalStar2View.image = emptyStar;
+                    _totalStar3View.image = emptyStar;
+                    _totalStar4View.image = emptyStar;
+                    _totalStar5View.image = emptyStar;
+                    break;
+                case 2:
+                    _totalStar1View.image = filledStar;
+                    _totalStar2View.image = filledStar;
+                    _totalStar3View.image = emptyStar;
+                    _totalStar4View.image = emptyStar;
+                    _totalStar5View.image = emptyStar;
+                    break;
+                case 3:
+                    _totalStar1View.image = filledStar;
+                    _totalStar2View.image = filledStar;
+                    _totalStar3View.image = filledStar;
+                    _totalStar4View.image = emptyStar;
+                    _totalStar5View.image = emptyStar;
+                    break;
+                case 4:
+                    _totalStar1View.image = filledStar;
+                    _totalStar2View.image = filledStar;
+                    _totalStar3View.image = filledStar;
+                    _totalStar4View.image = filledStar;
+                    _totalStar5View.image = emptyStar;
+                    break;
+                case 5:
+                    _totalStar1View.image = filledStar;
+                    _totalStar2View.image = filledStar;
+                    _totalStar3View.image = filledStar;
+                    _totalStar4View.image = filledStar;
+                    _totalStar5View.image = filledStar;
+                    break;
+                default:
+                    break;
+            }
+            
+        } else {
+            [_notEnoughLabel setHidden:NO];
+        }
+    }];
+    
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

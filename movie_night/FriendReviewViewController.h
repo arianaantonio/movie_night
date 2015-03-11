@@ -12,6 +12,9 @@
 @interface FriendReviewViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
 {
     NSMutableArray *commentArray;
+    NSString *reviewId;
+    NSString *userId;
+    NSString *commenterId;
 }
 
 @property (nonatomic, strong) MovieClass *selectedReview;

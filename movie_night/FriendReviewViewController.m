@@ -25,6 +25,10 @@
     [commentField setDelegate:self];
     [self registerForKeyboardNotifications];
     
+    PFUser *currentUser = [PFUser currentUser];
+    userId = currentUser.objectId;
+    reviewId = self.selectedReview.user_review_objectId;
+    
     UIImage *profilePicImage = self.selectedReview.user_photo_file;
     _profilePic.image = profilePicImage;
     
@@ -92,8 +96,39 @@
     _star4.image = star4Image;
     _star5.image = star5Image;
     
+    [self getComments];
     
+}
+//get previous comments from parse
+-(void)getComments {
     
+    //get comments that contain this review id
+    PFQuery *reviewsQuery = [PFQuery queryWithClassName:@"Activity"];
+    [reviewsQuery whereKey:@"reviewId" equalTo:reviewId];
+    [reviewsQuery whereKey:@"activityType" equalTo:@"comment"];
+    [reviewsQuery orderByAscending:@"createdAt"];
+    [reviewsQuery findObjectsInBackgroundWithBlock:^(NSArray *reviews, NSError *error) {
+        
+        for (PFObject *object in reviews) {
+            NSLog(@"Object: %@", object);
+            
+            NSString *prevComment = [object objectForKey:@"comment"];
+            NSString *prevUserId = [object objectForKey:@"fromUser"];
+            commenterId = [object objectForKey:@"fromUser"];
+            
+            PFQuery *userQuery = [PFUser query];
+            [userQuery whereKey:@"objectId" equalTo:prevUserId];
+            NSArray *usersArray = [userQuery findObjects];
+            NSDictionary *userDict = [usersArray firstObject];
+        
+            NSString *prevUsername = [userDict objectForKey:@"username"];
+            UIImage *image = [UIImage imageWithData:[(PFFile *)userDict[@"profile_pic"] getData]];
+
+            NSDictionary *tmpDict = [[NSDictionary alloc]initWithObjectsAndKeys:prevComment, @"comment", prevUsername, @"username", image, @"profile_pic", commenterId, @"userId", nil];
+            [commentArray addObject:tmpDict];
+            [_commentTable reloadData];
+        }
+    }];
 }
 //set up textfield so return button closes keyboard
 -(BOOL)textFieldShouldReturn:(UITextField*)textField {
@@ -137,10 +172,27 @@
 }
 -(void)onPostComment:(id)sender {
     NSString *comment = [commentField text];
-    NSDictionary *commentDict = [NSDictionary dictionaryWithObjectsAndKeys:comment, @"comment", nil];
-    [commentArray addObject:commentDict];
-    [_commentTable reloadData];
-    [commentField setText:@""];
+    
+    if (![comment isEqualToString:@""]) {
+        
+        //add to comment table
+        NSDictionary *commentDict = [NSDictionary dictionaryWithObjectsAndKeys:comment, @"comment", nil];
+        [commentArray addObject:commentDict];
+        [_commentTable reloadData];
+        [commentField setText:@""];
+        
+        //save to parse
+        PFObject *newComment = [PFObject objectWithClassName:@"Activity"];
+        newComment[@"activityType"] = @"comment";
+        newComment[@"fromUser"] = userId;
+        newComment[@"toUser"] = self.selectedReview.userID;
+        newComment[@"movieID"] = self.selectedReview.movie_TMDB_id;
+        newComment[@"comment"] = comment;
+        newComment[@"reviewId"] = reviewId;
+        newComment[@"movieTitle"] = self.selectedReview.movie_title;
+        [newComment saveInBackground];
+    }
+    
 }
 #pragma mark TableView
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -158,11 +210,11 @@
     if (cell != nil) {
         
         UIImageView *profilePicView = (UIImageView *) [cell viewWithTag:1];
-        UIImage *profileImage = [UIImage imageNamed:@"profilepic6.jpg"];
+        UIImage *profileImage = [commentDict objectForKey:@"profile_pic"];
         profilePicView.image = profileImage;
         
         UILabel *nameLabel = (UILabel *) [cell viewWithTag:2];
-        nameLabel.text = @"templepilot17 said:";
+        nameLabel.text = [commentDict objectForKey:@"username"];
         
         UILabel *commentLabel = (UILabel *) [cell viewWithTag:3];
         commentLabel.text = [commentDict objectForKey:@"comment"];
@@ -187,6 +239,13 @@
         MovieDetailViewController *mdvc = [segue destinationViewController];
         mdvc.passed_movie_id = self.selectedReview.movie_TMDB_id;
         mdvc.selectedMovie = self.selectedReview;
+    }
+    else if ([[segue identifier]isEqualToString:@"friendCommentProfile"]) {
+        UITableViewCell *cell = (UITableViewCell*)sender;
+        NSIndexPath *indexPath = [_commentTable indexPathForCell:cell];
+        
+        FriendProfileViewController *fpvc = [segue destinationViewController];
+        fpvc.userIdPassed = [[commentArray objectAtIndex:indexPath.row]objectForKey:@"userId"];
     }
     //else segueing to friend profile page
     else {

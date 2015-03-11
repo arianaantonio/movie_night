@@ -49,6 +49,13 @@
 @property (nonatomic, strong) IBOutlet UIButton *star4Button;
 @property (nonatomic, strong) IBOutlet UIButton *star5Button;
 @property (nonatomic, strong) IBOutlet UIButton *wantToSeeButton;
+@property (nonatomic, strong) IBOutlet UIImageView *totalStar1View;
+@property (nonatomic, strong) IBOutlet UIImageView *totalStar2View;
+@property (nonatomic, strong) IBOutlet UIImageView *totalStar3View;
+@property (nonatomic, strong) IBOutlet UIImageView *totalStar4View;
+@property (nonatomic, strong) IBOutlet UIImageView *totalStar5View;
+@property (nonatomic, strong) IBOutlet UILabel *notEnoughLabel;
+
 
 -(IBAction)clickedFavorite:(id)sender;
 -(IBAction)clickedTariler:(id)sender;
