@@ -30,10 +30,266 @@
     userId = currentUser.objectId;
     [_notEnoughLabel setHidden:YES];
     
-    [self refreshView];
+    if (userId != nil) {
+        [_guestLabel setHidden:YES];
+        [_wantToSeeButton setHidden:NO];
+        [self getMovieData];
+        [self refreshView];
+    } else {
+        [_guestLabel setHidden:NO];
+        [_wantToSeeButton setHidden:YES];
+        [self getMovieData];
+    }
+}
+-(void)viewDidAppear:(BOOL)animated {
+    if (userId != nil) {
+        [_guestLabel setHidden:YES];
+        [self getMovieData];
+        [self checkForNewActivity];
+    } else {
+        [_guestLabel setHidden:NO];
+        [self getMovieData];
+    }
+}
+-(void)checkForNewActivity {
+    
+    NSDate *date = [[NSDate alloc]init];
+    NSDateFormatter *df = [[NSDateFormatter alloc]init];
+    [df setDateFormat:@"MMM dd, yyyy, hh:mm"];
+    NSString *timeStamp = [df stringFromDate:date];
+    date = [df dateFromString:timeStamp];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSDate *lastUpdate = [defaults objectForKey:@"lastUpdate"];
+    
+    if (lastUpdate == nil) {
+        lastUpdate = date;
+    }
+    
+    PFQuery *updateQuery = [PFQuery queryWithClassName:@"Activity"];
+    [updateQuery whereKey:@"toUser" equalTo:userId];
+    [updateQuery whereKey:@"createdAt" greaterThan:lastUpdate];
+    [updateQuery orderByDescending:@"createdAt"];
+    [updateQuery countObjectsInBackgroundWithBlock:^(int count, NSError *error) {
+        if (!error) {
+            if (count > 0) {
+                [[self.tabBarController.tabBar.items objectAtIndex:2] setBadgeValue:[NSString stringWithFormat:@"%i", count]];
+            } else {
+                [[self.tabBarController.tabBar.items objectAtIndex:2] setBadgeValue:nil];
+            }
+        } else {
+            // The request failed
+        }
+    }];
+    
+    [defaults setObject:date forKey:@"lastUpdate"];
+}
+-(void)getMovieData {
+    self.navBar.title = self.selectedMovie.movie_title;
+    
+    //set movie id
+    movie_id = self.selectedMovie.movie_TMDB_id;
+    
+    ///----GETTING MOVIE INFO====///
+    //get the movie details from the API
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://api.themoviedb.org/3/movie/%@?api_key=086941b3fdbf6f475d06a19773f6eb65&append_to_response=credits,videos", movie_id]];
+    
+    [AppDelegate downloadDataFromURL:url withCompletionHandler:^(NSData *data) {
+        
+        if (data != nil) {
+            NSError *error;
+            NSMutableDictionary *returnedDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
+            self.selectedMovie.movie_imdb_id = [returnedDict objectForKey:@"imdb_id"];
+            self.selectedMovie.movie_plot_overview = [returnedDict objectForKey:@"overview"];
+            
+            // NSLog(@"Cast: %@", [returnedDict objectForKey:@"credits"]);
+            
+            //get cast and set to array of names
+            NSArray *castArray = [[returnedDict objectForKey:@"credits"] objectForKey:@"cast"];
+            NSString *castString = @"";
+            if ([castArray count] !=0) {
+                for (int i =0; i < [castArray count]; i++) {
+                    
+                    if (i == 4) {
+                        castString = [castString stringByAppendingString:[NSString stringWithFormat:@"%@", [[castArray objectAtIndex:i]objectForKey:@"name"]]];
+                    } else {
+                        if (i < 4) {
+                            castString = [castString stringByAppendingString:[NSString stringWithFormat:@"%@, ", [[castArray objectAtIndex:i]objectForKey:@"name"]]];
+                        }
+                    }
+                    
+                }
+            }
+            // NSLog(@"Cast: %@", castString);
+            
+            //get crew and pull out director, then set to label
+            self.selectedMovie.movie_cast = castString;
+            NSArray *crewArray = [[returnedDict objectForKey:@"credits"] objectForKey:@"crew"];
+            if ([crewArray count] != 0) {
+                for (int i =0; i < [crewArray count]; i++) {
+                    NSString *director = [[crewArray objectAtIndex:i]objectForKey:@"job"];
+                    if ([director isEqualToString:@"Director"]) {
+                        self.selectedMovie.movie_director = [[crewArray objectAtIndex:i]objectForKey:@"name"];
+                        NSLog(@"Director: %@", [[crewArray objectAtIndex:i]objectForKey:@"name"]);
+                    }
+                }
+            }
+            //get genre and set to lavel
+            NSArray *genreArray = [returnedDict objectForKey:@"genres"];
+            NSString *genreString = @"";
+            if ([genreArray count] != 0) {
+                for (int i =0; i < [genreArray count]; i++) {
+                    genreString = [genreString stringByAppendingString:[NSString stringWithFormat:@"%@, ", [[genreArray objectAtIndex:i]objectForKey:@"name"]]];
+                }
+            }
+            
+            //iterate through videos and grab the trailer
+            NSArray *videosArray = [[returnedDict objectForKey:@"videos"]objectForKey:@"results"];
+            NSString *youTubeUrl = @"";
+            for (int i =0; i < [videosArray count];i++) {
+                NSString *videoType = [[videosArray objectAtIndex:i]objectForKey:@"type"];
+                if ([videoType isEqualToString:@"Trailer"]) {
+                    youTubeUrl = [[videosArray objectAtIndex:i]objectForKey:@"key"];
+                }
+            }
+            //hide the trailer button if there is no trailer
+            if ([youTubeUrl isEqualToString:@""]) {
+                [_trailerButton setHidden:YES];
+            } else {
+                //build the youtube url
+                NSLog(@"YouTube Key: %@", youTubeUrl);
+                youTubeUrl = [NSString stringWithFormat:@"https://www.youtube.com/watch?v=%@", youTubeUrl];
+                self.selectedMovie.movie_trailer = youTubeUrl;
+            }
+            
+            //set labels from returned data
+            // NSLog(@"%@", returnedDict);
+            _movie_title_label.text = self.selectedMovie.movie_title;
+            movie_title = self.selectedMovie.movie_title;
+            _movie_title_label.font = [UIFont fontWithName:@"Quicksand-Bold" size:16];
+            _plot_label.text = self.selectedMovie.movie_plot_overview;
+            _plot_label.font = [UIFont fontWithName:@"Quicksand-Regular" size:14];
+            _genre_label.text = genreString;
+            _genre_label.font = [UIFont fontWithName:@"Quicksand-Regular" size:14];
+            NSString *dateString = [returnedDict objectForKey:@"release_date"];
+            NSDateFormatter *df = [[NSDateFormatter alloc]init];
+            [df setDateFormat:@"yyyy-MM-dd"];
+            NSDate *date = [df dateFromString:dateString];
+            [df setDateFormat:@"MMM dd, yyyy"];
+            dateString = [df stringFromDate:date];
+            self.selectedMovie.movie_date = dateString;
+            _date_label.text = self.selectedMovie.movie_date;
+            _date_label.font = [UIFont fontWithName:@"Quicksand-Regular" size:14];
+            _director_label.text = [NSString stringWithFormat:@"Directed By: %@", self.selectedMovie.movie_director];
+            _director_label.font = [UIFont fontWithName:@"Quicksand-Regular" size:14];
+            
+            //join cast names array into string and set to label
+            NSArray *movie_cast = [[NSArray alloc]initWithObjects:self.selectedMovie.movie_cast, nil];
+            _cast_label.text = [NSString stringWithFormat:@"Starring: %@",[movie_cast componentsJoinedByString:@", "]];
+            _cast_label.font = [UIFont fontWithName:@"Quicksand-Regular" size:14];
+            
+            //get poster url and set to imageview
+            self.selectedMovie.movie_poster = [returnedDict objectForKey:@"poster_path"];
+            NSString *posterURL = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/w185%@", self.selectedMovie.movie_poster];
+            UIImage *posterJPG = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:posterURL]]];
+            _poster_image.image = posterJPG;
+            friendReviewData.movie_poster_file = posterJPG;
+            //https://www.youtube.com/watch?v=SUXWAEX2jlg
+            [self.view setNeedsDisplay];
+            
+        }
+    }];
+    
+    ///----COLLATING MOVIE RATINGS====///
+    //get all ratings for this movie
+    NSString *movieIDStr = [NSString stringWithFormat:@"%@", movie_id];
+    PFQuery *ratingsQuery = [PFQuery queryWithClassName:@"Reviews"];
+    [ratingsQuery whereKey:@"movieID" equalTo:movieIDStr];
+    
+    [ratingsQuery findObjectsInBackgroundWithBlock:^(NSArray *reviews, NSError *error) {
+        
+        NSString *ratings = @"";
+        NSNumber *ratingsNum;
+        NSMutableArray *ratingsArray = [[NSMutableArray alloc]init];
+        
+        //get info about friends review
+        for (PFObject *object in reviews) {
+            
+            ratings = [object objectForKey:@"rating"];
+            
+            //convert rating to a number so it can be added
+            NSNumberFormatter *nf = [[NSNumberFormatter alloc] init];
+            nf.numberStyle = NSNumberFormatterDecimalStyle;
+            ratingsNum = [nf numberFromString:ratings];
+            [ratingsArray addObject:ratingsNum];
+        }
+        int ratingsInt = 0;
+        
+        //make sure there are at least 10 ratings to be more accurate
+        if ([ratingsArray count] > 9) {
+            
+            //loop through ratings and add them together
+            for (int i = 0; i < [ratingsArray count]; i++) {
+                ratingsInt += [[ratingsArray objectAtIndex:i]intValue];
+            }
+            
+            //divide for average and round result
+            int ratingsTotal = (int)roundf(ratingsInt/[ratingsArray count]);
+            NSLog(@"Rating total: %i, Average: %i", ratingsInt,ratingsTotal);
+            UIImage *filledStar = [UIImage imageNamed:@"christmas_star-48.png"];
+            UIImage *emptyStar = [UIImage imageNamed:@"outline_star-48.png"];
+            
+            //set stars
+            switch (ratingsTotal) {
+                case 1:
+                    _totalStar1View.image = filledStar;
+                    _totalStar2View.image = emptyStar;
+                    _totalStar3View.image = emptyStar;
+                    _totalStar4View.image = emptyStar;
+                    _totalStar5View.image = emptyStar;
+                    break;
+                case 2:
+                    _totalStar1View.image = filledStar;
+                    _totalStar2View.image = filledStar;
+                    _totalStar3View.image = emptyStar;
+                    _totalStar4View.image = emptyStar;
+                    _totalStar5View.image = emptyStar;
+                    break;
+                case 3:
+                    _totalStar1View.image = filledStar;
+                    _totalStar2View.image = filledStar;
+                    _totalStar3View.image = filledStar;
+                    _totalStar4View.image = emptyStar;
+                    _totalStar5View.image = emptyStar;
+                    break;
+                case 4:
+                    _totalStar1View.image = filledStar;
+                    _totalStar2View.image = filledStar;
+                    _totalStar3View.image = filledStar;
+                    _totalStar4View.image = filledStar;
+                    _totalStar5View.image = emptyStar;
+                    break;
+                case 5:
+                    _totalStar1View.image = filledStar;
+                    _totalStar2View.image = filledStar;
+                    _totalStar3View.image = filledStar;
+                    _totalStar4View.image = filledStar;
+                    _totalStar5View.image = filledStar;
+                    break;
+                default:
+                    break;
+            }
+            
+        } else {
+            //if not enough reviews, show not enough label
+            [_notEnoughLabel setHidden:NO];
+        }
+    }];
+
 }
 //refresh the view with passed over data
 -(void)refreshView {
+    /*
     self.navBar.title = self.selectedMovie.movie_title;
     
     //set movie id
@@ -147,7 +403,7 @@
                 [self.view setNeedsDisplay];
                 
             }
-        }];
+        }];*/
    
     ///----GETTING USER REVIEW INFO====///
     //check if user has left info for this movie
@@ -319,7 +575,7 @@
             [_friendsReviewsTable reloadData];
         }
     }];
-    
+    /*
     ///----COLLATING MOVIE RATINGS====///
     //get all ratings for this movie
     PFQuery *ratingsQuery = [PFQuery queryWithClassName:@"Reviews"];
@@ -401,7 +657,7 @@
             //if not enough reviews, show not enough label
             [_notEnoughLabel setHidden:NO];
         }
-    }];
+    }];*/
     
 }
 - (void)didReceiveMemoryWarning {
@@ -422,7 +678,13 @@
         heart = [UIImage imageNamed:@"hearts-48.png"];
         toggle = @"0";
     }
-    
+    PFQuery *query = [PFQuery queryWithClassName:@"Reviews"];
+    // Retrieve the object by id and update
+    [query getObjectInBackgroundWithId:reviewId block:^(PFObject *updateReview, NSError *error) {
+        
+        updateReview[@"isFavorite"] =  [NSNumber numberWithBool:toggle];
+        [updateReview saveInBackground];
+    }];
     _heartImageView.image = heart;
 }
 //play movie trailer
@@ -485,6 +747,14 @@
         default:
             break;
     }
+    PFQuery *query = [PFQuery queryWithClassName:@"Reviews"];
+    
+    // Retrieve the object by id and update
+    [query getObjectInBackgroundWithId:reviewId block:^(PFObject *updateReview, NSError *error) {
+        
+        updateReview[@"rating"] =  numStars;
+        [updateReview saveInBackground];
+    }];
 }
 -(IBAction)clickedWantToSee:(id)sender {
     if (!isWantToSee) {
@@ -519,7 +789,7 @@
         PFObject *newWant = [PFObject objectWithClassName:@"Reviews"];
         newWant[@"isWantToSee"] =  [NSNumber numberWithBool:isWantToSee];
         newWant[@"userID"] = userId;
-        newWant[@"movieID"] = movie_id;
+        newWant[@"movieID"] = [NSString stringWithFormat:@"%@", movie_id];
         newWant[@"moviePoster"] = imageFile;
         newWant[@"dateReleased"] = date;
         newWant[@"movieTitle"] = self.selectedMovie.movie_title;
@@ -686,7 +956,7 @@
     
     if ([[segue identifier]isEqualToString:@"review"]) {
         WriteReviewViewController *wrvc = [segue destinationViewController];
-        wrvc.movieID = movie_id;
+        wrvc.movieID = [NSString stringWithFormat:@"%@", movie_id];
         wrvc.moviePassed = self.selectedMovie;
     } else {
         UITableViewCell *cell = (UITableViewCell*)sender;

@@ -26,5 +26,6 @@
 @property (nonatomic, strong) IBOutlet UITableView *feedTableView;
 
 @property (nonatomic, strong) NSString *browse;
+-(void)checkForNewActivity;
 
 @end

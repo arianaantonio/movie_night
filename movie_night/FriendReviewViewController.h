@@ -15,6 +15,8 @@
     NSString *reviewId;
     NSString *userId;
     NSString *commenterId;
+    NSString *username;
+    UIImage *userImage;
 }
 
 @property (nonatomic, strong) MovieClass *selectedReview;

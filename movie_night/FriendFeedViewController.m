@@ -24,6 +24,13 @@
     PFUser *currentUser = [PFUser currentUser];
     userId = currentUser.objectId;
     
+    //make sure notifications are set to logged in user
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    if (currentUser) {
+        [currentInstallation setObject:currentUser forKey:@"user"];
+        currentInstallation.channels = @[currentUser.objectId];
+    }
+    
     reachGoogle = [Reachability reachabilityWithHostName:@"www.google.com"];
     checkNetworkStatus = [reachGoogle currentReachabilityStatus];
     
@@ -31,40 +38,45 @@
         UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"Please connect to a network" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
     }
-
     
-    [self refreshFeed];
-    [self setupRefreshControl];
-    [self checkForNewActivity];
+    if (currentUser == nil) {
+        
+    } else {
+        [self refreshFeed];
+        [self setupRefreshControl];
+    }
+    //[self checkForNewActivity];
     
 }
-
+-(void)viewDidAppear:(BOOL)animated {
+    if (userId != nil) {
+        [self checkForNewActivity];
+    }
+}
 -(void)checkForNewActivity {
     
     NSDate *date = [[NSDate alloc]init];
     NSDateFormatter *df = [[NSDateFormatter alloc]init];
-    [df setDateFormat:@"MMM dd, yyyy, hh:mm"];
+    [df setDateFormat:@"MMM dd, yyyy, hh:mm:ss"];
     NSString *timeStamp = [df stringFromDate:date];
     date = [df dateFromString:timeStamp];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSDate *lastUpdate = [defaults objectForKey:@"lastUpdate"];
-  // // NSDate *lastUpdate = [df dateFromString:@"Mar 11, 2015, 01:14"];
-   // NSDate *lastUpdate = [df dateFromString:@"2015-03-09 00:00:00 PST"];
+  
     if (lastUpdate == nil) {
         lastUpdate = date;
     }
     
-    
     PFQuery *updateQuery = [PFQuery queryWithClassName:@"Activity"];
     [updateQuery whereKey:@"toUser" equalTo:userId];
-    //[updateQuery whereKey:@"createdAt" greaterThan:lastUpdate];
     [updateQuery whereKey:@"createdAt" greaterThan:lastUpdate];
-    [updateQuery orderByDescending:@"createdAt"];
     [updateQuery countObjectsInBackgroundWithBlock:^(int count, NSError *error) {
         if (!error) {
             if (count > 0) {
                 [[self.tabBarController.tabBar.items objectAtIndex:2] setBadgeValue:[NSString stringWithFormat:@"%i", count]];
+            } else {
+                [[self.tabBarController.tabBar.items objectAtIndex:2] setBadgeValue:nil];
             }
         } else {
             // The request failed

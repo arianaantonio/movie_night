@@ -77,6 +77,12 @@
     //add that friend to an array and change the button text color
     [toAddArray addObject:[[usersArray objectAtIndex:[sender tag]]userID]];
     [sender setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+    
+    PFObject *newComment = [PFObject objectWithClassName:@"Activity"];
+    newComment[@"activityType"] = @"follow";
+    newComment[@"fromUser"] = [PFUser currentUser].objectId;
+    newComment[@"toUser"] = [[usersArray objectAtIndex:[sender tag]]userID];
+    [newComment saveInBackground];
 }
 -(IBAction)clickedDone:(id)sender {
     PFQuery *query = [PFUser query];

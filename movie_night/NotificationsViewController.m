@@ -29,7 +29,12 @@
     [[self.tabBarController.tabBar.items objectAtIndex:2] setBadgeValue:nil];    
 }
 -(void)viewDidAppear:(BOOL)animated {
-    [self getNewActivity];
+    
+    if (userId != nil) {
+        [self getNewActivity];
+    }
+    //clear any badge notifications
+    [[self.tabBarController.tabBar.items objectAtIndex:2] setBadgeValue:nil];
 }
 //get all activity for user
 -(void)getNewActivity {

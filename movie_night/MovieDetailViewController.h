@@ -27,7 +27,7 @@
     BOOL isWantToSee;
     NSString *reviewId;
 }
-
+@property (nonatomic, strong) IBOutlet UILabel *guestLabel;
 @property (nonatomic, strong) IBOutlet UILabel *movie_title_label;
 @property (nonatomic, strong) IBOutlet MovieClass *selectedMovie;
 @property (nonatomic, strong) IBOutlet NSString *passed_movie_id;

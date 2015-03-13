@@ -83,12 +83,15 @@
                 [df setDateFormat:@"MMM dd, yyyy"];
                 NSString *date = [df stringFromDate:dateReleased];
                 tmpMovie.movie_date = date;
-                [movieArray addObject:tmpMovie];
+                
                 if ([isFave intValue] == 1) {
                     [favoritesArray addObject:tmpMovie];
+    
                 }
                 if ([isWantToSee intValue] ==1) {
                     [wantToSeeArray addObject:tmpMovie];
+                } else {
+                    [movieArray addObject:tmpMovie];
                 }
                 [_listTableView reloadData];
             }
@@ -101,38 +104,42 @@
     PFUser *currentUser = [PFUser currentUser];
     userId = currentUser.objectId;
     
-    [self refreshView];
     
-    if (currentUser &&
-        [PFFacebookUtils isLinkedWithUser:[PFUser currentUser]]) {
+    if (currentUser != nil) {
         [self loadData];
-    } else if (currentUser) {
-        [self loadData];
+        [self refreshView];
+        [self checkForNewActivity];
+        [_guestView setHidden:YES];
+    } else {
+        [_guestView setHidden:NO];
+        [self.settingsButton setAction:nil];
     }
 }
 //set up textfield so return button puts focus on the next textfield
 -(BOOL)textFieldShouldReturn:(UITextField*)textField {
     
-    [textField resignFirstResponder];
-    if ([textField tag] == 10) {
-        [[PFUser currentUser]setObject:[_usernameField text] forKey:@"username"];
-        [[PFUser currentUser]saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-            if (!error) {
-
-            } else {
-                NSString *errorString = [error userInfo][@"error"];
-                NSLog(@"Error: %@", errorString);
-                //if username already in use
-                if ([error code] == 202) {
-                    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"Username already in use" delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
-                    [alert show];
+    if (userId != nil) {
+        [textField resignFirstResponder];
+        if ([textField tag] == 10) {
+            [[PFUser currentUser]setObject:[_usernameField text] forKey:@"username"];
+            [[PFUser currentUser]saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                if (!error) {
+                    
+                } else {
+                    NSString *errorString = [error userInfo][@"error"];
+                    NSLog(@"Error: %@", errorString);
+                    //if username already in use
+                    if ([error code] == 202) {
+                        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"Username already in use" delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                        [alert show];
+                    }
+                    [_usernameField setText:oldUsername];
                 }
-                [_usernameField setText:oldUsername];
-            }
-        }];
-    } else if ([textField tag] == 11) {
-        [[PFUser currentUser]setObject:[_nameField text] forKey:@"full_name"];
-        [[PFUser currentUser]saveInBackground];
+            }];
+        } else if ([textField tag] == 11) {
+            [[PFUser currentUser]setObject:[_nameField text] forKey:@"full_name"];
+            [[PFUser currentUser]saveInBackground];
+        }
     }
     return YES;
 }
@@ -152,9 +159,9 @@
     NSString *fullName = [userDict objectForKey:@"full_name"];
     friendsArray = [[NSArray alloc]initWithArray:[userDict objectForKey:@"friends"]];
     [_followingButton setTitle:[NSString stringWithFormat:@"%lu", (unsigned long)[friendsArray count]] forState:UIControlStateNormal];
-  //  [_friendsCountLabel setText:[NSString stringWithFormat:@"Friends: %lu", (unsigned long)[friendsArray count]]];
     UIImage *image = [UIImage imageWithData:[(PFFile *)userDict[@"profile_pic"] getData]];
     
+    //get number of revies
     __block int reviewsCount;
     PFQuery *countQuery = [PFQuery queryWithClassName:@"Reviews"];
     [countQuery whereKey:@"userID" equalTo:currentUser.objectId];
@@ -180,6 +187,7 @@
     [_nameField setText:fullName];
     [_usernameField setText:username];
     
+    //get number of followers
     PFQuery *followersQuery = [PFUser query];
     [followersQuery whereKey:@"friends" equalTo:userId];
     NSArray *followersFoundArray = [followersQuery findObjects];
@@ -187,6 +195,39 @@
     [_followersButton setTitle:[NSString stringWithFormat:@"%lu", (unsigned long)[followersFoundArray count]] forState:UIControlStateNormal];
 
 }
+-(void)checkForNewActivity {
+    
+    NSDate *date = [[NSDate alloc]init];
+    NSDateFormatter *df = [[NSDateFormatter alloc]init];
+    [df setDateFormat:@"MMM dd, yyyy, hh:mm"];
+    NSString *timeStamp = [df stringFromDate:date];
+    date = [df dateFromString:timeStamp];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSDate *lastUpdate = [defaults objectForKey:@"lastUpdate"];
+    
+    if (lastUpdate == nil) {
+        lastUpdate = date;
+    }
+    
+    PFQuery *updateQuery = [PFQuery queryWithClassName:@"Activity"];
+    [updateQuery whereKey:@"toUser" equalTo:userId];
+    [updateQuery whereKey:@"createdAt" greaterThan:lastUpdate];
+    [updateQuery countObjectsInBackgroundWithBlock:^(int count, NSError *error) {
+        if (!error) {
+            if (count > 0) {
+                [[self.tabBarController.tabBar.items objectAtIndex:2] setBadgeValue:[NSString stringWithFormat:@"%i", count]];
+            } else {
+                [[self.tabBarController.tabBar.items objectAtIndex:2] setBadgeValue:nil];
+            }
+        } else {
+            // The request failed
+        }
+    }];
+    
+    [defaults setObject:date forKey:@"lastUpdate"];
+}
+
 #pragma mark - Change Photo
 //upload a profile pic
 -(IBAction)uploadPhoto:(id)sender {
@@ -221,8 +262,7 @@
     
     [self presentViewController:imgPicker animated:YES completion:nil];
 }
-- (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
-{
+- (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
     // Close the image picker
     [picker dismissViewControllerAnimated:YES completion:nil];
 
@@ -411,9 +451,11 @@
     } else if ([[segue identifier]isEqualToString:@"following"]) {
         FollowersTableViewController *fvc = [segue destinationViewController];
         fvc.selectionType = @"following";
-    } else {
+    } else if ([[segue identifier]isEqualToString:@"followers"]){
         FollowersTableViewController *fvc = [segue destinationViewController];
         fvc.selectionType = @"followers";
+    } else {
+        
     }
 }
 

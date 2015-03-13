@@ -9,6 +9,8 @@
 #import "AppDelegate.h"
 #import <Parse/Parse.h>
 #import <ParseFacebookUtils/PFFacebookUtils.h>
+#import "FriendFeedViewController.h"
+#import "FriendReviewViewController.h"
 //#import <FacebookSDK/FacebookSDK.h>
 
 @interface AppDelegate ()
@@ -36,6 +38,8 @@
         self.window.rootViewController = [self.window.rootViewController.storyboard instantiateViewControllerWithIdentifier:@"loginViewController"];
     }
     
+    newLaunchingOptions = launchOptions;
+    
     //set up notifications
     UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert |
                                                     UIUserNotificationTypeBadge |
@@ -46,18 +50,13 @@
     [application registerForRemoteNotifications];
     
     PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-    if ([currentInstallation objectForKey:@"user"] == nil) {
+    if ([currentInstallation objectForKey:@"user"] == nil && currentUser) {
         [currentInstallation setObject:currentUser forKey:@"user"];
         currentInstallation.channels = @[currentUser.objectId];
     }
-    /*
-    [PFCloud callFunctionInBackground:@"hello"
-                       withParameters:@{}
-                                block:^(NSString *result, NSError *error) {
-                                    if (!error) {
-                                        // result is @"Hello world!"
-                                    }
-                                }];*/
+    
+    //handle app opening from push notification
+    [self handlePush:launchOptions];
     
     return YES;
 }
@@ -68,8 +67,11 @@
     // Store the deviceToken in the current installation and save it to Parse.
     PFInstallation *currentInstallation = [PFInstallation currentInstallation];
     [currentInstallation setDeviceTokenFromData:deviceToken];
-    
-    currentInstallation.channels = @[@"global", currentUser.objectId];
+    if (currentUser == nil) {
+        currentInstallation.channels = @[@"global"];
+    } else {
+        currentInstallation.channels = @[@"global", currentUser.objectId];
+    }
     [currentInstallation saveInBackground];
 }
 //handle notification while app is in use
@@ -88,7 +90,6 @@
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     [FBAppCall handleDidBecomeActiveWithSession:[PFFacebookUtils session]];
 }
-
 - (void)applicationWillTerminate:(UIApplication *)application {
     [[PFFacebookUtils session] close];
 }
@@ -109,13 +110,6 @@
     //reset any badge notifications
     [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
 }
-/*
-- (void)applicationDidBecomeActive:(UIApplication *)application {
-    // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-    
-    // Logs 'install' and 'app activate' App Events.
-    [FBAppEvents activateApp];
-}*/
 
 +(void)downloadDataFromURL:(NSURL *)url withCompletionHandler:(void (^)(NSData *))completionHandler{
     // Instantiate a session configuration object.
@@ -150,8 +144,39 @@
     // Resume the task.
     [task resume];
 }
+//handle app being opened from a push notification
+- (void)handlePush:(NSDictionary *)launchOptions {
+    
+    //get notification info
+    NSDictionary *remoteNotificationPayload = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+    
+    //Make sure our user and data are good
+    if (remoteNotificationPayload && [PFUser currentUser]) {
+        NSString *string = [NSString stringWithFormat:@"Disct: %@", remoteNotificationPayload];
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Qlert" message:string delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [alert show];
+        //transition to review view
+        NSString *activityObjectId = [remoteNotificationPayload objectForKey:@"rid"];
+        
+        UIAlertView *alert2 = [[UIAlertView alloc]initWithTitle:@"Qlert" message:activityObjectId delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [alert2 show];
+        if (activityObjectId && activityObjectId.length != 0) {
+            PFQuery *query = [PFQuery queryWithClassName:@"Activity"];
+            [query getObjectInBackgroundWithId:activityObjectId block:^(PFObject *review, NSError *error) {
+                if (!error) {
+                    NSString *reviewId = [review objectForKey:@"reviewId"];
+                    FriendReviewViewController *detailViewController = [FriendReviewViewController alloc];
+                    detailViewController.selectedReview.user_review_objectId = reviewId;
+                    
+                    UINavigationController *homeNavigationController = [[self.tabBarController viewControllers] objectAtIndex:0];
+                    [self.tabBarController setSelectedViewController:homeNavigationController];
+                    [homeNavigationController pushViewController:detailViewController animated:YES];
+                }
+            }];
+        }
+    }
+}
 - (BOOL) application:(UIApplication *)application handleOpenURL:(NSURL *)url {
     return [PFFacebookUtils session];
 }
-
 @end

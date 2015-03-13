@@ -35,6 +35,15 @@
         [self getReviewWithPassedData];
     }
     
+    //get current user data
+    PFQuery *query = [PFUser query];
+    [query whereKey:@"objectId" equalTo:currentUser.objectId];
+    NSArray *userArray = [query findObjects];
+    NSLog(@"User: %@", [userArray firstObject]);
+    NSDictionary *userDict = [userArray firstObject];
+    username = [userDict objectForKey:@"username"];
+    userImage = [UIImage imageWithData:[(PFFile *)userDict[@"profile_pic"] getData]];
+    
     [self getComments];
     
 }
@@ -274,12 +283,13 @@
     
     if (![comment isEqualToString:@""]) {
         
+        
         //add to comment table
-        NSDictionary *commentDict = [NSDictionary dictionaryWithObjectsAndKeys:comment, @"comment", nil];
+        NSDictionary *commentDict = [NSDictionary dictionaryWithObjectsAndKeys:comment, @"comment", username, @"username", userImage, @"profile_pic", nil];
         [commentArray addObject:commentDict];
         [_commentTable reloadData];
         [commentField setText:@""];
-        NSLog(@"ID: %@", [PFInstallation currentInstallation].installationId);
+    
         //save to parse
         PFObject *newComment = [PFObject objectWithClassName:@"Activity"];
         newComment[@"activityType"] = @"comment";

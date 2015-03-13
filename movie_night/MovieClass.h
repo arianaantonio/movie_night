@@ -32,5 +32,6 @@
 @property (nonatomic, strong) UIImage *movie_poster_file;
 @property (nonatomic, strong) NSString *userID;
 @property (nonatomic, strong) NSString *user_full_name;
+@property (nonatomic, strong) NSString *isBrowsing;
 
 @end

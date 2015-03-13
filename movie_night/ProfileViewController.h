@@ -36,6 +36,7 @@
 @property (nonatomic, strong) IBOutlet UIButton *reviewsCountButton;
 @property (nonatomic, strong) IBOutlet UITextField *usernameField;
 @property (nonatomic, strong) IBOutlet UITextField *nameField;
+@property (nonatomic, strong) IBOutlet UIView *guestView;
 
 -(IBAction)segmentSelected:(id)sender;
 -(IBAction)logoutButtonAction:(id)sender;

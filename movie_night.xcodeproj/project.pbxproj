@@ -14,6 +14,7 @@
 		41379C681AB04A7100E93321 /* outline_star-48.png in Resources */ = {isa = PBXBuildFile; fileRef = 41379C671AB04A7100E93321 /* outline_star-48.png */; };
 		416C803B1AB0FD0E000D4C68 /* share.png in Resources */ = {isa = PBXBuildFile; fileRef = 416C803A1AB0FD0E000D4C68 /* share.png */; };
 		416C803E1AB10910000D4C68 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 416C803D1AB10910000D4C68 /* Reachability.m */; };
+		416C80411AB2EDFF000D4C68 /* TabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 416C80401AB2EDFF000D4C68 /* TabBarController.m */; };
 		41BEEBD71AABE0B400FA593F /* SearchUsersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41BEEBD61AABE0B400FA593F /* SearchUsersViewController.m */; };
 		41E0C8331AAFF88400B13336 /* chat-26.png in Resources */ = {isa = PBXBuildFile; fileRef = 41E0C82D1AAFF88400B13336 /* chat-26.png */; };
 		41E0C8341AAFF88400B13336 /* collaboration-26.png in Resources */ = {isa = PBXBuildFile; fileRef = 41E0C82E1AAFF88400B13336 /* collaboration-26.png */; };
@@ -117,6 +118,8 @@
 		416C803A1AB0FD0E000D4C68 /* share.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = share.png; sourceTree = "<group>"; };
 		416C803C1AB10910000D4C68 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		416C803D1AB10910000D4C68 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
+		416C803F1AB2EDFF000D4C68 /* TabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TabBarController.h; sourceTree = "<group>"; };
+		416C80401AB2EDFF000D4C68 /* TabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TabBarController.m; sourceTree = "<group>"; };
 		41BEEBD51AABE0B400FA593F /* SearchUsersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchUsersViewController.h; sourceTree = "<group>"; };
 		41BEEBD61AABE0B400FA593F /* SearchUsersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchUsersViewController.m; sourceTree = "<group>"; };
 		41E0C82D1AAFF88400B13336 /* chat-26.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "chat-26.png"; sourceTree = "<group>"; };
@@ -322,6 +325,8 @@
 				41BEEBD61AABE0B400FA593F /* SearchUsersViewController.m */,
 				41379C5E1AAFFB4500E93321 /* NotificationsViewController.h */,
 				41379C5F1AAFFB4500E93321 /* NotificationsViewController.m */,
+				416C803F1AB2EDFF000D4C68 /* TabBarController.h */,
+				416C80401AB2EDFF000D4C68 /* TabBarController.m */,
 				41EC051E1A90A9E3000193DD /* MovieClass.h */,
 				41EC051F1A90A9E3000193DD /* MovieClass.m */,
 				41EC054C1A946374000193DD /* Resources */,
@@ -632,6 +637,7 @@
 				41EC053F1A92EEC6000193DD /* FriendFeedViewController.m in Sources */,
 				41EC05231A90AD21000193DD /* MovieDetailViewController.m in Sources */,
 				41EC05A01A9EF9DC000193DD /* LoginViewController.m in Sources */,
+				416C80411AB2EDFF000D4C68 /* TabBarController.m in Sources */,
 				41EC05801A9C3F1A000193DD /* FriendReviewViewController.m in Sources */,
 				41EC059B1A9EEC62000193DD /* SettingsViewController.m in Sources */,
 				41EC04E91A907040000193DD /* SearchViewController.m in Sources */,
@@ -786,6 +792,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "a9c10d47-ed02-483f-9eb8-82f54d445c5f";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -807,6 +814,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "a9c10d47-ed02-483f-9eb8-82f54d445c5f";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
