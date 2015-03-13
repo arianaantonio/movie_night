@@ -48,7 +48,6 @@
         
     }
     
-    
     //get user selected data
     PFQuery *query = [PFUser query];
     [query whereKey:@"objectId" equalTo:self.userIdPassed];
@@ -58,7 +57,7 @@
     NSString *username = [userDict objectForKey:@"username"];
     NSString *fullName = [userDict objectForKey:@"full_name"];
     friendsArray = [[NSArray alloc]initWithArray:[userDict objectForKey:@"friends"]];
-    [_followingButton setTitle:[NSString stringWithFormat:@"Following: %lu", (unsigned long)[friendsArray count]] forState:UIControlStateNormal];
+    [_followingButton setTitle:[NSString stringWithFormat:@"%lu", (unsigned long)[friendsArray count]] forState:UIControlStateNormal];
     UIImage *image = [UIImage imageWithData:[(PFFile *)userDict[@"profile_pic"] getData]];
     
     /*
@@ -83,14 +82,15 @@
     
     //set uielements
     [_nameLabel setText:fullName];
-    self.navBar.title = username;
+    self.navBar.title = @"Profile";
+    [_usernameLabel setText:username];
     
     //get count of followers
     PFQuery *followersQuery = [PFUser query];
     [followersQuery whereKey:@"friends" equalTo:self.userIdPassed];
     NSArray *followersFoundArray = [followersQuery findObjects];
     NSLog(@"Followers: %@", followersFoundArray);
-    [_followersButton setTitle:[NSString stringWithFormat:@"Followers: %lu", (unsigned long)[followersFoundArray count]] forState:UIControlStateNormal];
+    [_followersButton setTitle:[NSString stringWithFormat:@"%lu", (unsigned long)[followersFoundArray count]] forState:UIControlStateNormal];
     
     //pull reviews for user
     PFQuery *query2 = [PFQuery queryWithClassName:@"Reviews"];
@@ -125,7 +125,7 @@
                     [favoritesArray addObject:tmpMovie];
                 }
             }
-            [_reviewsCountLabel setText:[NSString stringWithFormat:@"Reviews: %lu", [movieArray count]]];
+            [_reviewsCountButton setTitle:[NSString stringWithFormat:@"%lu", [movieArray count]] forState:UIControlStateNormal];
             [_listTableView reloadData];
         }
     }];
@@ -139,6 +139,10 @@
 }
 #pragma mark  - Actions
 -(IBAction)segmentSelected:(id)sender {
+    [_listTableView reloadData];
+}
+-(void)clickedReviews:(id)sender {
+    [_listSegment setSelectedSegmentIndex:0];
     [_listTableView reloadData];
 }
 -(IBAction)followUserClicked:(id)sender {

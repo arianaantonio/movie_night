@@ -24,8 +24,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [_uploadPhoto setHidden:YES];
-    
     //init reveal controller for settings
     SWRevealViewController *revealViewController = self.revealViewController;
     
@@ -36,6 +34,8 @@
         [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
     }
     
+    _usernameField.delegate = self;
+    _nameField.delegate = self;
     wantToSeeArray = [[NSMutableArray alloc]init];
     favoritesArray = [[NSMutableArray alloc]init];
     movieArray = [[NSMutableArray alloc]init];
@@ -110,7 +110,32 @@
         [self loadData];
     }
 }
+//set up textfield so return button puts focus on the next textfield
+-(BOOL)textFieldShouldReturn:(UITextField*)textField {
+    
+    [textField resignFirstResponder];
+    if ([textField tag] == 10) {
+        [[PFUser currentUser]setObject:[_usernameField text] forKey:@"username"];
+        [[PFUser currentUser]saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            if (!error) {
 
+            } else {
+                NSString *errorString = [error userInfo][@"error"];
+                NSLog(@"Error: %@", errorString);
+                //if username already in use
+                if ([error code] == 202) {
+                    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"Username already in use" delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                    [alert show];
+                }
+                [_usernameField setText:oldUsername];
+            }
+        }];
+    } else if ([textField tag] == 11) {
+        [[PFUser currentUser]setObject:[_nameField text] forKey:@"full_name"];
+        [[PFUser currentUser]saveInBackground];
+    }
+    return YES;
+}
 //load user data to populate UI
 -(void)loadData {
 
@@ -126,7 +151,7 @@
     NSString *username = [userDict objectForKey:@"username"];
     NSString *fullName = [userDict objectForKey:@"full_name"];
     friendsArray = [[NSArray alloc]initWithArray:[userDict objectForKey:@"friends"]];
-    [_followingButton setTitle:[NSString stringWithFormat:@"Following: %lu", (unsigned long)[friendsArray count]] forState:UIControlStateNormal];
+    [_followingButton setTitle:[NSString stringWithFormat:@"%lu", (unsigned long)[friendsArray count]] forState:UIControlStateNormal];
   //  [_friendsCountLabel setText:[NSString stringWithFormat:@"Friends: %lu", (unsigned long)[friendsArray count]]];
     UIImage *image = [UIImage imageWithData:[(PFFile *)userDict[@"profile_pic"] getData]];
     
@@ -139,58 +164,96 @@
         } else {
             reviewsCount = 0;
         }
-        [_reviewsCountLabel setText:[NSString stringWithFormat:@"Reviews: %i", reviewsCount]];
+        [_reviewsCountButton setTitle:[NSString stringWithFormat:@"%i", reviewsCount] forState:UIControlStateNormal];
     }];
-    if (image == nil) {
-        _profilePicView.image = [UIImage imageNamed:@"Ninja.png"];
-        [_uploadPhoto setHidden:NO];
-    } else {
+   //make sure we aren't refreshing after uploading a new photo, parse won't have saved it yet
+    if (!newPic) {
         _profilePicView.image = image;
-        [_uploadPhoto setHidden:YES];
+    } else {
+        newPic = NO;
     }
     
     //set uielements
     [_nameLabel setText:fullName];
-    self.navBar.title = username;
+    oldUsername = username;
+    self.navBar.title = @"My Profile";
+    [_nameField setText:fullName];
+    [_usernameField setText:username];
     
     PFQuery *followersQuery = [PFUser query];
     [followersQuery whereKey:@"friends" equalTo:userId];
     NSArray *followersFoundArray = [followersQuery findObjects];
-    NSLog(@"Followers: %@", followersFoundArray);
-    [_followersButton setTitle:[NSString stringWithFormat:@"Followers: %lu", (unsigned long)[followersFoundArray count]] forState:UIControlStateNormal];
+    NSLog(@"%@", followersFoundArray);
+    [_followersButton setTitle:[NSString stringWithFormat:@"%lu", (unsigned long)[followersFoundArray count]] forState:UIControlStateNormal];
 
 }
+#pragma mark - Change Photo
 //upload a profile pic
 -(IBAction)uploadPhoto:(id)sender {
     
-    UIImagePickerController *imgPicker = [[UIImagePickerController alloc] init];
+    imgPicker = [[UIImagePickerController alloc] init];
     imgPicker.delegate = self;
-    imgPicker.sourceType = UIImagePickerControllerSourceTypeCamera &&UIImagePickerControllerSourceTypePhotoLibrary;
-    //[self.navigationController presentModalViewController:imgPicker animated:YES];
-    [self.navigationController presentViewController:imgPicker animated:YES completion:nil];
+    imgPicker.allowsEditing = YES;
+    
+    //open action sheet to choose photo type
+    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+        UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil
+                                                                 delegate:self
+                                                        cancelButtonTitle:@"Cancel"
+                                                   destructiveButtonTitle:nil
+                                                        otherButtonTitles:@"Take photo", @"Choose Existing", nil];
+        [actionSheet showInView:self.view];
+    } else {
+        imgPicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+        [self presentViewController:imgPicker animated:YES completion:nil];
+    }
+}
+//once photo type chosen, display appropriate image picker
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    
+    if (buttonIndex == 0) {
+        imgPicker.sourceType = UIImagePickerControllerSourceTypeCamera;
+    } else if (buttonIndex == 1) {
+        imgPicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    } else {
+        return;
+    }
+    
+    [self presentViewController:imgPicker animated:YES completion:nil];
 }
 - (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     // Close the image picker
-    //[picker dismissModalViewControllerAnimated:YES];
     [picker dismissViewControllerAnimated:YES completion:nil];
 
+    //set the image on the ui
     UIImage *image = (UIImage *)info[UIImagePickerControllerOriginalImage];
     _profilePicView.image = image;
-    [_uploadPhoto setHidden:YES];
- 
+    newPic = YES;
+    
+    //save image to parse
     NSData *imageData = UIImageJPEGRepresentation(image, 0.8);
     PFFile *imageFile = [PFFile fileWithName:@"img" data:imageData];
     [[PFUser currentUser]setObject:imageFile forKey:@"profile_pic"];
     [[PFUser currentUser]saveInBackground];
 }
+#pragma mark - Actions
 - (void)logoutButtonAction:(id)sender  {
+    
+    //log user out of notifications
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    [[PFInstallation currentInstallation] removeObjectForKey:currentInstallation.installationId];
+    [[PFInstallation currentInstallation] saveInBackground];
     [PFUser logOut]; // Log out
     
     // Return to Login view controller
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
 -(void)segmentSelected:(id)sender {
+    [_listTableView reloadData];
+}
+-(void)clickedReviews:(id)sender {
+    [_listSegment setSelectedSegmentIndex:0];
     [_listTableView reloadData];
 }
 - (void)didReceiveMemoryWarning {

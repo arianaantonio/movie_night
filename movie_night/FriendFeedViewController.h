@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "MovieClass.h"
 #import "FriendReviewViewController.h"
+#import "Reachability.h"
 
 @interface FriendFeedViewController : UITableViewController <UITableViewDataSource, UITableViewDelegate>
 {
@@ -18,6 +19,8 @@
     BOOL isRefreshIconsOverlap;
     BOOL isRefreshAnimating;
     NSString *userId;
+    Reachability *reachGoogle;
+    NetworkStatus checkNetworkStatus;
 }
 
 @property (nonatomic, strong) IBOutlet UITableView *feedTableView;

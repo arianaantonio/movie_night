@@ -27,11 +27,13 @@
 @property (nonatomic, strong) IBOutlet UIButton *followUserButton;
 @property (nonatomic, strong) IBOutlet UIButton *followingButton;
 @property (nonatomic, strong) IBOutlet UIButton *followersButton;
-@property (nonatomic, strong) IBOutlet UILabel *reviewsCountLabel;
+@property (nonatomic, strong) IBOutlet UIButton *reviewsCountButton;
+@property (nonatomic, strong) IBOutlet UILabel *usernameLabel;
 @property (nonatomic, strong) NSString *userIdPassed;
 
 -(IBAction)segmentSelected:(id)sender;
 -(IBAction)followUserClicked:(id)sender;
+-(IBAction)clickedReviews:(id)sender;
 
 
 @end

@@ -24,6 +24,15 @@
     PFUser *currentUser = [PFUser currentUser];
     userId = currentUser.objectId;
     
+    reachGoogle = [Reachability reachabilityWithHostName:@"www.google.com"];
+    checkNetworkStatus = [reachGoogle currentReachabilityStatus];
+    
+    if (checkNetworkStatus == NotReachable) {
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"Please connect to a network" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    }
+
+    
     [self refreshFeed];
     [self setupRefreshControl];
     [self checkForNewActivity];

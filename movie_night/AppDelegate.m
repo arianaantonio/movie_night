@@ -21,10 +21,12 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
+    //set up parse for application
     [Parse setApplicationId:@"IASTyOSCs3IoFTnmNU7JcBQ4ZoDzTVb1ESK8jwSW"
                   clientKey:@"FvfYcrED2qanfxBb7XE87BXGiWquIW2iJvZKORFj"];
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
+    //check if logged in an navigate accordingly
     PFUser *currentUser = [PFUser currentUser];
     if (currentUser) {
         // do stuff with the user
@@ -34,7 +36,45 @@
         self.window.rootViewController = [self.window.rootViewController.storyboard instantiateViewControllerWithIdentifier:@"loginViewController"];
     }
     
+    //set up notifications
+    UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert |
+                                                    UIUserNotificationTypeBadge |
+                                                    UIUserNotificationTypeSound);
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:userNotificationTypes
+                                                                             categories:nil];
+    [application registerUserNotificationSettings:settings];
+    [application registerForRemoteNotifications];
+    
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    if ([currentInstallation objectForKey:@"user"] == nil) {
+        [currentInstallation setObject:currentUser forKey:@"user"];
+        currentInstallation.channels = @[currentUser.objectId];
+    }
+    /*
+    [PFCloud callFunctionInBackground:@"hello"
+                       withParameters:@{}
+                                block:^(NSString *result, NSError *error) {
+                                    if (!error) {
+                                        // result is @"Hello world!"
+                                    }
+                                }];*/
+    
     return YES;
+}
+//setup current device in parse
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    PFUser *currentUser = [PFUser currentUser];
+    
+    // Store the deviceToken in the current installation and save it to Parse.
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    [currentInstallation setDeviceTokenFromData:deviceToken];
+    
+    currentInstallation.channels = @[@"global", currentUser.objectId];
+    [currentInstallation saveInBackground];
+}
+//handle notification while app is in use
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+    [PFPush handlePush:userInfo];
 }
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
@@ -65,6 +105,9 @@
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+    
+    //reset any badge notifications
+    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
 }
 /*
 - (void)applicationDidBecomeActive:(UIApplication *)application {

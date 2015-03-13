@@ -24,6 +24,7 @@
     toggle = @"1";
     numStars = @"0";
     isFave = NO;
+    _reviewView.delegate = self;
     
     if (![self.moviePassed.user_review isEqualToString:@""]) {
         [_reviewView setText:self.moviePassed.user_review];
@@ -97,7 +98,13 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
+//set up textfield so return button puts focus on the next textfield
+-(BOOL)textFieldShouldReturn:(UITextField*)textField {
+    
+    [textField resignFirstResponder];
+    return NO;
+}
+#pragma mark - Actions
 //save review to parse
 -(IBAction)clickedSave:(id)sender {
     

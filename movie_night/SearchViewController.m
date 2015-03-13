@@ -20,11 +20,13 @@
     
     movieSearchArray = [[NSMutableArray alloc]init];
     [_searchBar setDelegate:self];
+    [_searchBar resignFirstResponder];
     self.navigationItem.titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"movie_night_logo.png"]];
 }
 #pragma mark  - API Call
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
     
+    [_searchBar resignFirstResponder];
     NSLog(@"Searched1: %@", [_searchBar text]);
     NSString *string = [_searchBar text];
     string = [string stringByReplacingOccurrencesOfString:@" " withString:@"+"];

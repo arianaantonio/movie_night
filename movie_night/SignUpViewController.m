@@ -41,7 +41,7 @@
     } else {
         [textField resignFirstResponder];
     }
-    return NO;
+    return YES;
 }
 //register keyboard to receive notifications
 - (void)registerForKeyboardNotifications {
@@ -113,10 +113,15 @@
     }
     //sign up user
     else {
+        UIImage *image = [UIImage imageNamed:@"Ninja.png"];
+        NSData *imageData = UIImageJPEGRepresentation(image, 0.8);
+        PFFile *imageFile = [PFFile fileWithName:@"img" data:imageData];
+
         PFUser *user = [PFUser user];
         user.username = [usernameField text];
         user.password = [passwordField text];
         user.email = [emailField text];
+        user[@"profile_pic"] = imageFile;
         
         if (![fullName isEqualToString:@""]) {
             user[@"full_name"] = fullName;
@@ -132,6 +137,8 @@
                 //if username already in use
                 if ([error code] == 202) {
                     [errorLabel setText:@"Username already in use"];
+                } else if ([error code] == 203) {
+                    [errorLabel setText:@"Email already in use"];
                 }
             }
         }];

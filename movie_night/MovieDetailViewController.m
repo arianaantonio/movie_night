@@ -258,12 +258,12 @@
                     default:
                         break;
                 }
+                //set data to be passed over
+                self.selectedMovie.user_review = review;
+                self.selectedMovie.user_rating = rating;
+                self.selectedMovie.user_is_fave = isFavorite;
+                self.selectedMovie.user_review_objectId = objectID;
             }
-            //set data to be passed over
-            self.selectedMovie.user_review = review;
-            self.selectedMovie.user_rating = rating;
-            self.selectedMovie.user_is_fave = isFavorite;
-            self.selectedMovie.user_review_objectId = objectID;
             
         }
     }];
@@ -610,7 +610,7 @@
 #pragma mark - Navigation
 //refresh view when coming back from write review
 -(IBAction)prepareForUnwind:(UIStoryboardSegue *)segue {
-    [self refreshView];
+    //[self refreshView];
     NSString *rating = self.selectedMovie.user_rating;
     NSString *review = self.selectedMovie.user_review;
     NSNumber *isFavorite = self.selectedMovie.user_is_fave;

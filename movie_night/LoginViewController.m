@@ -13,6 +13,7 @@
 #import "FriendFeedViewController.h"
 #import <AddressBook/AddressBook.h>
 #import <AddressBookUI/AddressBookUI.h>
+#import "Reachability.h"
 
 @interface LoginViewController ()
 
@@ -27,103 +28,15 @@
     [passwordField setDelegate:self];
     [_forgotPasswordView setHidden:YES];
     
-    /*
-    CFErrorRef *error = nil;
+    reachGoogle = [Reachability reachabilityWithHostName:@"www.google.com"];
+    checkNetworkStatus = [reachGoogle currentReachabilityStatus];
     
-    
-    ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, error);
-    
-    __block BOOL accessGranted = NO;
-    
-    if (ABAddressBookRequestAccessWithCompletion != NULL) {
-        dispatch_semaphore_t sema = dispatch_semaphore_create(0);
-        ABAddressBookRequestAccessWithCompletion(addressBook, ^(bool granted, CFErrorRef error) {
-            accessGranted = granted;
-            dispatch_semaphore_signal(sema);
-        });
-        dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
-        
+    if (checkNetworkStatus == NotReachable) {
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"Please connect to a network" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
     }
-    
-    
-    if (accessGranted) {
-        
-        ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, error);
-        ABRecordRef source = ABAddressBookCopyDefaultSource(addressBook);
-        CFArrayRef allPeople = ABAddressBookCopyArrayOfAllPeopleInSourceWithSortOrdering(addressBook, source, kABPersonSortByFirstName);
-        CFIndex nPeople = ABAddressBookGetPersonCount(addressBook);
-        NSMutableArray *items = [NSMutableArray arrayWithCapacity:nPeople];
-        
-        
-        for (int i = 0; i < nPeople; i++) {
-            
-            ABRecordRef person = CFArrayGetValueAtIndex(allPeople, i);
-            
-            NSString *firstNames = (__bridge NSString*)ABRecordCopyValue(person, kABPersonFirstNameProperty);
-            NSString * lastNames =  (__bridge NSString*)ABRecordCopyValue(person, kABPersonLastNameProperty);
-            
-            if (!firstNames) {
-                firstNames = @"";
-            }
-            if (!lastNames) {
-                lastNames = @"";
-            }
-            
-            //get Contact email
-            
-            NSMutableArray *contactEmails = [NSMutableArray new];
-            ABMultiValueRef multiEmails = ABRecordCopyValue(person, kABPersonEmailProperty);
-            NSString *contactEmail = @"";
-            NSDictionary *contacts;
-            
-            for (CFIndex i=0; i<ABMultiValueGetCount(multiEmails); i++) {
-                
-                CFStringRef contactEmailRef = ABMultiValueCopyValueAtIndex(multiEmails, i);
-                contactEmail = (__bridge NSString *)contactEmailRef;
-                //[contactEmails addObject:contactEmail];
-                contacts = [[NSDictionary alloc]initWithObjectsAndKeys: firstNames, @"firstName", lastNames, @"lastName", contactEmail, @"contactEmail", nil];
-                
-                [items addObject:contacts];
-            }
-            NSLog(@"Person is: %@", firstNames);
-            NSLog(@"Email is:%@", contactEmails);
-            
-        }
-        NSMutableArray *hasEmailsArray = [[NSMutableArray alloc]init];
-        for (int i = 0; i < [items count]; i++) {
-            NSLog(@"%@",[items objectAtIndex:i]);
-            NSLog(@"%@", [[items objectAtIndex:i]objectForKey:@"contactEmail"]);
-            if (![[[items objectAtIndex:i]objectForKey:@"contactEmail"]isEqualToString:@""]) {
-                [hasEmailsArray addObject:[[items objectAtIndex:i]objectForKey:@"contactEmail"]];
-            }
-        }
-        NSLog(@"Array: %@", hasEmailsArray);
-        PFQuery *friendsQuery = [PFUser query];
-        [friendsQuery whereKey:@"email" containedIn:hasEmailsArray];
-        [friendsQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-            
-            if (!error) {
-                
-                NSString *movieTitle = @"";
-                NSString *rating = @"";
-                
-                for (PFObject *object in objects) {
-                    NSLog(@"%@", object.objectId);
-                    NSLog(@"You have a friend: %@", [object objectForKey:@"username"]);
 
-                }
-            }
-        }];
-
-        
-        
-        
-    } else {
-        NSLog(@"Cannot fetch Contacts :( ");
-        
-    }*/
-    
-    //initialize facebook with Parse
+       //initialize facebook with Parse
     [PFFacebookUtils initializeFacebook];
 }
 
@@ -150,7 +63,7 @@
     } else {
         [textField resignFirstResponder];
     }
-    return NO;
+    return YES;
 }
 //login with Facebook
 -(void)loginWithFacebook:(id)sender {
@@ -187,36 +100,40 @@
                 NSLog(@"user signed up and logged in w/Facebook");
             } else {
                 NSLog(@"user logged in w/Facebook");
-       
-            
-            //getting profile pic and upload file to parse
-            PFQuery *query = [PFUser query];
-            [query whereKey:@"objectId" equalTo:user.objectId];
-            NSArray *userReturned = [query findObjects];
-            NSLog(@"User: %@", [userReturned firstObject]);
-            NSDictionary *userDict = [userReturned firstObject];
-            NSString *facebookID = [userDict objectForKey:@"fbId"];
-            NSURL *pictureURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large&return_ssl_resources=1", facebookID]];
-            
-            NSURLRequest *urlRequest = [NSURLRequest requestWithURL:pictureURL];
-            
-            //get image from facebook
-            [NSURLConnection sendAsynchronousRequest:urlRequest
-                                               queue:[NSOperationQueue mainQueue]
-                                   completionHandler:
-             ^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-                 if (connectionError == nil && data != nil) {
-                     //set profile pic
                 
-                     //save image to parse as PFFile
-                     UIImage *image = [UIImage imageWithData:data];
+                
+                //getting profile pic and upload file to parse
+                PFQuery *query = [PFUser query];
+                [query whereKey:@"objectId" equalTo:user.objectId];
+                NSArray *userReturned = [query findObjects];
+                NSLog(@"User: %@", [userReturned firstObject]);
+                NSDictionary *userDict = [userReturned firstObject];
+                NSString *facebookID = [userDict objectForKey:@"fbId"];
+                NSURL *pictureURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large&return_ssl_resources=1", facebookID]];
+                
+                NSURLRequest *urlRequest = [NSURLRequest requestWithURL:pictureURL];
+                __block UIImage *image;
+                //get image from facebook
+                [NSURLConnection sendAsynchronousRequest:urlRequest
+                                                   queue:[NSOperationQueue mainQueue]
+                                       completionHandler:
+                 ^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                     if (connectionError == nil && data != nil) {
+                         
+                         //save image to parse as PFFile
+                         image = [UIImage imageWithData:data];
+                         
+                
+                     } else if (data == nil) {
+                         //if there's no Facebook photo, save the default ninja
+                         image = [UIImage imageNamed:@"Ninja.png"];
+                     }
                      NSData *imageData = UIImagePNGRepresentation(image);
                      PFFile *imageFile = [PFFile fileWithName:@"img" data:imageData];
                      [[PFUser currentUser]setObject:imageFile forKey:@"profile_pic"];
                      [[PFUser currentUser]saveInBackground];
-                     
-                 }
-             }];
+
+                 }];
                 [self performSegueWithIdentifier:@"tabSegue" sender:self];
             }
         }
@@ -289,6 +206,7 @@
     
     NSString *username = [usernameField text];
     NSString *password = [passwordField text];
+    [_errorLabel setText:@""];
     
     //if user hasn't entered a username
     if ([[usernameField text]isEqualToString:@""]) {
@@ -310,6 +228,9 @@
                                                 [self performSegueWithIdentifier:@"tabSegue" sender:self];
                                             } else {
                                                 // The login failed. Check error to see why.
+                                                if ([error code] == 101) {
+                                                    [_errorLabel setText:@"Username and password did not match"];
+                                                }
                                                 NSLog(@"Not logged in");
                                             }
                                         }];

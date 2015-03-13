@@ -279,7 +279,7 @@
         [commentArray addObject:commentDict];
         [_commentTable reloadData];
         [commentField setText:@""];
-        
+        NSLog(@"ID: %@", [PFInstallation currentInstallation].installationId);
         //save to parse
         PFObject *newComment = [PFObject objectWithClassName:@"Activity"];
         newComment[@"activityType"] = @"comment";

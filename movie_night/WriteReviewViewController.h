@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "MovieClass.h"
 
-@interface WriteReviewViewController : UIViewController
+@interface WriteReviewViewController : UIViewController <UITextViewDelegate>
 {
     NSString *numStars;
     NSString *toggle;
