@@ -49,6 +49,7 @@
     [application registerUserNotificationSettings:settings];
     [application registerForRemoteNotifications];
     
+    
     PFInstallation *currentInstallation = [PFInstallation currentInstallation];
     if ([currentInstallation objectForKey:@"user"] == nil && currentUser) {
         [currentInstallation setObject:currentUser forKey:@"user"];
@@ -62,16 +63,17 @@
 }
 //setup current device in parse
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    PFUser *currentUser = [PFUser currentUser];
+  //  PFUser *currentUser = [PFUser currentUser];
     
     // Store the deviceToken in the current installation and save it to Parse.
     PFInstallation *currentInstallation = [PFInstallation currentInstallation];
     [currentInstallation setDeviceTokenFromData:deviceToken];
-    if (currentUser == nil) {
-        currentInstallation.channels = @[@"global"];
-    } else {
-        currentInstallation.channels = @[@"global", currentUser.objectId];
-    }
+    
+   // if (currentUser == nil) {
+       // currentInstallation.channels = @[@"global"];
+   // } else {
+       // currentInstallation.channels = @[@"global", currentUser.objectId];
+  //  }
     [currentInstallation saveInBackground];
 }
 //handle notification while app is in use
