@@ -29,6 +29,7 @@
     if (currentUser) {
         [currentInstallation setObject:currentUser forKey:@"user"];
         currentInstallation.channels = @[currentUser.objectId];
+        [currentInstallation setObject:[NSNumber numberWithInt:0] forKey:@"badge"];
     }
     
     reachGoogle = [Reachability reachabilityWithHostName:@"www.google.com"];
@@ -44,17 +45,44 @@
     } else {
         [self refreshFeed];
         [self setupRefreshControl];
+        [self checkForNewActivity];
     }
     //[self checkForNewActivity];
     
 }
 -(void)viewDidAppear:(BOOL)animated {
     if (userId != nil) {
-        [self checkForNewActivity];
+       // [self checkForNewActivity];
     }
 }
 -(void)checkForNewActivity {
-    
+    __block int count = 0;
+    PFQuery *activityQuery = [PFQuery queryWithClassName:@"Activity"];
+    [activityQuery whereKey:@"toUser" equalTo:userId];
+    [activityQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        
+        //check for new activities
+        for (PFObject *object in objects) {
+            NSLog(@"Object: %@", object);
+            if ([[object objectForKey:@"isNew"]isEqualToString:@"Yes"]) {
+                count++;
+                PFQuery *query = [PFQuery queryWithClassName:@"Activity"];
+                // Retrieve the object by id and update to no
+                [query getObjectInBackgroundWithId:object.objectId block:^(PFObject *updateReview, NSError *error) {
+                    
+                    updateReview[@"isNew"] =  @"No";
+                    [updateReview saveInBackground];
+                }];
+            }
+
+        }
+        if (count > 0) {
+            [[self.tabBarController.tabBar.items objectAtIndex:2] setBadgeValue:[NSString stringWithFormat:@"%i", count]];
+        } else {
+            [[self.tabBarController.tabBar.items objectAtIndex:2] setBadgeValue:nil];
+        }
+    }];
+    /*
     NSDate *date = [[NSDate alloc]init];
     NSDateFormatter *df = [[NSDateFormatter alloc]init];
     [df setDateFormat:@"MMM dd, yyyy, hh:mm:ss"];
@@ -83,7 +111,7 @@
         }
     }];
     
-    [defaults setObject:date forKey:@"lastUpdate"];
+    [defaults setObject:date forKey:@"lastUpdate"];*/
 }
 #pragma mark - Refreshing
 //refresh the friend feed

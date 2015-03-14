@@ -73,7 +73,7 @@
     [updateQuery countObjectsInBackgroundWithBlock:^(int count, NSError *error) {
         if (!error) {
             if (count > 0) {
-                [[self.tabBarController.tabBar.items objectAtIndex:2] setBadgeValue:[NSString stringWithFormat:@"%i", count]];
+              //  [[self.tabBarController.tabBar.items objectAtIndex:2] setBadgeValue:[NSString stringWithFormat:@"%i", count]];
             } else {
                 [[self.tabBarController.tabBar.items objectAtIndex:2] setBadgeValue:nil];
             }

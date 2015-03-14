@@ -197,6 +197,7 @@
 }
 -(void)checkForNewActivity {
     
+    /*
     NSDate *date = [[NSDate alloc]init];
     NSDateFormatter *df = [[NSDateFormatter alloc]init];
     [df setDateFormat:@"MMM dd, yyyy, hh:mm"];
@@ -216,7 +217,7 @@
     [updateQuery countObjectsInBackgroundWithBlock:^(int count, NSError *error) {
         if (!error) {
             if (count > 0) {
-                [[self.tabBarController.tabBar.items objectAtIndex:2] setBadgeValue:[NSString stringWithFormat:@"%i", count]];
+              //  [[self.tabBarController.tabBar.items objectAtIndex:2] setBadgeValue:[NSString stringWithFormat:@"%i", count]];
             } else {
                 [[self.tabBarController.tabBar.items objectAtIndex:2] setBadgeValue:nil];
             }
@@ -225,7 +226,7 @@
         }
     }];
     
-    [defaults setObject:date forKey:@"lastUpdate"];
+    [defaults setObject:date forKey:@"lastUpdate"];*/
 }
 
 #pragma mark - Change Photo

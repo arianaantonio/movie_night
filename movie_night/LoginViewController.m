@@ -28,6 +28,7 @@
     // Do any additional setup after loading the view.
     [passwordField setDelegate:self];
     [_forgotPasswordView setHidden:YES];
+    [_emailField setDelegate:self];
     
     reachGoogle = [Reachability reachabilityWithHostName:@"www.google.com"];
     checkNetworkStatus = [reachGoogle currentReachabilityStatus];
@@ -246,8 +247,9 @@
 -(void)resetPassword:(id)sender {
     
     
-    if ([sender tag] == 1) {
+    if ([sender tag] == 5) {
         
+        [_emailField resignFirstResponder];
         NSString *email = [_emailField text];
         [PFUser requestPasswordResetForEmailInBackground:email];
         [_forgotPasswordView setHidden:YES];

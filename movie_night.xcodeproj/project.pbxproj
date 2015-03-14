@@ -15,6 +15,7 @@
 		416C803B1AB0FD0E000D4C68 /* share.png in Resources */ = {isa = PBXBuildFile; fileRef = 416C803A1AB0FD0E000D4C68 /* share.png */; };
 		416C803E1AB10910000D4C68 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 416C803D1AB10910000D4C68 /* Reachability.m */; };
 		416C80411AB2EDFF000D4C68 /* TabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 416C80401AB2EDFF000D4C68 /* TabBarController.m */; };
+		416C80431AB3C962000D4C68 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 416C80421AB3C962000D4C68 /* iAd.framework */; };
 		41BEEBD71AABE0B400FA593F /* SearchUsersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41BEEBD61AABE0B400FA593F /* SearchUsersViewController.m */; };
 		41E0C8331AAFF88400B13336 /* chat-26.png in Resources */ = {isa = PBXBuildFile; fileRef = 41E0C82D1AAFF88400B13336 /* chat-26.png */; };
 		41E0C8341AAFF88400B13336 /* collaboration-26.png in Resources */ = {isa = PBXBuildFile; fileRef = 41E0C82E1AAFF88400B13336 /* collaboration-26.png */; };
@@ -120,6 +121,7 @@
 		416C803D1AB10910000D4C68 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		416C803F1AB2EDFF000D4C68 /* TabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TabBarController.h; sourceTree = "<group>"; };
 		416C80401AB2EDFF000D4C68 /* TabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TabBarController.m; sourceTree = "<group>"; };
+		416C80421AB3C962000D4C68 /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
 		41BEEBD51AABE0B400FA593F /* SearchUsersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchUsersViewController.h; sourceTree = "<group>"; };
 		41BEEBD61AABE0B400FA593F /* SearchUsersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchUsersViewController.m; sourceTree = "<group>"; };
 		41E0C82D1AAFF88400B13336 /* chat-26.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "chat-26.png"; sourceTree = "<group>"; };
@@ -234,6 +236,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				416C80431AB3C962000D4C68 /* iAd.framework in Frameworks */,
 				41F9BD441AA68070008FA16C /* AddressBookUI.framework in Frameworks */,
 				41F9BD421AA67FC9008FA16C /* AddressBook.framework in Frameworks */,
 				41EC05D11AA3EEB7000193DD /* Social.framework in Frameworks */,
@@ -428,6 +431,7 @@
 		E3EA5A6558F5455F8FB6F76B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				416C80421AB3C962000D4C68 /* iAd.framework */,
 				41F9BD431AA68070008FA16C /* AddressBookUI.framework */,
 				41F9BD411AA67FC9008FA16C /* AddressBook.framework */,
 				41EC05D01AA3EEB7000193DD /* Social.framework */,
@@ -792,7 +796,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "a9c10d47-ed02-483f-9eb8-82f54d445c5f";
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -814,7 +818,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "a9c10d47-ed02-483f-9eb8-82f54d445c5f";
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

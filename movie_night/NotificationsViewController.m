@@ -47,17 +47,26 @@
     [activityQuery orderByDescending:@"createdAt"];
     [activityQuery findObjectsInBackgroundWithBlock:^(NSArray *activities, NSError *error) {
         
-        NSString *fromUserId = @"";
-        NSString *comment = @"";
-        NSString *reviewId = @"";
-        NSString *activityType = @"";
-        NSString *movieTitle = @"";
-        NSString *fromUsername = @"";
+      //  NSString *fromUserId = @"";
+      //  NSString *comment = @"";
+      //  NSString *reviewId = @"";
+      //  NSString *activityType = @"";
+      //  NSString *movieTitle = @"";
+      //  NSString *fromUsername = @"";
        // NSString *activityLabel = @"";
-        UIImage *userImage;
+      //  UIImage *userImage;
         
         for (PFObject *activity in activities) {
-            activityUser = [[MovieClass alloc]init];
+             MovieClass *activityUser = [[MovieClass alloc]init];
+            
+            NSString *fromUserId = @"";
+            NSString *comment = @"";
+            NSString *reviewId = @"";
+            NSString *activityType = @"";
+            NSString *movieTitle = @"";
+            NSString *fromUsername = @"";
+            UIImage *userImage;
+
             
             //get user info
             fromUserId = [activity objectForKey:@"fromUser"];
@@ -85,6 +94,8 @@
                 
             } else if ([activityType isEqualToString:@"follow"]) {
                 activityUser.user_review = @"has begun following you";
+                activityUser.movie_title = @"";
+                activityUser.user_review_objectId = @"";
             }
             [notifArray addObject:activityUser];
         }

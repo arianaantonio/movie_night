@@ -299,6 +299,7 @@
         newComment[@"comment"] = comment;
         newComment[@"reviewId"] = reviewId;
         newComment[@"movieTitle"] = self.selectedReview.movie_title;
+        newComment[@"isNew"] = @"Yes";
         [newComment saveInBackground];
     }
 }
