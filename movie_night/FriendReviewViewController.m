@@ -22,6 +22,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     commentArray = [[NSMutableArray alloc]init];
+    likesArray = [[NSMutableArray alloc]init];
     [commentField setDelegate:self];
     [self registerForKeyboardNotifications];
     
@@ -45,6 +46,7 @@
     userImage = [UIImage imageWithData:[(PFFile *)userDict[@"profile_pic"] getData]];
     
     [self getComments];
+    [self getLikes];
     
 }
 -(void)getReviewWithPassedData {
@@ -60,6 +62,8 @@
         _posterView.image = self.moviePosterPassed;
     }
     
+    reviewerUsername = self.selectedReview.username;
+    reviewerUserId = self.selectedReview.userID;
     [_usernameButton setTitle:self.selectedReview.username forState:UIControlStateNormal];
     if (self.selectedReview.movie_title != nil) {
         [_movieTitleButton setTitle:self.selectedReview.movie_title forState:UIControlStateNormal];
@@ -143,6 +147,8 @@
             UIImage *profilePicImage = [UIImage imageWithData:[(PFFile *)userDict[@"profile_pic"]getData]];;
             _profilePic.image = profilePicImage;
             
+            reviewerUsername = [userDict objectForKey:@"username"];
+            reviewerUserId = [userDict objectForKey:@"userID"];
             [_usernameButton setTitle:[userDict objectForKey:@"username"] forState:UIControlStateNormal];
             [_movieTitleButton setTitle:[object objectForKey:@"movieTitle"] forState:UIControlStateNormal];
             
@@ -236,6 +242,39 @@
         }
     }];
 }
+-(void)getLikes {
+    
+    //get likes that contain this review id
+    PFQuery *reviewsQuery = [PFQuery queryWithClassName:@"Activity"];
+    [reviewsQuery whereKey:@"reviewId" equalTo:reviewId];
+    [reviewsQuery whereKey:@"activityType" equalTo:@"like"];
+    [reviewsQuery orderByAscending:@"createdAt"];
+    [reviewsQuery findObjectsInBackgroundWithBlock:^(NSArray *reviews, NSError *error) {
+        
+        
+        for (PFObject *object in reviews) {
+            NSLog(@"Object: %@", object);
+            
+            NSString *prevUserId = [object objectForKey:@"fromUser"];
+            
+            //get info about user who left like
+            PFQuery *userQuery = [PFUser query];
+            [userQuery whereKey:@"objectId" equalTo:prevUserId];
+            NSArray *usersArray = [userQuery findObjects];
+            NSDictionary *userDict = [usersArray firstObject];
+            
+            NSString *prevUsername = [userDict objectForKey:@"username"];
+            [likesArray addObject:prevUsername];
+            NSString *likesString = [likesArray componentsJoinedByString:@", "];
+            [_likesLabel setText:[NSString stringWithFormat:@"Likes: %@", likesString]];
+        }
+        if ([likesArray containsObject:username]) {
+            [_likeButton setTitle:@"Liked" forState:UIControlStateNormal];
+            [_likeButton setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+        }
+            
+    }];
+}
 //set up textfield so return button closes keyboard
 -(BOOL)textFieldShouldReturn:(UITextField*)textField {
 
@@ -281,26 +320,73 @@
     NSString *comment = [commentField text];
     [commentField resignFirstResponder];
     
-    if (![comment isEqualToString:@""]) {
+    if ([sender tag] == 1) {
+        if (![comment isEqualToString:@""]) {
+            
+            //add to comment table
+            NSDictionary *commentDict = [NSDictionary dictionaryWithObjectsAndKeys:comment, @"comment", username, @"username", userImage, @"profile_pic", nil];
+            [commentArray addObject:commentDict];
+            [_commentTable reloadData];
+            [commentField setText:@""];
+            
+            //save to parse
+            PFObject *newComment = [PFObject objectWithClassName:@"Activity"];
+            newComment[@"activityType"] = @"comment";
+            newComment[@"fromUser"] = userId;
+            newComment[@"toUser"] = self.selectedReview.userID;
+            newComment[@"movieID"] = self.selectedReview.movie_TMDB_id;
+            newComment[@"comment"] = comment;
+            newComment[@"reviewId"] = reviewId;
+            newComment[@"movieTitle"] = self.selectedReview.movie_title;
+            newComment[@"isNew"] = @"Yes";
+            [newComment saveInBackground];
+        }
+    } else {
         
-        
-        //add to comment table
-        NSDictionary *commentDict = [NSDictionary dictionaryWithObjectsAndKeys:comment, @"comment", username, @"username", userImage, @"profile_pic", nil];
-        [commentArray addObject:commentDict];
-        [_commentTable reloadData];
-        [commentField setText:@""];
+        //if user already liked and is unliking, remove username
+        if ([likesArray containsObject:username]) {
+            [likesArray removeObject:username];
+            NSString *likesString = [likesArray componentsJoinedByString:@", "];
+            if ([likesArray count] > 0) {
+                [_likesLabel setText:[NSString stringWithFormat:@"Likes: %@", likesString]];
+            } else {
+                [_likesLabel setText:@""];
+            }
+            [_likeButton setTitle:@"Like" forState:UIControlStateNormal];
+            [_likeButton setTitleColor:[UIColor colorWithRed:109.0/255.0 green:189.0/255.0 blue:214.0/255.0 alpha:1.0f] forState:UIControlStateNormal];
+            
+            //delete from Activity
+            PFQuery *deleteQuery = [PFQuery queryWithClassName:@"Activity"];
+            [deleteQuery whereKey:@"fromUser" equalTo:userId];
+            [deleteQuery whereKey:@"toUser" equalTo:reviewerUserId];
+            [deleteQuery whereKey:@"activityType" equalTo:@"like"];
+            [deleteQuery whereKey:@"reviewId" equalTo:reviewId];
+            [deleteQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+                [[objects firstObject]deleteInBackground];
+            }];
+            
+        }
+        //else, add the username
+        else {
     
-        //save to parse
-        PFObject *newComment = [PFObject objectWithClassName:@"Activity"];
-        newComment[@"activityType"] = @"comment";
-        newComment[@"fromUser"] = userId;
-        newComment[@"toUser"] = self.selectedReview.userID;
-        newComment[@"movieID"] = self.selectedReview.movie_TMDB_id;
-        newComment[@"comment"] = comment;
-        newComment[@"reviewId"] = reviewId;
-        newComment[@"movieTitle"] = self.selectedReview.movie_title;
-        newComment[@"isNew"] = @"Yes";
-        [newComment saveInBackground];
+            //save to label
+            [likesArray addObject:username];
+            NSString *likesString = [likesArray componentsJoinedByString:@", "];
+            [_likesLabel setText:[NSString stringWithFormat:@"Likes: %@", likesString]];
+            [_likeButton setTitle:@"Liked" forState:UIControlStateNormal];
+            [_likeButton setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+            
+            //save to parse
+            PFObject *newLike = [PFObject objectWithClassName:@"Activity"];
+            newLike[@"activityType"] = @"like";
+            newLike[@"fromUser"] = userId;
+            newLike[@"toUser"] = self.selectedReview.userID;
+            newLike[@"movieID"] = self.selectedReview.movie_TMDB_id;
+            newLike[@"reviewId"] = reviewId;
+            newLike[@"movieTitle"] = self.selectedReview.movie_title;
+            newLike[@"isNew"] = @"Yes";
+            [newLike saveInBackground];
+        }
     }
 }
 #pragma mark TableView

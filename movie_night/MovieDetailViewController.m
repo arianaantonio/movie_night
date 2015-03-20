@@ -90,6 +90,7 @@
     //set movie id
     movie_id = self.selectedMovie.movie_TMDB_id;
     
+    
     ///----GETTING MOVIE INFO====///
     //get the movie details from the API
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://api.themoviedb.org/3/movie/%@?api_key=086941b3fdbf6f475d06a19773f6eb65&append_to_response=credits,videos", movie_id]];
@@ -197,6 +198,8 @@
             //https://www.youtube.com/watch?v=SUXWAEX2jlg
             [self.view setNeedsDisplay];
             
+            TMDBrating = [returnedDict objectForKey:@"vote_average"];
+            [self setAverageStars];
         }
     }];
     
@@ -210,7 +213,7 @@
         
         NSString *ratings = @"";
         NSNumber *ratingsNum;
-        NSMutableArray *ratingsArray = [[NSMutableArray alloc]init];
+        ratingsArray = [[NSMutableArray alloc]init];
         
         //get info about friends review
         for (PFObject *object in reviews) {
@@ -225,67 +228,73 @@
         }
         int ratingsInt = 0;
         
-        //make sure there are at least 10 ratings to be more accurate
-        if ([ratingsArray count] > 9) {
-            
-            //loop through ratings and add them together
-            for (int i = 0; i < [ratingsArray count]; i++) {
-                ratingsInt += [[ratingsArray objectAtIndex:i]intValue];
-            }
-            
-            //divide for average and round result
-            int ratingsTotal = (int)roundf(ratingsInt/[ratingsArray count]);
-            NSLog(@"Rating total: %i, Average: %i", ratingsInt,ratingsTotal);
-            UIImage *filledStar = [UIImage imageNamed:@"christmas_star-48.png"];
-            UIImage *emptyStar = [UIImage imageNamed:@"outline_star-48.png"];
-            
-            //set stars
-            switch (ratingsTotal) {
-                case 1:
-                    _totalStar1View.image = filledStar;
-                    _totalStar2View.image = emptyStar;
-                    _totalStar3View.image = emptyStar;
-                    _totalStar4View.image = emptyStar;
-                    _totalStar5View.image = emptyStar;
-                    break;
-                case 2:
-                    _totalStar1View.image = filledStar;
-                    _totalStar2View.image = filledStar;
-                    _totalStar3View.image = emptyStar;
-                    _totalStar4View.image = emptyStar;
-                    _totalStar5View.image = emptyStar;
-                    break;
-                case 3:
-                    _totalStar1View.image = filledStar;
-                    _totalStar2View.image = filledStar;
-                    _totalStar3View.image = filledStar;
-                    _totalStar4View.image = emptyStar;
-                    _totalStar5View.image = emptyStar;
-                    break;
-                case 4:
-                    _totalStar1View.image = filledStar;
-                    _totalStar2View.image = filledStar;
-                    _totalStar3View.image = filledStar;
-                    _totalStar4View.image = filledStar;
-                    _totalStar5View.image = emptyStar;
-                    break;
-                case 5:
-                    _totalStar1View.image = filledStar;
-                    _totalStar2View.image = filledStar;
-                    _totalStar3View.image = filledStar;
-                    _totalStar4View.image = filledStar;
-                    _totalStar5View.image = filledStar;
-                    break;
-                default:
-                    break;
-            }
-            
-        } else {
-            //if not enough reviews, show not enough label
-            [_notEnoughLabel setHidden:NO];
+        
+        //loop through ratings and add them together
+        for (int i = 0; i < [ratingsArray count]; i++) {
+            ratingsInt += [[ratingsArray objectAtIndex:i]intValue];
         }
+        
+        //divide for average and round result
+        ratingsTotal = (int)roundf(ratingsInt/[ratingsArray count]);
+        NSLog(@"Rating total: %i, Average: %i", ratingsInt,ratingsTotal);
+        
     }];
-
+}
+-(void)setAverageStars {
+    
+    if ([ratingsArray count] > 9) {
+        
+    } else {
+        double ratingDouble = [TMDBrating doubleValue];
+        ratingDouble = ratingDouble/2;
+        //ratingsTotal = [TMDBrating doubleValue];
+        //ratingsTotal = ratingsTotal/2;
+        ratingsTotal = (int)roundf(ratingDouble);
+    }
+    
+    
+    UIImage *filledStar = [UIImage imageNamed:@"christmas_star-48.png"];
+    UIImage *emptyStar = [UIImage imageNamed:@"outline_star-48.png"];
+    //set stars
+    switch (ratingsTotal) {
+        case 1:
+            _totalStar1View.image = filledStar;
+            _totalStar2View.image = emptyStar;
+            _totalStar3View.image = emptyStar;
+            _totalStar4View.image = emptyStar;
+            _totalStar5View.image = emptyStar;
+            break;
+        case 2:
+            _totalStar1View.image = filledStar;
+            _totalStar2View.image = filledStar;
+            _totalStar3View.image = emptyStar;
+            _totalStar4View.image = emptyStar;
+            _totalStar5View.image = emptyStar;
+            break;
+        case 3:
+            _totalStar1View.image = filledStar;
+            _totalStar2View.image = filledStar;
+            _totalStar3View.image = filledStar;
+            _totalStar4View.image = emptyStar;
+            _totalStar5View.image = emptyStar;
+            break;
+        case 4:
+            _totalStar1View.image = filledStar;
+            _totalStar2View.image = filledStar;
+            _totalStar3View.image = filledStar;
+            _totalStar4View.image = filledStar;
+            _totalStar5View.image = emptyStar;
+            break;
+        case 5:
+            _totalStar1View.image = filledStar;
+            _totalStar2View.image = filledStar;
+            _totalStar3View.image = filledStar;
+            _totalStar4View.image = filledStar;
+            _totalStar5View.image = filledStar;
+            break;
+        default:
+            break;
+    }
 }
 //refresh the view with passed over data
 -(void)refreshView {

@@ -26,6 +26,9 @@
     BOOL userHasReviewed;
     BOOL isWantToSee;
     NSString *reviewId;
+    NSMutableArray *ratingsArray;
+    int ratingsTotal;
+    NSNumber *TMDBrating;
 }
 @property (nonatomic, strong) IBOutlet UILabel *guestLabel;
 @property (nonatomic, strong) IBOutlet UILabel *movie_title_label;

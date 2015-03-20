@@ -133,11 +133,15 @@
     [reviewsQuery orderByDescending:@"createdAt"];
     [reviewsQuery findObjectsInBackgroundWithBlock:^(NSArray *reviews, NSError *error) {
         
-        for (PFObject *object in reviews) {
+       // for (PFObject *object in reviews) {
+        for (int i = 0; i < [reviews count]; i++) {
+            
+            PFObject *object = [reviews objectAtIndex:i];
             
             //get user info
             PFQuery *userInfo = [PFUser query];
             [userInfo whereKey:@"objectId" equalTo:[object objectForKey:@"userID"]];
+           // NSArray *friends = [userInfo findObjects];
             [userInfo findObjectsInBackgroundWithBlock:^(NSArray *friends, NSError *error) {
                 
                 
@@ -154,6 +158,7 @@
                 NSString *movieTitle = [object objectForKey:@"movieTitle"];
                 UIImage *moviePoster = [UIImage imageWithData:[(PFFile *)object[@"moviePoster"]getData]];
                 NSString *movieID = [object objectForKey:@"movieID"];
+                NSNumber *isWantToSee = [object objectForKey:@"isWantToSee"];
                 
                 //set to tmp class
                 MovieClass *tmpMovie = [[MovieClass alloc]init];
@@ -167,14 +172,19 @@
                 tmpMovie.userID = friendID;
                 tmpMovie.user_review_objectId = object.objectId;
                 
-                //add to array
-                [feedArray addObject:tmpMovie];
-            
+                //make sure movie is a review
+                if ([isWantToSee intValue]==0) {
+                    //add to array
+                    [feedArray addObject:tmpMovie];
+
+                }
+                
                 //reload table
                 [_feedTableView reloadData];
                 [self.refreshControl endRefreshing];
             }];
         }
+        
     }];
 }
 - (void)setupRefreshControl
