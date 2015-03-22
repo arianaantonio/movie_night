@@ -879,7 +879,6 @@
                                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D2t-62-Bcb">
                                                 <rect key="frame" x="111" y="68" width="460" height="218"/>
                                                 <color key="backgroundColor" red="0.89325573979999995" green="0.89325573979999995" blue="0.89325573979999995" alpha="1" colorSpace="calibratedRGB"/>
-                                                <string key="text">Really liked this movie. It was such an important time in American history and a story that needs to be told. The acting was phenominal and it's a shame they didn't get all the Oscar attention they deserved. The main song of the movie that plays over the end credits was great.</string>
                                                 <fontDescription key="fontDescription" name="Quicksand-Regular" family="Quicksand" pointSize="15"/>
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                             </textView>
@@ -1271,13 +1270,13 @@
                                                         </mask>
                                                     </variation>
                                                 </label>
-                                                <button opaque="NO" tag="2" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gvb-xe-Dop">
+                                                <button opaque="NO" tag="200" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gvb-xe-Dop">
                                                     <rect key="frame" x="76" y="10" width="75" height="30"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="75" id="4ms-nZ-4x5"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" name="Quicksand-Bold" family="Quicksand" pointSize="15"/>
-                                                    <state key="normal" title="username">
+                                                    <state key="normal">
                                                         <color key="titleColor" red="0.4274510145" green="0.74117648599999997" blue="0.82745105029999999" alpha="1" colorSpace="deviceRGB"/>
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
@@ -1290,10 +1289,10 @@
                                                         <segue destination="lMT-PG-30O" kind="show" identifier="userProfile" id="kZR-87-tpM"/>
                                                     </connections>
                                                 </button>
-                                                <button opaque="NO" tag="4" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gDy-QJ-5hV">
+                                                <button opaque="NO" tag="400" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gDy-QJ-5hV">
                                                     <rect key="frame" x="76" y="36" width="516" height="30"/>
                                                     <fontDescription key="fontDescription" name="Quicksand-Bold" family="Quicksand" pointSize="15"/>
-                                                    <state key="normal" title="movie title">
+                                                    <state key="normal">
                                                         <color key="titleColor" red="0.4274510145" green="0.74117648599999997" blue="0.82745105029999999" alpha="1" colorSpace="deviceRGB"/>
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
@@ -1476,7 +1475,7 @@
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="aFv-4F-Zrs"/>
                                 </connections>
                             </tableView>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="iAd.png" translatesAutoresizingMaskIntoConstraints="NO" id="H93-UL-ecT">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="H93-UL-ecT">
                                 <rect key="frame" x="0.0" y="445" width="601" height="44"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="44" id="56d-dG-rdG"/>
@@ -1494,6 +1493,9 @@
                                     <action selector="segmentSelected:" destination="BYZ-38-t0r" eventType="valueChanged" id="fTh-fF-Mr1"/>
                                 </connections>
                             </segmentedControl>
+                            <adBannerView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" translatesAutoresizingMaskIntoConstraints="NO" id="Txl-HN-DER">
+                                <rect key="frame" x="140" y="437" width="320" height="50"/>
+                            </adBannerView>
                         </subviews>
                         <color key="backgroundColor" red="0.92941182850000004" green="0.92941182850000004" blue="0.92941182850000004" alpha="1" colorSpace="deviceRGB"/>
                         <constraints>
@@ -1501,10 +1503,12 @@
                             <constraint firstItem="GDG-11-B3M" firstAttribute="top" secondItem="KGv-Dy-aHq" secondAttribute="bottom" constant="4" id="B5T-eV-ynh"/>
                             <constraint firstItem="KGv-Dy-aHq" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-20" id="HCk-b9-lvJ"/>
                             <constraint firstItem="7yn-3M-kNJ" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="MkV-tH-c3H"/>
+                            <constraint firstAttribute="centerX" secondItem="Txl-HN-DER" secondAttribute="centerX" id="Phr-Le-TGL"/>
                             <constraint firstItem="GDG-11-B3M" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="bN5-jN-6dA"/>
                             <constraint firstItem="H93-UL-ecT" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-16" id="jfc-ka-idE"/>
                             <constraint firstItem="GDG-11-B3M" firstAttribute="centerX" secondItem="H93-UL-ecT" secondAttribute="centerX" id="jjU-nH-wSa"/>
                             <constraint firstItem="KGv-Dy-aHq" firstAttribute="centerX" secondItem="GDG-11-B3M" secondAttribute="centerX" id="lft-DG-dKW"/>
+                            <constraint firstAttribute="bottomMargin" secondItem="Txl-HN-DER" secondAttribute="bottom" constant="49" id="pY8-8s-RX8"/>
                             <constraint firstItem="KGv-Dy-aHq" firstAttribute="top" secondItem="7yn-3M-kNJ" secondAttribute="bottom" id="rLi-QO-319"/>
                             <constraint firstAttribute="trailingMargin" secondItem="H93-UL-ecT" secondAttribute="trailing" constant="-17" id="rkX-q8-qzN"/>
                             <constraint firstItem="GDG-11-B3M" firstAttribute="leading" secondItem="H93-UL-ecT" secondAttribute="leading" id="vnI-Uj-htR"/>
@@ -3697,21 +3701,26 @@
                                     </mask>
                                 </variation>
                             </view>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="iAd.png" translatesAutoresizingMaskIntoConstraints="NO" id="4GL-dk-bL3">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4GL-dk-bL3">
                                 <rect key="frame" x="0.0" y="448" width="601" height="44"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="44" id="UZu-XZ-O7d"/>
                                 </constraints>
                             </imageView>
+                            <adBannerView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" translatesAutoresizingMaskIntoConstraints="NO" id="PkR-Kj-4OJ">
+                                <rect key="frame" x="140" y="437" width="320" height="50"/>
+                            </adBannerView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="S0m-sG-9xW" firstAttribute="top" secondItem="cXk-5J-FwS" secondAttribute="bottom" constant="8" symbolic="YES" id="5BH-jm-M60"/>
                             <constraint firstItem="4GL-dk-bL3" firstAttribute="bottom" secondItem="OJf-Cz-hwG" secondAttribute="top" id="DTA-tP-Zs6"/>
+                            <constraint firstItem="PkR-Kj-4OJ" firstAttribute="bottom" secondItem="OJf-Cz-hwG" secondAttribute="top" id="Ld1-o9-dZf"/>
                             <constraint firstItem="S0m-sG-9xW" firstAttribute="leading" secondItem="7gb-yC-ONh" secondAttribute="leadingMargin" constant="-8" id="VYu-cs-uu5"/>
                             <constraint firstItem="4GL-dk-bL3" firstAttribute="leading" secondItem="7gb-yC-ONh" secondAttribute="leading" id="gWx-MY-Uia"/>
                             <constraint firstItem="S0m-sG-9xW" firstAttribute="centerX" secondItem="7gb-yC-ONh" secondAttribute="centerX" id="oFb-UT-OZO"/>
                             <constraint firstItem="4GL-dk-bL3" firstAttribute="centerX" secondItem="S0m-sG-9xW" secondAttribute="centerX" id="xnW-pt-bTh"/>
+                            <constraint firstItem="PkR-Kj-4OJ" firstAttribute="centerX" secondItem="4GL-dk-bL3" secondAttribute="centerX" id="ySG-SE-dPR"/>
                         </constraints>
                     </view>
                     <toolbarItems/>
@@ -3736,7 +3745,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x9o-ot-sfj" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="of7-ZS-z6Y" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="1354" y="567"/>
+            <point key="canvasLocation" x="1550" y="404"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="orK-7U-LxD">
@@ -3765,7 +3774,6 @@
         <image name="clipperboard-50.png" width="25" height="25"/>
         <image name="grayButton.png" width="92" height="33"/>
         <image name="home-26.png" width="26" height="26"/>
-        <image name="iAd.png" width="272" height="39"/>
         <image name="like_outline-48.png" width="48" height="48"/>
         <image name="movieReel.png" width="480" height="800"/>
         <image name="movie_night_logo.png" width="200" height="64"/>
@@ -3781,15 +3789,15 @@
         <image name="star-50.png" width="50" height="50"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="ys4-ag-VPf"/>
-        <segue reference="R48-G9-Sqr"/>
+        <segue reference="EWv-0u-ZqT"/>
+        <segue reference="PMb-Bx-lrJ"/>
+        <segue reference="8GA-Yv-Ar5"/>
         <segue reference="RLy-OW-Zvj"/>
-        <segue reference="k82-Bc-qsh"/>
         <segue reference="y4B-tZ-bPZ"/>
+        <segue reference="CI0-Vd-fhO"/>
+        <segue reference="Xua-aC-MgM"/>
         <segue reference="lJB-xy-MrC"/>
-        <segue reference="gAD-PF-bnc"/>
-        <segue reference="fWr-P3-KRe"/>
-        <segue reference="mNY-il-d9X"/>
-        <segue reference="aUo-vW-HuH"/>
+        <segue reference="lM3-kv-TAF"/>
+        <segue reference="kZR-87-tpM"/>
     </inferredMetricsTieBreakers>
 </document>

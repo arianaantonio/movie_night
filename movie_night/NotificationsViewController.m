@@ -46,15 +46,7 @@
     [activityQuery whereKey:@"toUser" equalTo:userId];
     [activityQuery orderByDescending:@"createdAt"];
     [activityQuery findObjectsInBackgroundWithBlock:^(NSArray *activities, NSError *error) {
-        
-      //  NSString *fromUserId = @"";
-      //  NSString *comment = @"";
-      //  NSString *reviewId = @"";
-      //  NSString *activityType = @"";
-      //  NSString *movieTitle = @"";
-      //  NSString *fromUsername = @"";
-       // NSString *activityLabel = @"";
-      //  UIImage *userImage;
+
         
         for (PFObject *activity in activities) {
              MovieClass *activityUser = [[MovieClass alloc]init];
@@ -96,6 +88,12 @@
                 activityUser.user_review = @"has begun following you";
                 activityUser.movie_title = @"";
                 activityUser.user_review_objectId = @"";
+            } else if ([activityType isEqualToString:@"like"]) {
+                reviewId = [activity objectForKey:@"reviewId"];
+                movieTitle = [activity objectForKey:@"movieTitle"];
+                activityUser.user_review = @"has liked your review:";
+                activityUser.movie_title = movieTitle;
+                activityUser.user_review_objectId = reviewId;
             }
             [notifArray addObject:activityUser];
         }
@@ -112,26 +110,28 @@
     MovieClass *currentActivity = [notifArray objectAtIndex:indexPath.row];
     
     if (cell != nil) {
-        
+        NSLog(@"%@ %@ %@", currentActivity.username, currentActivity.user_review, currentActivity.movie_title);
+
         UIImageView *profile_pic = (UIImageView *) [cell viewWithTag:1];
         profile_pic.image = currentActivity.user_photo_file;
         
-        UIButton *usernameButton = (UIButton *) [cell viewWithTag:2];
+        UIButton *usernameButton = (UIButton *) [cell viewWithTag:200];
         usernameButton.tag = indexPath.row;
         [usernameButton setTitle:currentActivity.username forState:UIControlStateNormal];
         
         UILabel *activityLabel = (UILabel *) [cell viewWithTag:3];
         activityLabel.text = currentActivity.user_review;
         
-        UIButton *movieButton = (UIButton *) [cell viewWithTag:4];
+        UIButton *movieButton = (UIButton *) [cell viewWithTag:400];
         movieButton.tag = indexPath.row;
-        if (![currentActivity.movie_title isEqualToString:@""]) {
+       // if (![currentActivity.movie_title isEqualToString:@""]) {
             [movieButton setTitle:currentActivity.movie_title forState:UIControlStateNormal];
-            [movieButton setHidden:NO];
-        } else {
-            [movieButton setHidden:YES];
-        }
-        
+            //[movieButton setHidden:NO];
+      //  } else {
+           // [movieButton setTitle:@"" forState:UIControlStateNormal];
+
+           // [movieButton setHidden:YES];
+        //}
         return cell;
     }
     return nil;
