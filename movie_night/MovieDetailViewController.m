@@ -235,7 +235,9 @@
         }
         
         //divide for average and round result
-        ratingsTotal = (int)roundf(ratingsInt/[ratingsArray count]);
+        if ([ratingsArray count] != 0) {
+            ratingsTotal = (int)roundf(ratingsInt/[ratingsArray count]);
+        }
         NSLog(@"Rating total: %i, Average: %i", ratingsInt,ratingsTotal);
         
     }];

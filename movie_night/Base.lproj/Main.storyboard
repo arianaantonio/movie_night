@@ -1420,7 +1420,7 @@
                                 </connections>
                             </searchBar>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="88" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="GDG-11-B3M">
-                                <rect key="frame" x="0.0" y="44" width="600" height="443"/>
+                                <rect key="frame" x="0.0" y="76" width="600" height="411"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="movieCell" rowHeight="88" id="fs7-5J-H9w">
@@ -1464,13 +1464,11 @@
                                                 <constraint firstItem="btE-aE-NOo" firstAttribute="top" secondItem="uct-DH-PPG" secondAttribute="topMargin" constant="-4" id="cj4-sZ-l8p"/>
                                                 <constraint firstAttribute="bottomMargin" secondItem="OrY-Uy-C23" secondAttribute="bottom" constant="4" id="gY4-5k-Ah5"/>
                                                 <constraint firstItem="OrY-Uy-C23" firstAttribute="leading" secondItem="btE-aE-NOo" secondAttribute="leading" id="myo-gN-z2f"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="OrY-Uy-C23" secondAttribute="bottom" constant="4" id="rvT-x5-Vtc"/>
                                                 <constraint firstItem="97Q-No-hSF" firstAttribute="top" secondItem="uct-DH-PPG" secondAttribute="topMargin" constant="-7" id="vLg-6y-mdq"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="OrY-Uy-C23" secondAttribute="trailing" constant="-33" id="zvg-O6-7eW"/>
                                             </constraints>
                                         </tableViewCellContentView>
-                                        <connections>
-                                            <segue destination="Lsx-s2-9v0" kind="show" id="aPV-ON-OQw"/>
-                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
                                 <connections>
@@ -1484,24 +1482,43 @@
                                     <constraint firstAttribute="height" constant="44" id="56d-dG-rdG"/>
                                 </constraints>
                             </imageView>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="KGv-Dy-aHq">
+                                <rect key="frame" x="-4" y="44" width="609" height="29"/>
+                                <color key="backgroundColor" red="0.92941182850000004" green="0.92941182850000004" blue="0.92941182850000004" alpha="1" colorSpace="deviceRGB"/>
+                                <segments>
+                                    <segment title="Movies"/>
+                                    <segment title="Users"/>
+                                </segments>
+                                <color key="tintColor" red="0.21568629149999999" green="0.2470588386" blue="0.39607846740000002" alpha="1" colorSpace="deviceRGB"/>
+                                <connections>
+                                    <action selector="segmentSelected:" destination="BYZ-38-t0r" eventType="valueChanged" id="fTh-fF-Mr1"/>
+                                </connections>
+                            </segmentedControl>
                         </subviews>
+                        <color key="backgroundColor" red="0.92941182850000004" green="0.92941182850000004" blue="0.92941182850000004" alpha="1" colorSpace="deviceRGB"/>
                         <constraints>
-                            <constraint firstItem="7yn-3M-kNJ" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="Q3F-pP-WjC"/>
-                            <constraint firstAttribute="trailing" secondItem="GDG-11-B3M" secondAttribute="trailing" id="Yft-dr-p7b"/>
-                            <constraint firstItem="7yn-3M-kNJ" firstAttribute="leading" secondItem="GDG-11-B3M" secondAttribute="leading" id="dbf-4H-AX1"/>
-                            <constraint firstItem="7yn-3M-kNJ" firstAttribute="trailing" secondItem="GDG-11-B3M" secondAttribute="trailing" id="fcl-WA-AaH"/>
-                            <constraint firstItem="7yn-3M-kNJ" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="jNh-Eu-Geq"/>
+                            <constraint firstItem="7yn-3M-kNJ" firstAttribute="leading" secondItem="H93-UL-ecT" secondAttribute="leading" id="7fc-rT-Ybk"/>
+                            <constraint firstItem="GDG-11-B3M" firstAttribute="top" secondItem="KGv-Dy-aHq" secondAttribute="bottom" constant="4" id="B5T-eV-ynh"/>
+                            <constraint firstItem="KGv-Dy-aHq" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-20" id="HCk-b9-lvJ"/>
+                            <constraint firstItem="7yn-3M-kNJ" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="MkV-tH-c3H"/>
+                            <constraint firstItem="GDG-11-B3M" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="bN5-jN-6dA"/>
                             <constraint firstItem="H93-UL-ecT" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-16" id="jfc-ka-idE"/>
-                            <constraint firstItem="GDG-11-B3M" firstAttribute="top" secondItem="7yn-3M-kNJ" secondAttribute="bottom" id="mQA-X3-jch"/>
-                            <constraint firstItem="GDG-11-B3M" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="peC-hH-cp2"/>
+                            <constraint firstItem="GDG-11-B3M" firstAttribute="centerX" secondItem="H93-UL-ecT" secondAttribute="centerX" id="jjU-nH-wSa"/>
+                            <constraint firstItem="KGv-Dy-aHq" firstAttribute="centerX" secondItem="GDG-11-B3M" secondAttribute="centerX" id="lft-DG-dKW"/>
+                            <constraint firstItem="KGv-Dy-aHq" firstAttribute="top" secondItem="7yn-3M-kNJ" secondAttribute="bottom" id="rLi-QO-319"/>
                             <constraint firstAttribute="trailingMargin" secondItem="H93-UL-ecT" secondAttribute="trailing" constant="-17" id="rkX-q8-qzN"/>
+                            <constraint firstItem="GDG-11-B3M" firstAttribute="leading" secondItem="H93-UL-ecT" secondAttribute="leading" id="vnI-Uj-htR"/>
                             <constraint firstAttribute="bottomMargin" secondItem="H93-UL-ecT" secondAttribute="bottom" constant="47" id="vwb-R2-Myy"/>
+                            <constraint firstItem="KGv-Dy-aHq" firstAttribute="centerX" secondItem="7yn-3M-kNJ" secondAttribute="centerX" id="xmE-1p-syy"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Search" id="QsY-Cb-mst"/>
                     <connections>
                         <outlet property="searchBar" destination="7yn-3M-kNJ" id="g6P-jB-0gl"/>
                         <outlet property="searchTable" destination="GDG-11-B3M" id="A3L-sv-X2y"/>
+                        <outlet property="segmentControl" destination="KGv-Dy-aHq" id="Uc6-r5-H2R"/>
+                        <segue destination="Lsx-s2-9v0" kind="show" identifier="MovieSegue" id="fWr-P3-KRe"/>
+                        <segue destination="lMT-PG-30O" kind="show" identifier="UserSegue" id="gAD-PF-bnc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -2018,7 +2035,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5Hf-aq-GOD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="527" y="1117"/>
+            <point key="canvasLocation" x="540" y="1117"/>
         </scene>
         <!--My Profile-->
         <scene sceneID="WOn-lZ-CSD">
@@ -3494,7 +3511,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="k6F-DG-3bG" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="721" y="407"/>
+            <point key="canvasLocation" x="833" y="404"/>
         </scene>
         <!--Write Review-->
         <scene sceneID="MAb-Bs-dYx">
@@ -3769,10 +3786,10 @@
         <segue reference="RLy-OW-Zvj"/>
         <segue reference="k82-Bc-qsh"/>
         <segue reference="y4B-tZ-bPZ"/>
-        <segue reference="itd-8k-4ag"/>
-        <segue reference="MRu-h9-dR8"/>
-        <segue reference="kTt-jg-zYa"/>
-        <segue reference="mNY-il-d9X"/>
         <segue reference="lJB-xy-MrC"/>
+        <segue reference="gAD-PF-bnc"/>
+        <segue reference="fWr-P3-KRe"/>
+        <segue reference="mNY-il-d9X"/>
+        <segue reference="aUo-vW-HuH"/>
     </inferredMetricsTieBreakers>
 </document>
