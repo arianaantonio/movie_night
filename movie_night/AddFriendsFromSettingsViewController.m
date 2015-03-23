@@ -42,7 +42,6 @@
 #pragma mark - Search By
 //find friends via contacts
 -(void)findContacts {
-
     
     CFErrorRef *error = nil;
     

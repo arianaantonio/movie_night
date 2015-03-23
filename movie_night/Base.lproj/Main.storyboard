@@ -1418,7 +1418,7 @@
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="9mi-Uk-nQV"/>
                                 </connections>
                             </searchBar>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="88" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="GDG-11-B3M">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="88" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="GDG-11-B3M">
                                 <rect key="frame" x="0.0" y="76" width="600" height="411"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
@@ -2480,7 +2480,7 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Add Friends" id="UDt-FW-kWb">
-                        <barButtonItem key="rightBarButtonItem" title="Done" id="3rd-go-WAj">
+                        <barButtonItem key="rightBarButtonItem" id="3rd-go-WAj">
                             <connections>
                                 <action selector="clickedDone:" destination="9Yv-xn-6VO" id="JRa-1c-nhN"/>
                             </connections>
@@ -3791,11 +3791,11 @@
     <inferredMetricsTieBreakers>
         <segue reference="EWv-0u-ZqT"/>
         <segue reference="PMb-Bx-lrJ"/>
-        <segue reference="8GA-Yv-Ar5"/>
-        <segue reference="RLy-OW-Zvj"/>
+        <segue reference="k82-Bc-qsh"/>
         <segue reference="y4B-tZ-bPZ"/>
         <segue reference="CI0-Vd-fhO"/>
         <segue reference="Xua-aC-MgM"/>
+        <segue reference="l1G-Ys-TBB"/>
         <segue reference="lJB-xy-MrC"/>
         <segue reference="lM3-kv-TAF"/>
         <segue reference="kZR-87-tpM"/>

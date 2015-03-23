@@ -28,6 +28,9 @@
                   clientKey:@"FvfYcrED2qanfxBb7XE87BXGiWquIW2iJvZKORFj"];
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
+    //AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    //self.tabBarController.delegate = appDelegate;
+    
     //check if logged in an navigate accordingly
     PFUser *currentUser = [PFUser currentUser];
     if (currentUser) {
@@ -177,6 +180,11 @@
             }];
         }
     }
+}
+- (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController {
+    
+    NSLog(@"hooray this works");
+    
 }
 - (BOOL) application:(UIApplication *)application handleOpenURL:(NSURL *)url {
     return [PFFacebookUtils session];

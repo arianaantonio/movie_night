@@ -83,8 +83,7 @@
     newComment[@"fromUser"] = [PFUser currentUser].objectId;
     newComment[@"toUser"] = [[usersArray objectAtIndex:[sender tag]]userID];
     [newComment saveInBackground];
-}
--(IBAction)clickedDone:(id)sender {
+    
     PFQuery *query = [PFUser query];
     NSString *currentUserId = [PFUser currentUser].objectId;
     [query whereKey:@"objectId" equalTo:currentUserId];
@@ -95,6 +94,19 @@
     //add the friends in the array to the users parse account
     [[PFUser currentUser]setObject:toAddArray forKey:@"friends"];
     [[PFUser currentUser]saveInBackground];
+}
+-(IBAction)clickedDone:(id)sender {
+    /*
+    PFQuery *query = [PFUser query];
+    NSString *currentUserId = [PFUser currentUser].objectId;
+    [query whereKey:@"objectId" equalTo:currentUserId];
+    NSMutableArray *userArray = [[[query findObjects]firstObject]objectForKey:@"friends"];
+    
+    [toAddArray addObjectsFromArray:userArray];
+    
+    //add the friends in the array to the users parse account
+    [[PFUser currentUser]setObject:toAddArray forKey:@"friends"];
+    [[PFUser currentUser]saveInBackground];*/
 }
 #pragma mark - TableView
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {

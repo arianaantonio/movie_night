@@ -11,7 +11,7 @@
 #import "FriendFeedViewController.h"
 #import "TabBarController.h"
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate, UITabBarControllerDelegate>
 {
     NSDictionary *newLaunchingOptions;
 }
