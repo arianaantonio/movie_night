@@ -34,8 +34,12 @@
     checkNetworkStatus = [reachGoogle currentReachabilityStatus];
     
     if (checkNetworkStatus == NotReachable) {
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"Please connect to a network" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        [alert show];
+
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error" message:@"Please connect to a network" preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alertController addAction:okAction];
+        [self presentViewController:alertController animated:YES completion:nil];
     }
 
        //initialize facebook with Parse
@@ -86,12 +90,12 @@
                 NSLog(@"An error occurred: %@", error);
                 errorMessage = [error localizedDescription];
             }
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error on Log in"
-                                                            message:errorMessage
-                                                           delegate:nil
-                                                  cancelButtonTitle:nil
-                                                  otherButtonTitles:@"Dismiss", nil];
-            [alert show];
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error on Log In" message:errorMessage preferredStyle:UIAlertControllerStyleAlert];
+            
+            UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+            [alertController addAction:okAction];
+            [self presentViewController:alertController animated:YES completion:nil];
+            
         } else {
             //user logged in
             if (user.isNew) {
@@ -151,9 +155,14 @@
         [query countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
             if(number > 0) {
                 NSLog(@"Username exists");
-                UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Username already exists. Please choose a new one." delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Submit", nil];
-                alert.alertViewStyle = UIAlertViewStylePlainTextInput;
-                [alert show];
+                
+                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error" message:@"Username already exists. Please choose a new one" preferredStyle:UIAlertControllerStyleAlert];
+                
+                UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
+                UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Submit" style:UIAlertActionStyleDefault handler:nil];
+                [alertController addAction:cancelAction];
+                [alertController addAction:okAction];
+                [self presentViewController:alertController animated:YES completion:nil];
             } else {
                 //segue to tabViewController
                 [FBRequestConnection startForMeWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
@@ -253,8 +262,13 @@
         NSString *email = [_emailField text];
         [PFUser requestPasswordResetForEmailInBackground:email];
         [_forgotPasswordView setHidden:YES];
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Success!" message:@"You have been sent an email to reset your password" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        [alert show];
+       
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Success!" message:@"You have been sent an email to reset your password" preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alertController addAction:okAction];
+        [self presentViewController:alertController animated:YES completion:nil];
+        //[alert show];
     } else {
         [_forgotPasswordView setHidden:YES];
     }

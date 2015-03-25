@@ -130,8 +130,12 @@
                     NSLog(@"Error: %@", errorString);
                     //if username already in use
                     if ([error code] == 202) {
-                        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"Username already in use" delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
-                        [alert show];
+           
+                        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error" message:@"Username already in use" preferredStyle:UIAlertControllerStyleAlert];
+                        
+                        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+                        [alertController addAction:okAction];
+                        [self presentViewController:alertController animated:YES completion:nil];
                     }
                     [_usernameField setText:oldUsername];
                 }

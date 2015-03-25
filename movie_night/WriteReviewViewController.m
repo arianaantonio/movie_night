@@ -243,8 +243,13 @@
     
     //make sure user is signed in to facebook
     if (![FBDialogs canPresentOSIntegratedShareDialogWithSession:[FBSession activeSession]]) {
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"To share on Facebook your account must by registed in the iPhone settings" delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
-        [alert show];
+       
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error" message:@"To share on Facebook your account must be registered in the iPhone's settings" preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alertController addAction:okAction];
+        [self presentViewController:alertController animated:YES completion:nil];
+       // [alert show];
         return;
     }
     NSString *review = [_reviewView text];
@@ -260,12 +265,16 @@
     }
     //else if there's both
     else if (![numStars isEqualToString:@"0"] && ![review isEqualToString:@""]) {
-        facebookText = [NSString stringWithFormat:@"I've rated %@ %@ stars on the Movie Night app for iPone and left a review: %@", self.moviePassed.movie_title, numStars, review];
+        facebookText = [NSString stringWithFormat:@"I've rated %@ %@ stars on the Movie Night app for iPhone and left a review: %@", self.moviePassed.movie_title, numStars, review];
     }
     //if both empty return without facebook session
     else {
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"Please rate the movie or write a review to share" delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
-        [alert show];
+
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error" message:@"Please rate the movie or write a review to share" preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alertController addAction:okAction];
+        [self presentViewController:alertController animated:YES completion:nil];
         return;
     }
     

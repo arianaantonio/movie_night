@@ -153,18 +153,16 @@
 - (void)handlePush:(NSDictionary *)launchOptions {
     
     //get notification info
-    NSDictionary *remoteNotificationPayload = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
-    
+   // NSDictionary *remoteNotificationPayload = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+    /*
     //Make sure our user and data are good
     if (remoteNotificationPayload && [PFUser currentUser]) {
         NSString *string = [NSString stringWithFormat:@"Disct: %@", remoteNotificationPayload];
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Qlert" message:string delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
-        [alert show];
+     
         //transition to review view
         NSString *activityObjectId = [remoteNotificationPayload objectForKey:@"rid"];
         
-        UIAlertView *alert2 = [[UIAlertView alloc]initWithTitle:@"Qlert" message:activityObjectId delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
-        [alert2 show];
+     
         if (activityObjectId && activityObjectId.length != 0) {
             PFQuery *query = [PFQuery queryWithClassName:@"Activity"];
             [query getObjectInBackgroundWithId:activityObjectId block:^(PFObject *review, NSError *error) {
@@ -179,7 +177,7 @@
                 }
             }];
         }
-    }
+    }*/
 }
 - (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController {
     

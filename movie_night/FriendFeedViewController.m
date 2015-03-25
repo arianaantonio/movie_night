@@ -36,8 +36,12 @@
     checkNetworkStatus = [reachGoogle currentReachabilityStatus];
     
     if (checkNetworkStatus == NotReachable) {
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"Please connect to a network" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        [alert show];
+
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error" message:@"Please connect to a network" preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alertController addAction:okAction];
+        [self presentViewController:alertController animated:YES completion:nil];
     }
     
     if (currentUser == nil) {
