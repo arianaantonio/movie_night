@@ -150,12 +150,16 @@
     UIButton *resultButton = (UIButton *)sender;
     
     if ([resultButton.currentTitle isEqual:@"Follow"]) {
-        [currentFriendsArray addObject:self.userIdPassed];
-        [_followUserButton setTitle:@"Unfollow" forState:UIControlStateNormal];
+        if (![currentFriendsArray containsObject:self.userIdPassed]) {
+            [currentFriendsArray addObject:self.userIdPassed];
+            [_followUserButton setTitle:@"Unfollow" forState:UIControlStateNormal];
+        }
     } else {
         [currentFriendsArray removeObject:self.userIdPassed];
         [_followUserButton setTitle:@"Follow" forState:UIControlStateNormal];
+        
     }
+    
     
     [[PFUser currentUser]setObject:currentFriendsArray forKey:@"friends"];
     [[PFUser currentUser]saveInBackground];
@@ -285,6 +289,7 @@
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    
     if ([[segue identifier]isEqualToString:@"movieDetail"]) {
         MovieDetailViewController *vc = [segue destinationViewController];
         UITableViewCell *cell = (UITableViewCell*)sender;
@@ -309,9 +314,12 @@
     } else if ([[segue identifier]isEqualToString:@"following"]) {
         FollowersTableViewController *fvc = [segue destinationViewController];
         fvc.selectionType = @"following";
+        fvc.passedUserId = self.userIdPassed;
     } else {
         FollowersTableViewController *fvc = [segue destinationViewController];
         fvc.selectionType = @"followers";
+        fvc.passedUserId = self.userIdPassed;
+
     }
 }
 

@@ -300,121 +300,6 @@
 }
 //refresh the view with passed over data
 -(void)refreshView {
-    /*
-    self.navBar.title = self.selectedMovie.movie_title;
-    
-    //set movie id
-    movie_id = self.selectedMovie.movie_TMDB_id;
-    
-        ///----GETTING MOVIE INFO====///
-        //get the movie details from the API
-        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://api.themoviedb.org/3/movie/%@?api_key=086941b3fdbf6f475d06a19773f6eb65&append_to_response=credits,videos", movie_id]];
-        
-        [AppDelegate downloadDataFromURL:url withCompletionHandler:^(NSData *data) {
-            
-            if (data != nil) {
-                NSError *error;
-                NSMutableDictionary *returnedDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
-                self.selectedMovie.movie_imdb_id = [returnedDict objectForKey:@"imdb_id"];
-                self.selectedMovie.movie_plot_overview = [returnedDict objectForKey:@"overview"];
-                
-                // NSLog(@"Cast: %@", [returnedDict objectForKey:@"credits"]);
-                
-                //get cast and set to array of names
-                NSArray *castArray = [[returnedDict objectForKey:@"credits"] objectForKey:@"cast"];
-                NSString *castString = @"";
-                if ([castArray count] !=0) {
-                    for (int i =0; i < [castArray count]; i++) {
-                        
-                        if (i == 4) {
-                            castString = [castString stringByAppendingString:[NSString stringWithFormat:@"%@", [[castArray objectAtIndex:i]objectForKey:@"name"]]];
-                        } else {
-                            if (i < 4) {
-                                castString = [castString stringByAppendingString:[NSString stringWithFormat:@"%@, ", [[castArray objectAtIndex:i]objectForKey:@"name"]]];
-                            }
-                        }
-                        
-                    }
-                }
-                // NSLog(@"Cast: %@", castString);
-                
-                //get crew and pull out director, then set to label
-                self.selectedMovie.movie_cast = castString;
-                NSArray *crewArray = [[returnedDict objectForKey:@"credits"] objectForKey:@"crew"];
-                if ([crewArray count] != 0) {
-                    for (int i =0; i < [crewArray count]; i++) {
-                        NSString *director = [[crewArray objectAtIndex:i]objectForKey:@"job"];
-                        if ([director isEqualToString:@"Director"]) {
-                            self.selectedMovie.movie_director = [[crewArray objectAtIndex:i]objectForKey:@"name"];
-                            NSLog(@"Director: %@", [[crewArray objectAtIndex:i]objectForKey:@"name"]);
-                        }
-                    }
-                }
-                //get genre and set to lavel
-                NSArray *genreArray = [returnedDict objectForKey:@"genres"];
-                NSString *genreString = @"";
-                if ([genreArray count] != 0) {
-                    for (int i =0; i < [genreArray count]; i++) {
-                        genreString = [genreString stringByAppendingString:[NSString stringWithFormat:@"%@, ", [[genreArray objectAtIndex:i]objectForKey:@"name"]]];
-                    }
-                }
-                
-                //iterate through videos and grab the trailer
-                NSArray *videosArray = [[returnedDict objectForKey:@"videos"]objectForKey:@"results"];
-                NSString *youTubeUrl = @"";
-                for (int i =0; i < [videosArray count];i++) {
-                    NSString *videoType = [[videosArray objectAtIndex:i]objectForKey:@"type"];
-                    if ([videoType isEqualToString:@"Trailer"]) {
-                        youTubeUrl = [[videosArray objectAtIndex:i]objectForKey:@"key"];
-                    }
-                }
-                //hide the trailer button if there is no trailer
-                if ([youTubeUrl isEqualToString:@""]) {
-                    [_trailerButton setHidden:YES];
-                } else {
-                    //build the youtube url
-                    NSLog(@"YouTube Key: %@", youTubeUrl);
-                    youTubeUrl = [NSString stringWithFormat:@"https://www.youtube.com/watch?v=%@", youTubeUrl];
-                    self.selectedMovie.movie_trailer = youTubeUrl;
-                }
-                
-                //set labels from returned data
-                // NSLog(@"%@", returnedDict);
-                _movie_title_label.text = self.selectedMovie.movie_title;
-                movie_title = self.selectedMovie.movie_title;
-                _movie_title_label.font = [UIFont fontWithName:@"Quicksand-Bold" size:16];
-                _plot_label.text = self.selectedMovie.movie_plot_overview;
-                _plot_label.font = [UIFont fontWithName:@"Quicksand-Regular" size:14];
-                _genre_label.text = genreString;
-                _genre_label.font = [UIFont fontWithName:@"Quicksand-Regular" size:14];
-                NSString *dateString = [returnedDict objectForKey:@"release_date"];
-                NSDateFormatter *df = [[NSDateFormatter alloc]init];
-                [df setDateFormat:@"yyyy-MM-dd"];
-                NSDate *date = [df dateFromString:dateString];
-                [df setDateFormat:@"MMM dd, yyyy"];
-                dateString = [df stringFromDate:date];
-                self.selectedMovie.movie_date = dateString;
-                _date_label.text = self.selectedMovie.movie_date;
-                _date_label.font = [UIFont fontWithName:@"Quicksand-Regular" size:14];
-                _director_label.text = [NSString stringWithFormat:@"Directed By: %@", self.selectedMovie.movie_director];
-                _director_label.font = [UIFont fontWithName:@"Quicksand-Regular" size:14];
-                
-                //join cast names array into string and set to label
-                NSArray *movie_cast = [[NSArray alloc]initWithObjects:self.selectedMovie.movie_cast, nil];
-                _cast_label.text = [NSString stringWithFormat:@"Starring: %@",[movie_cast componentsJoinedByString:@", "]];
-                _cast_label.font = [UIFont fontWithName:@"Quicksand-Regular" size:14];
-                
-                //get poster url and set to imageview
-                self.selectedMovie.movie_poster = [returnedDict objectForKey:@"poster_path"];
-                NSString *posterURL = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/w185%@", self.selectedMovie.movie_poster];
-                UIImage *posterJPG = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:posterURL]]];
-                _poster_image.image = posterJPG;
-                friendReviewData.movie_poster_file = posterJPG;
-                //https://www.youtube.com/watch?v=SUXWAEX2jlg
-                [self.view setNeedsDisplay];
-                
-            }
-        }];*/
    
     ///----GETTING USER REVIEW INFO====///
     //check if user has left info for this movie
@@ -579,6 +464,7 @@
             friendReviewData.username = friendUsername;
             friendReviewData.user_photo_file = friendProfilePic;
             friendReviewData.movie_TMDB_id = self.selectedMovie.movie_TMDB_id;
+            friendReviewData.user_review_objectId = [object objectId];
           //  friendReviewData.movie_title = movie_title;
           //  friendReviewData.movie_poster_file = movie_poster_image;
             
@@ -970,8 +856,8 @@
         wrvc.movieID = [NSString stringWithFormat:@"%@", movie_id];
         wrvc.moviePassed = self.selectedMovie;
     } else {
-        UITableViewCell *cell = (UITableViewCell*)sender;
-        NSIndexPath *indexPath = [_friendsReviewsTable indexPathForCell:cell];
+       // UITableViewCell *cell = (UITableViewCell*)sender;
+        NSIndexPath *indexPath = [_friendsReviewsTable indexPathForSelectedRow];
         
         NSString *movieTitleToPass = _movie_title_label.text;
         UIImage *moviePosterToPass = _poster_image.image;

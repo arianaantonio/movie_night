@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MovieClass.h"
 
 @interface FollowersTableViewController : UITableViewController <UITableViewDataSource, UITableViewDelegate>
 {
@@ -17,5 +18,6 @@
 @property (nonatomic, strong) IBOutlet UITableView *followersTable;
 @property (nonatomic, strong) NSString *selectionType;
 @property (nonatomic, strong) IBOutlet UINavigationItem *navBar;
+@property (nonatomic, strong) NSString *passedUserId;
 
 @end

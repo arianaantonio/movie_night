@@ -20,11 +20,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     PFUser *currentUser = [PFUser currentUser];
     userID = currentUser.objectId;
     
@@ -42,10 +37,14 @@
 -(void)getFollowing {
     
     [followersArray removeAllObjects];
-    
+
     //get user information
     PFQuery *query = [PFUser query];
-    [query whereKey:@"objectId" equalTo:userID];
+    if ([self.passedUserId isEqualToString:@""] || self.passedUserId == nil) {
+        [query whereKey:@"objectId" equalTo:userID];
+    } else {
+        [query whereKey:@"objectId" equalTo:self.passedUserId];
+    }
     NSArray *userArray = [query findObjects];
     NSDictionary *userData = [userArray firstObject];
     
@@ -76,7 +75,11 @@
     
     //query where current users id is contained in another users friends array
     PFQuery *query = [PFUser query];
-    [query whereKey:@"friends" equalTo:userID];
+    if ([self.passedUserId isEqualToString:@""] || self.passedUserId == nil) {
+        [query whereKey:@"friends" equalTo:userID];
+    } else {
+        [query whereKey:@"friends" equalTo:self.passedUserId];
+    }
     NSArray *followersFoundArray = [query findObjects];
     
     //iterate through returned followers array

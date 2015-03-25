@@ -24,6 +24,50 @@
     [_searchBar setDelegate:self];
     [_searchBar resignFirstResponder];
     self.navigationItem.titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"movie_night_logo.png"]];
+    [self getNowPlaying];
+}
+-(void)getNowPlaying {
+    
+    if ([_segmentControl selectedSegmentIndex] == 0) {
+        //http://api.themoviedb.org/3/movie/now_playing
+        NSURL *url = [NSURL URLWithString:@"http://api.themoviedb.org/3/movie/now_playing?api_key=086941b3fdbf6f475d06a19773f6eb65"];
+        
+        [AppDelegate downloadDataFromURL:url withCompletionHandler:^(NSData *data) {
+            
+            [movieSearchArray removeAllObjects];
+            if (data != nil) {
+                NSError *error;
+                NSMutableDictionary *returnedDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
+                // NSLog(@"%@", returnedDict);
+                NSArray *array = [returnedDict objectForKey:@"results"];
+                NSLog(@"Array: %@", array);
+                
+                for (int i = 0; i < [array count]; i++) {
+                    
+                    MovieClass *newMovie = [[MovieClass alloc]init];
+                    newMovie.movie_title = [[array objectAtIndex:i]objectForKey:@"title"];
+                    NSString *dateString = [[array objectAtIndex:i]objectForKey:@"release_date"];
+                    NSDateFormatter *df = [[NSDateFormatter alloc]init];
+                    [df setDateFormat:@"yyyy-MM-dd"];
+                    NSDate *date = [df dateFromString:dateString];
+                    [df setDateFormat:@"MMM dd, yyyy"];
+                    dateString = [df stringFromDate:date];
+                    
+                    newMovie.movie_date = dateString;
+                    newMovie.movie_poster = [[array objectAtIndex:i]objectForKey:@"poster_path"];
+                    newMovie.movie_TMDB_id = [[array objectAtIndex:i]objectForKey:@"id"];
+                    
+                    [movieSearchArray addObject:newMovie];
+                }
+                [_searchTable reloadData];
+                
+                if (error != nil) {
+                    NSLog(@"%@", [error localizedDescription]);
+                }
+
+            }
+        }];
+    }
 }
 #pragma mark  - API Call
 //search based on which segment is selected
@@ -41,9 +85,12 @@
 //search movies API
 -(void)searchMovies {
     
+    [movieSearchArray removeAllObjects];
     [_searchBar resignFirstResponder];
     NSLog(@"Searched1: %@", [_searchBar text]);
     NSString *string = [_searchBar text];
+    
+    if (![string isEqualToString:@""]) {
     string = [string stringByReplacingOccurrencesOfString:@" " withString:@"+"];
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://api.themoviedb.org/3/search/movie?api_key=086941b3fdbf6f475d06a19773f6eb65&query=%@", string]];
     
@@ -80,10 +127,22 @@
             }
         }
     }];
+    } else {
+        [self getNowPlaying];
+    }
 }
 //search for users
 -(void)searchUsers {
     
+    //check if current user is following selected user
+    PFQuery *currentUserQuery = [PFUser query];
+    [currentUserQuery whereKey:@"objectId" equalTo:[PFUser currentUser].objectId];
+    NSArray *returnedArray = [currentUserQuery findObjects];
+    NSDictionary *userInfo = [returnedArray firstObject];
+    NSMutableArray *currentFriendsArray = [[NSMutableArray alloc]init];
+    currentFriendsArray = [userInfo objectForKey:@"friends"];
+    
+    [usersArray removeAllObjects];
     NSString *userSearched = [_searchBar text];
     PFQuery *usernameQuery = [PFUser query];
     [usernameQuery whereKey:@"username" equalTo:userSearched];
@@ -102,6 +161,7 @@
             NSString *userID = @"";
             UIImage *profilePic;
             NSString *fullName = @"";
+            NSString *isFollowing = @"";
             
             for (int i = 0; i < [results count]; i++) {
                 NSLog(@"Results: %@", [results objectAtIndex:i]);
@@ -117,22 +177,31 @@
                 userData.userID = userID;
                 userData.user_photo_file = profilePic;
                 userData.user_full_name = fullName;
+                if ([currentFriendsArray containsObject:userID]) {
+                    isFollowing = @"Following";
+                } else {
+                    isFollowing = @"";
+                }
+                userData.movie_date = isFollowing;
                 
                 [usersArray addObject:userData];
                 [_searchTable reloadData];
             }
         }
     }];
+    [_searchTable reloadData];
 }
 -(void)segmentSelected:(id)sender {
     
     if ([_segmentControl selectedSegmentIndex] == 0) {
-        [movieSearchArray removeAllObjects];
-        [_searchTable reloadData];
+        //[movieSearchArray removeAllObjects];
+        [_searchBar setPlaceholder:@"Movie Title"];
+       // [_searchTable reloadData];
         [self searchMovies];
     } else {
-        [usersArray removeAllObjects];
-        [_searchTable reloadData];
+        //[usersArray removeAllObjects];
+        [_searchBar setPlaceholder:@"Username, Email Address, Full Name"];
+       // [_searchTable reloadData];
         [self searchUsers];
     }
 }
@@ -168,7 +237,7 @@
         } else {
             currentMovie = [usersArray objectAtIndex:indexPath.row];
             titleLabel.text = currentMovie.username;
-            dateLabel.text = @"";
+            dateLabel.text = currentMovie.movie_date;
             posterJPG = currentMovie.user_photo_file;
         }
     
@@ -196,29 +265,25 @@
 }
 #pragma mark - Navigation
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+
+    NSIndexPath *indexPath = [_searchTable indexPathForSelectedRow];
     
     if ([_segmentControl selectedSegmentIndex] == 0) {
         MovieDetailViewController *detailViewController = segue.destinationViewController;
         
         if (detailViewController != nil) {
-            UITableViewCell *cell = (UITableViewCell*)sender;
-            NSIndexPath *indexPath = [_searchTable indexPathForCell:cell];
             
             MovieClass *currentMovie = [movieSearchArray objectAtIndex:indexPath.row];
-            
             detailViewController.selectedMovie = currentMovie;
         }
     } else {
         FriendProfileViewController *fpvc = segue.destinationViewController;
         
         if (fpvc != nil) {
-            UITableViewCell *cell = (UITableViewCell*)sender;
-            NSIndexPath *indexPath = [_searchTable indexPathForCell:cell];
-            
+
             MovieClass *currentMovie = [usersArray objectAtIndex:indexPath.row];
             
             fpvc.userIdPassed = currentMovie.userID;
-
         }
     }
 }
