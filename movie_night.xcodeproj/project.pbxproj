@@ -14,9 +14,7 @@
 		41379C681AB04A7100E93321 /* outline_star-48.png in Resources */ = {isa = PBXBuildFile; fileRef = 41379C671AB04A7100E93321 /* outline_star-48.png */; };
 		416C803B1AB0FD0E000D4C68 /* share.png in Resources */ = {isa = PBXBuildFile; fileRef = 416C803A1AB0FD0E000D4C68 /* share.png */; };
 		416C803E1AB10910000D4C68 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 416C803D1AB10910000D4C68 /* Reachability.m */; };
-		416C80411AB2EDFF000D4C68 /* TabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 416C80401AB2EDFF000D4C68 /* TabBarController.m */; };
 		416C80431AB3C962000D4C68 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 416C80421AB3C962000D4C68 /* iAd.framework */; };
-		41BEEBD71AABE0B400FA593F /* SearchUsersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41BEEBD61AABE0B400FA593F /* SearchUsersViewController.m */; };
 		41E0C8331AAFF88400B13336 /* chat-26.png in Resources */ = {isa = PBXBuildFile; fileRef = 41E0C82D1AAFF88400B13336 /* chat-26.png */; };
 		41E0C8341AAFF88400B13336 /* collaboration-26.png in Resources */ = {isa = PBXBuildFile; fileRef = 41E0C82E1AAFF88400B13336 /* collaboration-26.png */; };
 		41E0C8361AAFF88400B13336 /* my_topic-26.png in Resources */ = {isa = PBXBuildFile; fileRef = 41E0C8301AAFF88400B13336 /* my_topic-26.png */; };
@@ -87,8 +85,6 @@
 		41F9BD401AA67DEA008FA16C /* AddContactsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41F9BD3F1AA67DEA008FA16C /* AddContactsViewController.m */; };
 		41F9BD421AA67FC9008FA16C /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41F9BD411AA67FC9008FA16C /* AddressBook.framework */; };
 		41F9BD441AA68070008FA16C /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41F9BD431AA68070008FA16C /* AddressBookUI.framework */; };
-		41F9BD471AA825B0008FA16C /* AddFriendsFromSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41F9BD461AA825B0008FA16C /* AddFriendsFromSettingsViewController.m */; };
-		41F9BD4A1AA83985008FA16C /* WhereFriendsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41F9BD491AA83985008FA16C /* WhereFriendsViewController.m */; };
 		41F9BD4C1AA98AA2008FA16C /* moviereelSpinner.png in Resources */ = {isa = PBXBuildFile; fileRef = 41F9BD4B1AA98AA2008FA16C /* moviereelSpinner.png */; };
 		41F9BD4E1AAA9940008FA16C /* playButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 41F9BD4D1AAA9940008FA16C /* playButton.png */; };
 		41F9BD511AAAA4A8008FA16C /* FollowersTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41F9BD501AAAA4A8008FA16C /* FollowersTableViewController.m */; };
@@ -118,11 +114,7 @@
 		416C803A1AB0FD0E000D4C68 /* share.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = share.png; sourceTree = "<group>"; };
 		416C803C1AB10910000D4C68 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		416C803D1AB10910000D4C68 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
-		416C803F1AB2EDFF000D4C68 /* TabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TabBarController.h; sourceTree = "<group>"; };
-		416C80401AB2EDFF000D4C68 /* TabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TabBarController.m; sourceTree = "<group>"; };
 		416C80421AB3C962000D4C68 /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
-		41BEEBD51AABE0B400FA593F /* SearchUsersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchUsersViewController.h; sourceTree = "<group>"; };
-		41BEEBD61AABE0B400FA593F /* SearchUsersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchUsersViewController.m; sourceTree = "<group>"; };
 		41E0C82D1AAFF88400B13336 /* chat-26.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "chat-26.png"; sourceTree = "<group>"; };
 		41E0C82E1AAFF88400B13336 /* collaboration-26.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "collaboration-26.png"; sourceTree = "<group>"; };
 		41E0C8301AAFF88400B13336 /* my_topic-26.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "my_topic-26.png"; sourceTree = "<group>"; };
@@ -215,10 +207,6 @@
 		41F9BD3F1AA67DEA008FA16C /* AddContactsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddContactsViewController.m; sourceTree = "<group>"; };
 		41F9BD411AA67FC9008FA16C /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		41F9BD431AA68070008FA16C /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
-		41F9BD451AA825B0008FA16C /* AddFriendsFromSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddFriendsFromSettingsViewController.h; sourceTree = "<group>"; };
-		41F9BD461AA825B0008FA16C /* AddFriendsFromSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddFriendsFromSettingsViewController.m; sourceTree = "<group>"; };
-		41F9BD481AA83985008FA16C /* WhereFriendsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WhereFriendsViewController.h; sourceTree = "<group>"; };
-		41F9BD491AA83985008FA16C /* WhereFriendsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WhereFriendsViewController.m; sourceTree = "<group>"; };
 		41F9BD4B1AA98AA2008FA16C /* moviereelSpinner.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = moviereelSpinner.png; sourceTree = "<group>"; };
 		41F9BD4D1AAA9940008FA16C /* playButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = playButton.png; sourceTree = "<group>"; };
 		41F9BD4F1AAAA4A8008FA16C /* FollowersTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FollowersTableViewController.h; sourceTree = "<group>"; };
@@ -268,6 +256,48 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		41412BCF1AC3B54B00D669A3 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				41EC04E71A907040000193DD /* SearchViewController.h */,
+				41EC04E81A907040000193DD /* SearchViewController.m */,
+				41EC05211A90AD21000193DD /* MovieDetailViewController.h */,
+				41EC05221A90AD21000193DD /* MovieDetailViewController.m */,
+				41EC053A1A92EEB6000193DD /* ProfileViewController.h */,
+				41EC053B1A92EEB6000193DD /* ProfileViewController.m */,
+				41EC053D1A92EEC6000193DD /* FriendFeedViewController.h */,
+				41EC053E1A92EEC6000193DD /* FriendFeedViewController.m */,
+				41EC057E1A9C3F1A000193DD /* FriendReviewViewController.h */,
+				41EC057F1A9C3F1A000193DD /* FriendReviewViewController.m */,
+				41EC05931A9ED9B2000193DD /* WriteReviewViewController.h */,
+				41EC05941A9ED9B2000193DD /* WriteReviewViewController.m */,
+				41EC05991A9EEC62000193DD /* SettingsViewController.h */,
+				41EC059A1A9EEC62000193DD /* SettingsViewController.m */,
+				41EC059E1A9EF9DC000193DD /* LoginViewController.h */,
+				41EC059F1A9EF9DC000193DD /* LoginViewController.m */,
+				41EC05A11A9EFA1B000193DD /* SignUpViewController.h */,
+				41EC05A21A9EFA1B000193DD /* SignUpViewController.m */,
+				41F9BD3E1AA67DEA008FA16C /* AddContactsViewController.h */,
+				41F9BD3F1AA67DEA008FA16C /* AddContactsViewController.m */,
+				41F9BD4F1AAAA4A8008FA16C /* FollowersTableViewController.h */,
+				41F9BD501AAAA4A8008FA16C /* FollowersTableViewController.m */,
+				41F9BD521AAAE4CC008FA16C /* FriendProfileViewController.h */,
+				41F9BD531AAAE4CC008FA16C /* FriendProfileViewController.m */,
+				41379C5E1AAFFB4500E93321 /* NotificationsViewController.h */,
+				41379C5F1AAFFB4500E93321 /* NotificationsViewController.m */,
+			);
+			name = ViewControllers;
+			sourceTree = "<group>";
+		};
+		41412BD11AC3B56400D669A3 /* Custom Classes */ = {
+			isa = PBXGroup;
+			children = (
+				41EC051E1A90A9E3000193DD /* MovieClass.h */,
+				41EC051F1A90A9E3000193DD /* MovieClass.m */,
+			);
+			name = "Custom Classes";
+			sourceTree = "<group>";
+		};
 		41EC04D41A90703F000193DD = {
 			isa = PBXGroup;
 			children = (
@@ -294,42 +324,8 @@
 				41EC04EA1A907040000193DD /* Main.storyboard */,
 				41EC04E41A907040000193DD /* AppDelegate.h */,
 				41EC04E51A907040000193DD /* AppDelegate.m */,
-				41EC04E71A907040000193DD /* SearchViewController.h */,
-				41EC04E81A907040000193DD /* SearchViewController.m */,
-				41EC05211A90AD21000193DD /* MovieDetailViewController.h */,
-				41EC05221A90AD21000193DD /* MovieDetailViewController.m */,
-				41EC053A1A92EEB6000193DD /* ProfileViewController.h */,
-				41EC053B1A92EEB6000193DD /* ProfileViewController.m */,
-				41EC053D1A92EEC6000193DD /* FriendFeedViewController.h */,
-				41EC053E1A92EEC6000193DD /* FriendFeedViewController.m */,
-				41EC057E1A9C3F1A000193DD /* FriendReviewViewController.h */,
-				41EC057F1A9C3F1A000193DD /* FriendReviewViewController.m */,
-				41EC05931A9ED9B2000193DD /* WriteReviewViewController.h */,
-				41EC05941A9ED9B2000193DD /* WriteReviewViewController.m */,
-				41EC05991A9EEC62000193DD /* SettingsViewController.h */,
-				41EC059A1A9EEC62000193DD /* SettingsViewController.m */,
-				41EC059E1A9EF9DC000193DD /* LoginViewController.h */,
-				41EC059F1A9EF9DC000193DD /* LoginViewController.m */,
-				41EC05A11A9EFA1B000193DD /* SignUpViewController.h */,
-				41EC05A21A9EFA1B000193DD /* SignUpViewController.m */,
-				41F9BD3E1AA67DEA008FA16C /* AddContactsViewController.h */,
-				41F9BD3F1AA67DEA008FA16C /* AddContactsViewController.m */,
-				41F9BD481AA83985008FA16C /* WhereFriendsViewController.h */,
-				41F9BD491AA83985008FA16C /* WhereFriendsViewController.m */,
-				41F9BD451AA825B0008FA16C /* AddFriendsFromSettingsViewController.h */,
-				41F9BD461AA825B0008FA16C /* AddFriendsFromSettingsViewController.m */,
-				41F9BD4F1AAAA4A8008FA16C /* FollowersTableViewController.h */,
-				41F9BD501AAAA4A8008FA16C /* FollowersTableViewController.m */,
-				41F9BD521AAAE4CC008FA16C /* FriendProfileViewController.h */,
-				41F9BD531AAAE4CC008FA16C /* FriendProfileViewController.m */,
-				41BEEBD51AABE0B400FA593F /* SearchUsersViewController.h */,
-				41BEEBD61AABE0B400FA593F /* SearchUsersViewController.m */,
-				41379C5E1AAFFB4500E93321 /* NotificationsViewController.h */,
-				41379C5F1AAFFB4500E93321 /* NotificationsViewController.m */,
-				416C803F1AB2EDFF000D4C68 /* TabBarController.h */,
-				416C80401AB2EDFF000D4C68 /* TabBarController.m */,
-				41EC051E1A90A9E3000193DD /* MovieClass.h */,
-				41EC051F1A90A9E3000193DD /* MovieClass.m */,
+				41412BCF1AC3B54B00D669A3 /* ViewControllers */,
+				41412BD11AC3B56400D669A3 /* Custom Classes */,
 				41EC054C1A946374000193DD /* Resources */,
 				41EC04ED1A907040000193DD /* Images.xcassets */,
 				41EC04E01A907040000193DD /* Supporting Files */,
@@ -637,7 +633,6 @@
 				41EC053F1A92EEC6000193DD /* FriendFeedViewController.m in Sources */,
 				41EC05231A90AD21000193DD /* MovieDetailViewController.m in Sources */,
 				41EC05A01A9EF9DC000193DD /* LoginViewController.m in Sources */,
-				416C80411AB2EDFF000D4C68 /* TabBarController.m in Sources */,
 				41EC05801A9C3F1A000193DD /* FriendReviewViewController.m in Sources */,
 				41EC059B1A9EEC62000193DD /* SettingsViewController.m in Sources */,
 				41EC04E91A907040000193DD /* SearchViewController.m in Sources */,
@@ -645,16 +640,13 @@
 				41F9BD401AA67DEA008FA16C /* AddContactsViewController.m in Sources */,
 				41EC053C1A92EEB6000193DD /* ProfileViewController.m in Sources */,
 				41F9BD511AAAA4A8008FA16C /* FollowersTableViewController.m in Sources */,
-				41F9BD471AA825B0008FA16C /* AddFriendsFromSettingsViewController.m in Sources */,
 				41EC05201A90A9E3000193DD /* MovieClass.m in Sources */,
-				41F9BD4A1AA83985008FA16C /* WhereFriendsViewController.m in Sources */,
 				41EC05951A9ED9B2000193DD /* WriteReviewViewController.m in Sources */,
 				416C803E1AB10910000D4C68 /* Reachability.m in Sources */,
 				41EC04E31A907040000193DD /* main.m in Sources */,
 				41EC05A31A9EFA1B000193DD /* SignUpViewController.m in Sources */,
 				41F9BD541AAAE4CC008FA16C /* FriendProfileViewController.m in Sources */,
 				41379C601AAFFB4500E93321 /* NotificationsViewController.m in Sources */,
-				41BEEBD71AABE0B400FA593F /* SearchUsersViewController.m in Sources */,
 				41EC05AB1A9F0D94000193DD /* HCYoutubeParser.m in Sources */,
 				41EC05981A9EE2C8000193DD /* SWRevealViewController.m in Sources */,
 			);
@@ -726,7 +718,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IBSC_ERRORS = NO;
+				IBSC_ERRORS = YES;
 				IBSC_NOTICES = NO;
 				IBSC_WARNINGS = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
@@ -768,7 +760,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IBSC_ERRORS = NO;
+				IBSC_ERRORS = YES;
 				IBSC_NOTICES = NO;
 				IBSC_WARNINGS = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
@@ -794,7 +786,7 @@
 					/Users/faeryqueen21/Documents/FacebookSDK,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				IBSC_ERRORS = NO;
+				IBSC_ERRORS = YES;
 				INFOPLIST_FILE = movie_night/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -817,7 +809,7 @@
 					/Users/faeryqueen21/Documents/FacebookSDK,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				IBSC_ERRORS = NO;
+				IBSC_ERRORS = YES;
 				INFOPLIST_FILE = movie_night/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";

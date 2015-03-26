@@ -19,12 +19,12 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
     [password2Field setDelegate:self];
     [self.view endEditing:YES];
     [[[UIApplication sharedApplication] keyWindow] endEditing:YES];
     [self registerForKeyboardNotifications];
 }
-
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -150,26 +150,5 @@
     NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegex];
     return [emailTest evaluateWithObject:emailStr];
 }
-//resign keyboard
-/*
--(BOOL) textFieldShouldReturn:(UITextField *)textField{
-    
-    [usernameField resignFirstResponder];
-    [password2Field resignFirstResponder];
-    [passwordField resignFirstResponder];
-    [emailField resignFirstResponder];
-    [fullNameField resignFirstResponder];
-    
-    return YES;
-}*/
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

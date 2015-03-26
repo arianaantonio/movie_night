@@ -60,19 +60,6 @@
     [_followingButton setTitle:[NSString stringWithFormat:@"%lu", (unsigned long)[friendsArray count]] forState:UIControlStateNormal];
     UIImage *image = [UIImage imageWithData:[(PFFile *)userDict[@"profile_pic"] getData]];
     
-    /*
-    //count number of reviews for user
-    __block int reviewsCount;
-    PFQuery *countQuery = [PFQuery queryWithClassName:@"Reviews"];
-    [countQuery whereKey:@"userID" equalTo:self.userIdPassed];
-    [countQuery countObjectsInBackgroundWithBlock:^(int count, NSError *error) {
-        if (!error) {
-            reviewsCount = count;
-        } else {
-            reviewsCount = 0;
-        }
-        [_reviewsCountLabel setText:[NSString stringWithFormat:@"Reviews: %i", reviewsCount]];
-    }];*/
     //set profile pic
     if (image == nil) {
         _profilePicView.image = [UIImage imageNamed:@"Ninja.png"];
@@ -129,22 +116,22 @@
             [_listTableView reloadData];
         }
     }];
-    
-
-    
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 #pragma mark  - Actions
+//switching segments
 -(IBAction)segmentSelected:(id)sender {
     [_listTableView reloadData];
 }
+//pop to reviews
 -(void)clickedReviews:(id)sender {
     [_listSegment setSelectedSegmentIndex:0];
     [_listTableView reloadData];
 }
+//clicked to follow user
 -(IBAction)followUserClicked:(id)sender {
 
     UIButton *resultButton = (UIButton *)sender;
@@ -159,8 +146,7 @@
         [_followUserButton setTitle:@"Follow" forState:UIControlStateNormal];
         
     }
-    
-    
+    //add user to friends
     [[PFUser currentUser]setObject:currentFriendsArray forKey:@"friends"];
     [[PFUser currentUser]saveInBackground];
 }
@@ -175,7 +161,6 @@
     }
     return [movieArray count];
 }
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"movieCell" forIndexPath:indexPath];
     
@@ -282,11 +267,8 @@
         return cell;
     }
     return nil;
-
 }
-
 #pragma mark - Navigation
-
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     
@@ -319,9 +301,6 @@
         FollowersTableViewController *fvc = [segue destinationViewController];
         fvc.selectionType = @"followers";
         fvc.passedUserId = self.userIdPassed;
-
     }
 }
-
-
 @end

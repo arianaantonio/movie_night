@@ -108,7 +108,6 @@
     if (currentUser != nil) {
         [self loadData];
         [self refreshView];
-        [self checkForNewActivity];
         [_guestView setHidden:YES];
     } else {
         [_guestView setHidden:NO];
@@ -121,6 +120,7 @@
     if (userId != nil) {
         [textField resignFirstResponder];
         if ([textField tag] == 10) {
+            //update username
             [[PFUser currentUser]setObject:[_usernameField text] forKey:@"username"];
             [[PFUser currentUser]saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                 if (!error) {
@@ -141,6 +141,7 @@
                 }
             }];
         } else if ([textField tag] == 11) {
+            //update name
             [[PFUser currentUser]setObject:[_nameField text] forKey:@"full_name"];
             [[PFUser currentUser]saveInBackground];
         }
@@ -199,40 +200,6 @@
     [_followersButton setTitle:[NSString stringWithFormat:@"%lu", (unsigned long)[followersFoundArray count]] forState:UIControlStateNormal];
 
 }
--(void)checkForNewActivity {
-    
-    /*
-    NSDate *date = [[NSDate alloc]init];
-    NSDateFormatter *df = [[NSDateFormatter alloc]init];
-    [df setDateFormat:@"MMM dd, yyyy, hh:mm"];
-    NSString *timeStamp = [df stringFromDate:date];
-    date = [df dateFromString:timeStamp];
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSDate *lastUpdate = [defaults objectForKey:@"lastUpdate"];
-    
-    if (lastUpdate == nil) {
-        lastUpdate = date;
-    }
-    
-    PFQuery *updateQuery = [PFQuery queryWithClassName:@"Activity"];
-    [updateQuery whereKey:@"toUser" equalTo:userId];
-    [updateQuery whereKey:@"createdAt" greaterThan:lastUpdate];
-    [updateQuery countObjectsInBackgroundWithBlock:^(int count, NSError *error) {
-        if (!error) {
-            if (count > 0) {
-              //  [[self.tabBarController.tabBar.items objectAtIndex:2] setBadgeValue:[NSString stringWithFormat:@"%i", count]];
-            } else {
-                [[self.tabBarController.tabBar.items objectAtIndex:2] setBadgeValue:nil];
-            }
-        } else {
-            // The request failed
-        }
-    }];
-    
-    [defaults setObject:date forKey:@"lastUpdate"];*/
-}
-
 #pragma mark - Change Photo
 //upload a profile pic
 -(IBAction)uploadPhoto:(id)sender {
@@ -243,32 +210,54 @@
     
     //open action sheet to choose photo type
     if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
-        UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil
-                                                                 delegate:self
-                                                        cancelButtonTitle:@"Cancel"
-                                                   destructiveButtonTitle:nil
-                                                        otherButtonTitles:@"Take photo", @"Choose Existing", nil];
-        [actionSheet showInView:self.view];
+        UIAlertController * view=   [UIAlertController
+                                     alertControllerWithTitle:@"Upload Photo"
+                                     message:@""
+                                     preferredStyle:UIAlertControllerStyleActionSheet];
+        
+        UIAlertAction* camera = [UIAlertAction
+                                 actionWithTitle:@"Take Photo With Camera"
+                                 style:UIAlertActionStyleDefault
+                                 handler:^(UIAlertAction * action)
+                                 {
+                                     //display camera
+                                     [view dismissViewControllerAnimated:YES completion:nil];
+                                     imgPicker.sourceType = UIImagePickerControllerSourceTypeCamera;
+                                     [self presentViewController:imgPicker animated:YES completion:nil];
+                                     
+                                 }];
+        UIAlertAction* album = [UIAlertAction
+                                actionWithTitle:@"Choose Existing Photo"
+                                style:UIAlertActionStyleDefault
+                                handler:^(UIAlertAction * action)
+                                {
+                                    //display photo album
+                                    [view dismissViewControllerAnimated:YES completion:nil];
+                                    imgPicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+                                    [self presentViewController:imgPicker animated:YES completion:nil];
+                                    
+                                }];
+        UIAlertAction* cancel = [UIAlertAction
+                                 actionWithTitle:@"Cancel"
+                                 style:UIAlertActionStyleDefault
+                                 handler:^(UIAlertAction * action)
+                                 {
+                                     [view dismissViewControllerAnimated:YES completion:nil];
+                                     
+                                 }];
+        
+        
+        [view addAction:camera];
+        [view addAction:album];
+        [view addAction:cancel];
+        [self presentViewController:view animated:YES completion:nil];
     } else {
         imgPicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
         [self presentViewController:imgPicker animated:YES completion:nil];
     }
 }
-//once photo type chosen, display appropriate image picker
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
-    
-    if (buttonIndex == 0) {
-        imgPicker.sourceType = UIImagePickerControllerSourceTypeCamera;
-    } else if (buttonIndex == 1) {
-        imgPicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-    } else {
-        return;
-    }
-    
-    [self presentViewController:imgPicker animated:YES completion:nil];
-}
-- (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
-    // Close the image picker
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    // close the image picker
     [picker dismissViewControllerAnimated:YES completion:nil];
 
     //set the image on the ui
@@ -294,9 +283,11 @@
     // Return to Login view controller
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
+//reload table when user selects segment
 -(void)segmentSelected:(id)sender {
     [_listTableView reloadData];
 }
+//if clicks reviews, pop to reviews table
 -(void)clickedReviews:(id)sender {
     [_listSegment setSelectedSegmentIndex:0];
     [_listTableView reloadData];
@@ -323,6 +314,7 @@
 
     MovieClass *currentMovie;
     
+    //switch out data based on which segment is selected
     switch ([_listSegment selectedSegmentIndex]) {
         case 0:
             currentMovie = [movieArray objectAtIndex:indexPath.row];

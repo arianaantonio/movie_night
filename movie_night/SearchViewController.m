@@ -24,14 +24,19 @@
     [_searchBar setDelegate:self];
     [_searchBar resignFirstResponder];
     self.navigationItem.titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"movie_night_logo.png"]];
+    
+    //get now playing movies from API
     [self getNowPlaying];
 }
+//get now playing movies from API
 -(void)getNowPlaying {
     
+    //if search by movies is selected
     if ([_segmentControl selectedSegmentIndex] == 0) {
         //http://api.themoviedb.org/3/movie/now_playing
         NSURL *url = [NSURL URLWithString:@"http://api.themoviedb.org/3/movie/now_playing?api_key=086941b3fdbf6f475d06a19773f6eb65"];
         
+        //query the API
         [AppDelegate downloadDataFromURL:url withCompletionHandler:^(NSData *data) {
             
             [movieSearchArray removeAllObjects];
@@ -44,6 +49,7 @@
                 
                 for (int i = 0; i < [array count]; i++) {
                     
+                    //set movies to object
                     MovieClass *newMovie = [[MovieClass alloc]init];
                     newMovie.movie_title = [[array objectAtIndex:i]objectForKey:@"title"];
                     NSString *dateString = [[array objectAtIndex:i]objectForKey:@"release_date"];
@@ -57,6 +63,7 @@
                     newMovie.movie_poster = [[array objectAtIndex:i]objectForKey:@"poster_path"];
                     newMovie.movie_TMDB_id = [[array objectAtIndex:i]objectForKey:@"id"];
                     
+                    //add to array
                     [movieSearchArray addObject:newMovie];
                 }
                 [_searchTable reloadData];
@@ -64,7 +71,6 @@
                 if (error != nil) {
                     NSLog(@"%@", [error localizedDescription]);
                 }
-
             }
         }];
     }
@@ -75,16 +81,19 @@
     
     [_searchBar resignFirstResponder];
     
+    //search movies
     if ([_segmentControl selectedSegmentIndex] == 0) {
         [self searchMovies];
-    } else {
+    }
+    //search users
+    else {
         [self searchUsers];
     }
-
 }
 //search movies API
 -(void)searchMovies {
     
+    //get movie searched
     [movieSearchArray removeAllObjects];
     [_searchBar resignFirstResponder];
     NSLog(@"Searched1: %@", [_searchBar text]);
@@ -94,15 +103,18 @@
     string = [string stringByReplacingOccurrencesOfString:@" " withString:@"+"];
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://api.themoviedb.org/3/search/movie?api_key=086941b3fdbf6f475d06a19773f6eb65&query=%@", string]];
     
+    //query API for movie searched
     [AppDelegate downloadDataFromURL:url withCompletionHandler:^(NSData *data) {
         
         [movieSearchArray removeAllObjects];
+        
         if (data != nil) {
             NSError *error;
             NSMutableDictionary *returnedDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
             // NSLog(@"%@", returnedDict);
             NSArray *array = [returnedDict objectForKey:@"results"];
-            // NSLog(@"%@", array);
+       
+            //get movies returned and set to table
             for (int i = 0; i < [array count]; i++) {
                 
                 MovieClass *newMovie = [[MovieClass alloc]init];
@@ -143,6 +155,8 @@
     currentFriendsArray = [userInfo objectForKey:@"friends"];
     
     [usersArray removeAllObjects];
+    
+    //get users that match username, full name, or email address
     NSString *userSearched = [_searchBar text];
     PFQuery *usernameQuery = [PFUser query];
     [usernameQuery whereKey:@"username" equalTo:userSearched];
@@ -166,6 +180,7 @@
             for (int i = 0; i < [results count]; i++) {
                 NSLog(@"Results: %@", [results objectAtIndex:i]);
                 
+                //set results to object and table
                 NSDictionary *friendDict = [results objectAtIndex:i];
                 username = [[results objectAtIndex:i]objectForKey:@"username"];
                 userID = [[results objectAtIndex:i]objectId];
@@ -177,6 +192,8 @@
                 userData.userID = userID;
                 userData.user_photo_file = profilePic;
                 userData.user_full_name = fullName;
+                
+                //if current user is already following returned user, set label to Following
                 if ([currentFriendsArray containsObject:userID]) {
                     isFollowing = @"Following";
                 } else {
@@ -191,17 +208,14 @@
     }];
     [_searchTable reloadData];
 }
+//search based on which segment is selected
 -(void)segmentSelected:(id)sender {
     
     if ([_segmentControl selectedSegmentIndex] == 0) {
-        //[movieSearchArray removeAllObjects];
         [_searchBar setPlaceholder:@"Movie Title"];
-       // [_searchTable reloadData];
         [self searchMovies];
     } else {
-        //[usersArray removeAllObjects];
         [_searchBar setPlaceholder:@"Username, Email Address, Full Name"];
-       // [_searchTable reloadData];
         [self searchUsers];
     }
 }
@@ -247,15 +261,8 @@
     }
     return nil;
 }
--(IBAction)onMovieSelected:(id)sender {
-
-    if ([_segmentControl selectedSegmentIndex] == 0) {
-        
-        [self performSegueWithIdentifier: @"MovieSegue" sender: self];
-    } else {
-        [self performSegueWithIdentifier:@"UserSegue" sender:self];
-    }
-}- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+//one item selected in table, perform segue to appropriate screen
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if ([_segmentControl selectedSegmentIndex] == 0) {
         
         [self performSegueWithIdentifier: @"MovieSegue" sender: self];

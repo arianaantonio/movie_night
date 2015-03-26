@@ -30,6 +30,7 @@
     userId = currentUser.objectId;
     reviewId = self.selectedReview.user_review_objectId;
     
+    //check how we got here and pull data
     if (self.selectedReview.movie_poster_file == nil) {
         [self getReviewWithoutPassedData];
     } else {

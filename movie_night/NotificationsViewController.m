@@ -59,7 +59,6 @@
             NSString *fromUsername = @"";
             UIImage *userImage;
 
-            
             //get user info
             fromUserId = [activity objectForKey:@"fromUser"];
             
@@ -124,14 +123,8 @@
         
         UIButton *movieButton = (UIButton *) [cell viewWithTag:400];
         movieButton.tag = indexPath.row;
-       // if (![currentActivity.movie_title isEqualToString:@""]) {
-            [movieButton setTitle:currentActivity.movie_title forState:UIControlStateNormal];
-            //[movieButton setHidden:NO];
-      //  } else {
-           // [movieButton setTitle:@"" forState:UIControlStateNormal];
-
-           // [movieButton setHidden:YES];
-        //}
+        [movieButton setTitle:currentActivity.movie_title forState:UIControlStateNormal];
+        
         return cell;
     }
     return nil;
@@ -155,6 +148,4 @@
         frvc.selectedReview = selectedCell;
     }
 }
-
-
 @end

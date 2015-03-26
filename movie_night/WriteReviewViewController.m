@@ -26,6 +26,7 @@
     isFave = NO;
     _reviewView.delegate = self;
     
+    //if user has already reviewed set UI elements
     if (![self.moviePassed.user_review isEqualToString:@""]) {
         [_reviewView setText:self.moviePassed.user_review];
     }

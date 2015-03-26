@@ -30,6 +30,7 @@
     userId = currentUser.objectId;
     [_notEnoughLabel setHidden:YES];
     
+    //check if user is logged in or browsing as guest
     if (userId != nil) {
         [_guestLabel setHidden:YES];
         [_wantToSeeButton setHidden:NO];
@@ -42,6 +43,8 @@
     }
 }
 -(void)viewDidAppear:(BOOL)animated {
+    
+    //check if user is logged in or browsing as guest
     if (userId != nil) {
         [_guestLabel setHidden:YES];
         [self getMovieData];
@@ -51,6 +54,7 @@
         [self getMovieData];
     }
 }
+//check for new activity from other users to update badge notification
 -(void)checkForNewActivity {
     
     NSDate *date = [[NSDate alloc]init];
@@ -66,6 +70,7 @@
         lastUpdate = date;
     }
     
+    //query activity table for new activity and increment tab badge
     PFQuery *updateQuery = [PFQuery queryWithClassName:@"Activity"];
     [updateQuery whereKey:@"toUser" equalTo:userId];
     [updateQuery whereKey:@"createdAt" greaterThan:lastUpdate];
@@ -228,7 +233,6 @@
         }
         int ratingsInt = 0;
         
-        
         //loop through ratings and add them together
         for (int i = 0; i < [ratingsArray count]; i++) {
             ratingsInt += [[ratingsArray objectAtIndex:i]intValue];
@@ -242,15 +246,15 @@
         
     }];
 }
+//set average stars
 -(void)setAverageStars {
     
+    //if not enough ratings, use rating from TMDB
     if ([ratingsArray count] > 9) {
         
     } else {
         double ratingDouble = [TMDBrating doubleValue];
         ratingDouble = ratingDouble/2;
-        //ratingsTotal = [TMDBrating doubleValue];
-        //ratingsTotal = ratingsTotal/2;
         ratingsTotal = (int)roundf(ratingDouble);
     }
     
@@ -465,97 +469,11 @@
             friendReviewData.user_photo_file = friendProfilePic;
             friendReviewData.movie_TMDB_id = self.selectedMovie.movie_TMDB_id;
             friendReviewData.user_review_objectId = [object objectId];
-          //  friendReviewData.movie_title = movie_title;
-          //  friendReviewData.movie_poster_file = movie_poster_image;
             
             [friendsReviews addObject:friendReviewData];
             [_friendsReviewsTable reloadData];
         }
     }];
-    /*
-    ///----COLLATING MOVIE RATINGS====///
-    //get all ratings for this movie
-    PFQuery *ratingsQuery = [PFQuery queryWithClassName:@"Reviews"];
-    [ratingsQuery whereKey:@"movieID" equalTo:movieIDStr];
-    
-    [ratingsQuery findObjectsInBackgroundWithBlock:^(NSArray *reviews, NSError *error) {
-
-        NSString *ratings = @"";
-        NSNumber *ratingsNum;
-        NSMutableArray *ratingsArray = [[NSMutableArray alloc]init];
-        
-        //get info about friends review
-        for (PFObject *object in reviews) {
-            
-            ratings = [object objectForKey:@"rating"];
-            
-            //convert rating to a number so it can be added
-            NSNumberFormatter *nf = [[NSNumberFormatter alloc] init];
-            nf.numberStyle = NSNumberFormatterDecimalStyle;
-            ratingsNum = [nf numberFromString:ratings];
-            [ratingsArray addObject:ratingsNum];
-        }
-        int ratingsInt = 0;
-        
-        //make sure there are at least 10 ratings to be more accurate
-        if ([ratingsArray count] > 9) {
-            
-            //loop through ratings and add them together
-            for (int i = 0; i < [ratingsArray count]; i++) {
-                ratingsInt += [[ratingsArray objectAtIndex:i]intValue];
-            }
-            
-            //divide for average and round result
-            int ratingsTotal = (int)roundf(ratingsInt/[ratingsArray count]);
-            NSLog(@"Rating total: %i, Average: %i", ratingsInt,ratingsTotal);
-            
-            //set stars
-            switch (ratingsTotal) {
-                case 1:
-                    _totalStar1View.image = filledStar;
-                    _totalStar2View.image = emptyStar;
-                    _totalStar3View.image = emptyStar;
-                    _totalStar4View.image = emptyStar;
-                    _totalStar5View.image = emptyStar;
-                    break;
-                case 2:
-                    _totalStar1View.image = filledStar;
-                    _totalStar2View.image = filledStar;
-                    _totalStar3View.image = emptyStar;
-                    _totalStar4View.image = emptyStar;
-                    _totalStar5View.image = emptyStar;
-                    break;
-                case 3:
-                    _totalStar1View.image = filledStar;
-                    _totalStar2View.image = filledStar;
-                    _totalStar3View.image = filledStar;
-                    _totalStar4View.image = emptyStar;
-                    _totalStar5View.image = emptyStar;
-                    break;
-                case 4:
-                    _totalStar1View.image = filledStar;
-                    _totalStar2View.image = filledStar;
-                    _totalStar3View.image = filledStar;
-                    _totalStar4View.image = filledStar;
-                    _totalStar5View.image = emptyStar;
-                    break;
-                case 5:
-                    _totalStar1View.image = filledStar;
-                    _totalStar2View.image = filledStar;
-                    _totalStar3View.image = filledStar;
-                    _totalStar4View.image = filledStar;
-                    _totalStar5View.image = filledStar;
-                    break;
-                default:
-                    break;
-            }
-            
-        } else {
-            //if not enough reviews, show not enough label
-            [_notEnoughLabel setHidden:NO];
-        }
-    }];*/
-    
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -653,6 +571,7 @@
         [updateReview saveInBackground];
     }];
 }
+//selected movie as want to see
 -(IBAction)clickedWantToSee:(id)sender {
     if (!isWantToSee) {
         [_wantToSeeButton setImage:[UIImage imageNamed:@"blueButton.png"] forState:UIControlStateNormal];
@@ -662,6 +581,7 @@
         isWantToSee = NO;
     }
     
+    //if user has previously reviewed, update
     if (userHasReviewed) {
         
         PFQuery *query = [PFQuery queryWithClassName:@"Reviews"];
@@ -674,6 +594,7 @@
             
         }];
         
+        //if user has not previously reviewed, add a new row to Review table
     } else {
         NSDateFormatter *df = [[NSDateFormatter alloc]init];
         [df setDateFormat:@"MMM dd, yyyy"];

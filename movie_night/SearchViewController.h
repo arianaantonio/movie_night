@@ -25,7 +25,6 @@
 @property (nonatomic, strong) IBOutlet UISegmentedControl *segmentControl;
 @property (nonatomic, strong) MovieClass *userData;
 
-//-(IBAction)onSearch:(id)sender;
 -(IBAction)onMovieSelected:(id)sender;
 -(IBAction)segmentSelected:(id)sender;
 

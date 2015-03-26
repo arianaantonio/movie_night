@@ -8,13 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@interface SettingsViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
+@interface SettingsViewController : UIViewController 
 {
-    NSArray *settingsArray;
 }
-
-@property (nonatomic, strong) IBOutlet UITableView *settingsTable;
-
 
 -(IBAction)logoutButtonAction:(id)sender;
 @end

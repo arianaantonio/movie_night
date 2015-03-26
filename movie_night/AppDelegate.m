@@ -11,7 +11,6 @@
 #import <ParseFacebookUtils/PFFacebookUtils.h>
 #import "FriendFeedViewController.h"
 #import "FriendReviewViewController.h"
-//#import <FacebookSDK/FacebookSDK.h>
 
 @interface AppDelegate ()
 
@@ -28,10 +27,7 @@
                   clientKey:@"FvfYcrED2qanfxBb7XE87BXGiWquIW2iJvZKORFj"];
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
-    //AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    //self.tabBarController.delegate = appDelegate;
-    
-    //check if logged in an navigate accordingly
+    //check if logged in and navigate accordingly
     PFUser *currentUser = [PFUser currentUser];
     if (currentUser) {
         // do stuff with the user
@@ -40,9 +36,7 @@
         // show the signup or login screen
         self.window.rootViewController = [self.window.rootViewController.storyboard instantiateViewControllerWithIdentifier:@"loginViewController"];
     }
-    
-    newLaunchingOptions = launchOptions;
-    
+
     //set up notifications
     UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert |
                                                     UIUserNotificationTypeBadge |
@@ -52,31 +46,22 @@
     [application registerUserNotificationSettings:settings];
     [application registerForRemoteNotifications];
     
-    
+    //check for notification installation
     PFInstallation *currentInstallation = [PFInstallation currentInstallation];
     if ([currentInstallation objectForKey:@"user"] == nil && currentUser) {
         [currentInstallation setObject:currentUser forKey:@"user"];
         currentInstallation.channels = @[currentUser.objectId];
     }
     
-    //handle app opening from push notification
-    [self handlePush:launchOptions];
-    
     return YES;
 }
 //setup current device in parse
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-  //  PFUser *currentUser = [PFUser currentUser];
+    //  PFUser *currentUser = [PFUser currentUser];
     
     // Store the deviceToken in the current installation and save it to Parse.
     PFInstallation *currentInstallation = [PFInstallation currentInstallation];
     [currentInstallation setDeviceTokenFromData:deviceToken];
-    
-   // if (currentUser == nil) {
-       // currentInstallation.channels = @[@"global"];
-   // } else {
-       // currentInstallation.channels = @[@"global", currentUser.objectId];
-  //  }
     [currentInstallation saveInBackground];
 }
 //handle notification while app is in use
@@ -149,41 +134,7 @@
     // Resume the task.
     [task resume];
 }
-//handle app being opened from a push notification
-- (void)handlePush:(NSDictionary *)launchOptions {
-    
-    //get notification info
-   // NSDictionary *remoteNotificationPayload = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
-    /*
-    //Make sure our user and data are good
-    if (remoteNotificationPayload && [PFUser currentUser]) {
-        NSString *string = [NSString stringWithFormat:@"Disct: %@", remoteNotificationPayload];
-     
-        //transition to review view
-        NSString *activityObjectId = [remoteNotificationPayload objectForKey:@"rid"];
-        
-     
-        if (activityObjectId && activityObjectId.length != 0) {
-            PFQuery *query = [PFQuery queryWithClassName:@"Activity"];
-            [query getObjectInBackgroundWithId:activityObjectId block:^(PFObject *review, NSError *error) {
-                if (!error) {
-                    NSString *reviewId = [review objectForKey:@"reviewId"];
-                    FriendReviewViewController *detailViewController = [FriendReviewViewController alloc];
-                    detailViewController.selectedReview.user_review_objectId = reviewId;
-                    
-                    UINavigationController *homeNavigationController = [[self.tabBarController viewControllers] objectAtIndex:0];
-                    [self.tabBarController setSelectedViewController:homeNavigationController];
-                    [homeNavigationController pushViewController:detailViewController animated:YES];
-                }
-            }];
-        }
-    }*/
-}
-- (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController {
-    
-    NSLog(@"hooray this works");
-    
-}
+//start facebook session if user logged in with facebook
 - (BOOL) application:(UIApplication *)application handleOpenURL:(NSURL *)url {
     return [PFFacebookUtils session];
 }

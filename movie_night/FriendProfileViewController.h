@@ -16,7 +16,7 @@
     NSString *userId;
     NSArray *friendsArray;
     NSMutableArray *currentFriendsArray;
-   // NSString *userId;
+
 }
 
 @property (nonatomic, strong) IBOutlet UITableView *listTableView;

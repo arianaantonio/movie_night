@@ -25,7 +25,6 @@
 @property (nonatomic, strong) MovieClass *selectedReview;
 @property (nonatomic, strong) IBOutlet UIImageView *profilePic;
 @property (nonatomic, strong) IBOutlet UIImageView *posterView;
-//@property (nonatomic, strong) IBOutlet UILabel *titleLabel;
 @property (nonatomic, strong) IBOutlet UIImageView *star1;
 @property (nonatomic, strong) IBOutlet UIImageView *star2;
 @property (nonatomic, strong) IBOutlet UIImageView *star3;

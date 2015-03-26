@@ -13,7 +13,7 @@
 {
     NSMutableArray *notifArray;
     NSString *userId;
-   // MovieClass *activityUser;
+
 }
 
 @property (nonatomic, strong) IBOutlet UITableView *notifTable;

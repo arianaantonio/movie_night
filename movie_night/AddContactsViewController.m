@@ -33,6 +33,7 @@
     
     __block BOOL accessGranted = NO;
     
+    //request access to contacts on phone
     if (ABAddressBookRequestAccessWithCompletion != NULL) {
         dispatch_semaphore_t sema = dispatch_semaphore_create(0);
         ABAddressBookRequestAccessWithCompletion(addressBook, ^(bool granted, CFErrorRef error) {
@@ -42,17 +43,16 @@
         dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
         
     }
-    
+    //if user gives access
     if (accessGranted) {
         
         ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, error);
         ABRecordRef source = ABAddressBookCopyDefaultSource(addressBook);
         CFArrayRef allPeople = ABAddressBookCopyArrayOfAllPeopleInSourceWithSortOrdering(addressBook, source, kABPersonSortByFirstName);
         CFIndex nPeople = CFArrayGetCount(allPeople);
-       // CFIndex nPeople = ABAddressBookGetPersonCount(addressBook);
         NSMutableArray *items = [NSMutableArray arrayWithCapacity:nPeople];
         
-        
+        //loop through contacts returned
         for (int i = 0; i < nPeople; i++) {
             
             ABRecordRef person = CFArrayGetValueAtIndex(allPeople, i);
@@ -68,7 +68,6 @@
             }
             
             //get Contact email
-            
             NSMutableArray *contactEmails = [NSMutableArray new];
             ABMultiValueRef multiEmails = ABRecordCopyValue(person, kABPersonEmailProperty);
             NSString *contactEmail = @"";
@@ -78,7 +77,6 @@
                 
                 CFStringRef contactEmailRef = ABMultiValueCopyValueAtIndex(multiEmails, i);
                 contactEmail = (__bridge NSString *)contactEmailRef;
-                //[contactEmails addObject:contactEmail];
                 contacts = [[NSDictionary alloc]initWithObjectsAndKeys: firstNames, @"firstName", lastNames, @"lastName", contactEmail, @"contactEmail", nil];
                 
                 [items addObject:contacts];
@@ -98,6 +96,7 @@
                 
             }
         }
+        //check for friends using Movie Night
         NSLog(@"Array: %@", hasEmailsArray);
         PFQuery *friendsQuery = [PFUser query];
         [friendsQuery whereKey:@"email" containedIn:hasEmailsArray];
@@ -105,7 +104,7 @@
             
             if (!error) {
                 
-                
+                //display friends using movie night
                 for (PFObject *object in objects) {
                     NSLog(@"%@", object.objectId);
                     NSLog(@"You have a friend: %@", [object objectForKey:@"username"]);
@@ -138,6 +137,7 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+//add contacts selected to friends in movie night
 -(IBAction)addContacts:(id)sender {
     
     [toAddArray addObject:[[contactArray objectAtIndex:[sender tag]]objectForKey:@"userID"]];

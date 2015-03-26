@@ -42,10 +42,9 @@
         [self presentViewController:alertController animated:YES completion:nil];
     }
 
-       //initialize facebook with Parse
+    //initialize facebook with Parse
     [PFFacebookUtils initializeFacebook];
 }
-
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -99,9 +98,32 @@
         } else {
             //user logged in
             if (user.isNew) {
-                UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Hello" message:@"Please choose a username" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Submit", nil];
-                alert.alertViewStyle = UIAlertViewStylePlainTextInput;
-                [alert show];
+                
+                UIAlertController *alert=   [UIAlertController
+                                              alertControllerWithTitle:@"Hello"
+                                              message:@"Please choose a username"
+                                              preferredStyle:UIAlertControllerStyleAlert];
+                
+                UIAlertAction *submit = [UIAlertAction actionWithTitle:@"Submit" style:UIAlertActionStyleDefault
+                                                           handler:^(UIAlertAction * action) {
+                                                               //Do Some action here
+                                                               UITextField *textField = alert.textFields[0];
+                                                               [self saveNewUser:[textField text]];
+                                                               
+                                                           }];
+                UIAlertAction* cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault
+                                                               handler:^(UIAlertAction * action) {
+                                                                   [alert dismissViewControllerAnimated:YES completion:nil];
+                                                               }];
+                
+                [alert addAction:submit];
+                [alert addAction:cancel];
+                
+                [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+                    textField.placeholder = @"Username";
+                }];
+                
+                [self presentViewController:alert animated:YES completion:nil];
                 
                 NSLog(@"user signed up and logged in w/Facebook");
             } else {
@@ -145,13 +167,13 @@
         }
     }];
 }
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
-    NSLog(@"Entered: %@",[[alertView textFieldAtIndex:0] text]);
+//save new facebook user with selected username
+-(void)saveNewUser:(NSString *)username {
+    NSLog(@"Entered: %@",username);
     
-    if ([[[alertView textFieldAtIndex:0]text] isEqualToString:@"(null)"]) {
-        
+    if (![username isEqualToString:@""] || username == nil) {
         PFQuery *query = [PFUser query];
-        [query whereKey:@"username" equalTo:[[alertView textFieldAtIndex:0] text]];
+        [query whereKey:@"username" equalTo:username];
         [query countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
             if(number > 0) {
                 NSLog(@"Username exists");
@@ -172,7 +194,7 @@
                         [[PFUser currentUser]setObject:me.objectID forKey:@"fbId"];
                         [[PFUser currentUser]setObject:me.name forKey:@"full_name"];
                         [[PFUser currentUser]setObject:[me objectForKey:@"email"] forKey:@"email"];
-                        [[PFUser currentUser]setObject:[[alertView textFieldAtIndex:0]text] forKey:@"username"];
+                        [[PFUser currentUser]setObject:username forKey:@"username"];
                         [[PFUser currentUser] saveInBackground];
                         
                         PFUser *user = [PFUser currentUser];
@@ -204,7 +226,6 @@
                                  
                              }
                          }];
-                        
                         [self performSegueWithIdentifier:@"tabSegue" sender:self];
                     }
                 }];

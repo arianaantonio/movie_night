@@ -32,6 +32,7 @@
         [currentInstallation setObject:[NSNumber numberWithInt:0] forKey:@"badge"];
     }
     
+    //check for network status
     reachGoogle = [Reachability reachabilityWithHostName:@"www.google.com"];
     checkNetworkStatus = [reachGoogle currentReachabilityStatus];
     
@@ -51,14 +52,8 @@
         [self setupRefreshControl];
         [self checkForNewActivity];
     }
-    //[self checkForNewActivity];
-    
 }
--(void)viewDidAppear:(BOOL)animated {
-    if (userId != nil) {
-       // [self checkForNewActivity];
-    }
-}
+//check for new activity to increment tab badge
 -(void)checkForNewActivity {
     __block int count = 0;
     PFQuery *activityQuery = [PFQuery queryWithClassName:@"Activity"];
@@ -86,36 +81,6 @@
             [[self.tabBarController.tabBar.items objectAtIndex:2] setBadgeValue:nil];
         }
     }];
-    /*
-    NSDate *date = [[NSDate alloc]init];
-    NSDateFormatter *df = [[NSDateFormatter alloc]init];
-    [df setDateFormat:@"MMM dd, yyyy, hh:mm:ss"];
-    NSString *timeStamp = [df stringFromDate:date];
-    date = [df dateFromString:timeStamp];
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSDate *lastUpdate = [defaults objectForKey:@"lastUpdate"];
-  
-    if (lastUpdate == nil) {
-        lastUpdate = date;
-    }
-    
-    PFQuery *updateQuery = [PFQuery queryWithClassName:@"Activity"];
-    [updateQuery whereKey:@"toUser" equalTo:userId];
-    [updateQuery whereKey:@"createdAt" greaterThan:lastUpdate];
-    [updateQuery countObjectsInBackgroundWithBlock:^(int count, NSError *error) {
-        if (!error) {
-            if (count > 0) {
-                [[self.tabBarController.tabBar.items objectAtIndex:2] setBadgeValue:[NSString stringWithFormat:@"%i", count]];
-            } else {
-                [[self.tabBarController.tabBar.items objectAtIndex:2] setBadgeValue:nil];
-            }
-        } else {
-            // The request failed
-        }
-    }];
-    
-    [defaults setObject:date forKey:@"lastUpdate"];*/
 }
 #pragma mark - Refreshing
 //refresh the friend feed
@@ -188,7 +153,6 @@
                 [self.refreshControl endRefreshing];
             }];
         }
-        
     }];
 }
 - (void)setupRefreshControl
@@ -259,18 +223,15 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"friendCell" forIndexPath:indexPath];
     
     MovieClass *currentMovie = [feedArray objectAtIndex:indexPath.row];
-    if (cell != nil)
-    {
+    if (cell != nil) {
         
         UIImageView *posterView = (UIImageView *) [cell viewWithTag:9];
-        //UIImage *posterImage = [UIImage imageNamed:currentMovie.movie_poster];
         posterView.image = currentMovie.movie_poster_file;
         
         UILabel *titleLabel = (UILabel *) [cell viewWithTag:2];
         titleLabel.text = [NSString stringWithFormat:@"%@ rated %@:", currentMovie.username, currentMovie.movie_title];
         
         UIImageView *profilePicView = (UIImageView *) [cell viewWithTag:1];
-       // UIImage *picImage = [UIImage imageNamed:currentMovie.user_photo];
         profilePicView.image = currentMovie.user_photo_file;
         
         UILabel *reviewLabel = (UILabel *) [cell viewWithTag:8];
@@ -349,8 +310,6 @@
         MovieClass *currentMovie = [feedArray objectAtIndex:indexPath.row];
         vc.selectedReview = currentMovie;
     }
-        
 }
-
 
 @end
