@@ -34,7 +34,7 @@
         self.window.rootViewController = [self.window.rootViewController.storyboard instantiateViewControllerWithIdentifier:@"tabBarController"];
     } else {
         // show the signup or login screen
-        self.window.rootViewController = [self.window.rootViewController.storyboard instantiateViewControllerWithIdentifier:@"loginViewController"];
+        self.window.rootViewController = [self.window.rootViewController.storyboard instantiateViewControllerWithIdentifier:@"initialNavController"];
     }
 
     //set up notifications
@@ -66,7 +66,7 @@
 }
 //handle notification while app is in use
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    [PFPush handlePush:userInfo];
+   // [PFPush handlePush:userInfo];
 }
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
