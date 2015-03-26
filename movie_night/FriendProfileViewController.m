@@ -92,6 +92,7 @@
             NSNumber *isFave;
             UIImage *moviePoster;
             NSString *movieID = @"";
+            NSNumber *isWantToSee;
             
             for (PFObject *object in objects) {
                 NSLog(@"%@", object.objectId);
@@ -102,6 +103,7 @@
                 movieTitle = [object objectForKey:@"movieTitle"];
                 isFave = [object objectForKey:@"isFavorite"];
                 movieID = [object objectForKey:@"movieID"];
+                isWantToSee = [object objectForKey:@"isWantToSee"];
                 MovieClass *tmpMovie = [[MovieClass alloc]init];
                 tmpMovie.movie_title = movieTitle;
                 tmpMovie.user_rating = rating;
@@ -110,6 +112,11 @@
                 [movieArray addObject:tmpMovie];
                 if ([isFave intValue] == 1) {
                     [favoritesArray addObject:tmpMovie];
+                }
+                if ([isWantToSee intValue] ==1) {
+                    [wantToSeeArray addObject:tmpMovie];
+                } else {
+                    [movieArray addObject:tmpMovie];
                 }
             }
             [_reviewsCountButton setTitle:[NSString stringWithFormat:@"%lu", [movieArray count]] forState:UIControlStateNormal];

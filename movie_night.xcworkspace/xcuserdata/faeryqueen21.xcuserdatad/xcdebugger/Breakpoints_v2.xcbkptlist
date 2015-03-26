@@ -1256,11 +1256,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "movie_night/FriendProfileViewController.m"
-            timestampString = "449033688.453289"
+            timestampString = "449036897.045508"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "174"
-            endingLineNumber = "174"
+            startingLineNumber = "181"
+            endingLineNumber = "181"
             landmarkName = "-tableView:cellForRowAtIndexPath:"
             landmarkType = "5">
          </BreakpointContent>
@@ -1272,11 +1272,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "movie_night/FriendProfileViewController.m"
-            timestampString = "449033688.453289"
+            timestampString = "449036897.045508"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "155"
-            endingLineNumber = "155"
+            startingLineNumber = "162"
+            endingLineNumber = "162"
             landmarkName = "-tableView:numberOfRowsInSection:"
             landmarkType = "5">
          </BreakpointContent>
@@ -1288,11 +1288,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "movie_night/FriendProfileViewController.m"
-            timestampString = "449033688.453289"
+            timestampString = "449036897.045508"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "111"
-            endingLineNumber = "111"
+            startingLineNumber = "113"
+            endingLineNumber = "113"
             landmarkName = "-loadUserInfo"
             landmarkType = "5">
          </BreakpointContent>
@@ -1304,11 +1304,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "movie_night/FriendProfileViewController.m"
-            timestampString = "449033688.453289"
+            timestampString = "449036897.045508"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "127"
-            endingLineNumber = "127"
+            startingLineNumber = "134"
+            endingLineNumber = "134"
             landmarkName = "-segmentSelected:"
             landmarkType = "5">
          </BreakpointContent>
@@ -1368,11 +1368,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "movie_night/FriendProfileViewController.m"
-            timestampString = "449033688.453289"
+            timestampString = "449036897.045508"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "135"
-            endingLineNumber = "135"
+            startingLineNumber = "142"
+            endingLineNumber = "142"
             landmarkName = "-followUserClicked:"
             landmarkType = "5">
          </BreakpointContent>
@@ -2758,11 +2758,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "movie_night/FriendProfileViewController.m"
-            timestampString = "449033688.453289"
+            timestampString = "449036897.045508"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "275"
-            endingLineNumber = "275"
+            startingLineNumber = "282"
+            endingLineNumber = "282"
             landmarkName = "-prepareForSegue:sender:"
             landmarkType = "5">
          </BreakpointContent>
@@ -2854,11 +2854,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "movie_night/FriendProfileViewController.m"
-            timestampString = "449033688.453289"
+            timestampString = "449036897.045508"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "139"
-            endingLineNumber = "139"
+            startingLineNumber = "146"
+            endingLineNumber = "146"
             landmarkName = "-followUserClicked:"
             landmarkType = "5">
          </BreakpointContent>
@@ -2902,11 +2902,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "movie_night/FriendProfileViewController.m"
-            timestampString = "449033688.453289"
+            timestampString = "449036897.045508"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "296"
-            endingLineNumber = "296"
+            startingLineNumber = "303"
+            endingLineNumber = "303"
             landmarkName = "-prepareForSegue:sender:"
             landmarkType = "5">
             <Locations>

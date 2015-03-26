@@ -66,7 +66,7 @@
 }
 //handle notification while app is in use
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-   // [PFPush handlePush:userInfo];
+    [PFPush handlePush:userInfo];
 }
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
