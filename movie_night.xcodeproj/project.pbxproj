@@ -15,6 +15,7 @@
 		416C803B1AB0FD0E000D4C68 /* share.png in Resources */ = {isa = PBXBuildFile; fileRef = 416C803A1AB0FD0E000D4C68 /* share.png */; };
 		416C803E1AB10910000D4C68 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 416C803D1AB10910000D4C68 /* Reachability.m */; };
 		416C80431AB3C962000D4C68 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 416C80421AB3C962000D4C68 /* iAd.framework */; };
+		41DEBCD41AC4EB8D0017E760 /* TabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 41DEBCD31AC4EB8D0017E760 /* TabBarController.m */; };
 		41E0C8331AAFF88400B13336 /* chat-26.png in Resources */ = {isa = PBXBuildFile; fileRef = 41E0C82D1AAFF88400B13336 /* chat-26.png */; };
 		41E0C8341AAFF88400B13336 /* collaboration-26.png in Resources */ = {isa = PBXBuildFile; fileRef = 41E0C82E1AAFF88400B13336 /* collaboration-26.png */; };
 		41E0C8361AAFF88400B13336 /* my_topic-26.png in Resources */ = {isa = PBXBuildFile; fileRef = 41E0C8301AAFF88400B13336 /* my_topic-26.png */; };
@@ -115,6 +116,8 @@
 		416C803C1AB10910000D4C68 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		416C803D1AB10910000D4C68 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		416C80421AB3C962000D4C68 /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
+		41DEBCD21AC4EB8D0017E760 /* TabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TabBarController.h; sourceTree = "<group>"; };
+		41DEBCD31AC4EB8D0017E760 /* TabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TabBarController.m; sourceTree = "<group>"; };
 		41E0C82D1AAFF88400B13336 /* chat-26.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "chat-26.png"; sourceTree = "<group>"; };
 		41E0C82E1AAFF88400B13336 /* collaboration-26.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "collaboration-26.png"; sourceTree = "<group>"; };
 		41E0C8301AAFF88400B13336 /* my_topic-26.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "my_topic-26.png"; sourceTree = "<group>"; };
@@ -285,6 +288,8 @@
 				41F9BD531AAAE4CC008FA16C /* FriendProfileViewController.m */,
 				41379C5E1AAFFB4500E93321 /* NotificationsViewController.h */,
 				41379C5F1AAFFB4500E93321 /* NotificationsViewController.m */,
+				41DEBCD21AC4EB8D0017E760 /* TabBarController.h */,
+				41DEBCD31AC4EB8D0017E760 /* TabBarController.m */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -647,6 +652,7 @@
 				41EC05A31A9EFA1B000193DD /* SignUpViewController.m in Sources */,
 				41F9BD541AAAE4CC008FA16C /* FriendProfileViewController.m in Sources */,
 				41379C601AAFFB4500E93321 /* NotificationsViewController.m in Sources */,
+				41DEBCD41AC4EB8D0017E760 /* TabBarController.m in Sources */,
 				41EC05AB1A9F0D94000193DD /* HCYoutubeParser.m in Sources */,
 				41EC05981A9EE2C8000193DD /* SWRevealViewController.m in Sources */,
 			);
