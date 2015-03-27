@@ -9,7 +9,8 @@
 #import "AppDelegate.h"
 #import <Parse/Parse.h>
 #import <ParseFacebookUtils/PFFacebookUtils.h>
-//#import <FacebookSDK/FacebookSDK.h>
+#import "FriendFeedViewController.h"
+#import "FriendReviewViewController.h"
 
 @interface AppDelegate ()
 
@@ -21,20 +22,51 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
+    //set up parse for application
     [Parse setApplicationId:@"IASTyOSCs3IoFTnmNU7JcBQ4ZoDzTVb1ESK8jwSW"
                   clientKey:@"FvfYcrED2qanfxBb7XE87BXGiWquIW2iJvZKORFj"];
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
+    //check if logged in and navigate accordingly
     PFUser *currentUser = [PFUser currentUser];
     if (currentUser) {
         // do stuff with the user
         self.window.rootViewController = [self.window.rootViewController.storyboard instantiateViewControllerWithIdentifier:@"tabBarController"];
     } else {
         // show the signup or login screen
-        self.window.rootViewController = [self.window.rootViewController.storyboard instantiateViewControllerWithIdentifier:@"loginViewController"];
+        self.window.rootViewController = [self.window.rootViewController.storyboard instantiateViewControllerWithIdentifier:@"initialNavController"];
+    }
+
+    //set up notifications
+    UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert |
+                                                    UIUserNotificationTypeBadge |
+                                                    UIUserNotificationTypeSound);
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:userNotificationTypes
+                                                                             categories:nil];
+    [application registerUserNotificationSettings:settings];
+    [application registerForRemoteNotifications];
+    
+    //check for notification installation
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    if ([currentInstallation objectForKey:@"user"] == nil && currentUser) {
+        [currentInstallation setObject:currentUser forKey:@"user"];
+        currentInstallation.channels = @[currentUser.objectId];
     }
     
     return YES;
+}
+//setup current device in parse
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    //  PFUser *currentUser = [PFUser currentUser];
+    
+    // Store the deviceToken in the current installation and save it to Parse.
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    [currentInstallation setDeviceTokenFromData:deviceToken];
+    [currentInstallation saveInBackground];
+}
+//handle notification while app is in use
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+    [PFPush handlePush:userInfo];
 }
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
@@ -48,7 +80,6 @@
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     [FBAppCall handleDidBecomeActiveWithSession:[PFFacebookUtils session]];
 }
-
 - (void)applicationWillTerminate:(UIApplication *)application {
     [[PFFacebookUtils session] close];
 }
@@ -65,14 +96,10 @@
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
-}
-/*
-- (void)applicationDidBecomeActive:(UIApplication *)application {
-    // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     
-    // Logs 'install' and 'app activate' App Events.
-    [FBAppEvents activateApp];
-}*/
+    //reset any badge notifications
+    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
+}
 
 +(void)downloadDataFromURL:(NSURL *)url withCompletionHandler:(void (^)(NSData *))completionHandler{
     // Instantiate a session configuration object.
@@ -107,8 +134,8 @@
     // Resume the task.
     [task resume];
 }
+//start facebook session if user logged in with facebook
 - (BOOL) application:(UIApplication *)application handleOpenURL:(NSURL *)url {
     return [PFFacebookUtils session];
 }
-
 @end

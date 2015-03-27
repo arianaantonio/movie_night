@@ -7,32 +7,77 @@
 //
 
 #import "FriendReviewViewController.h"
+#import "MovieDetailViewController.h"
+#import "FriendProfileViewController.h"
+#import <Parse/Parse.h>
 
 @interface FriendReviewViewController ()
 
 @end
 
 @implementation FriendReviewViewController
+@synthesize scrollView, commentField;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     commentArray = [[NSMutableArray alloc]init];
+    likesArray = [[NSMutableArray alloc]init];
+    [commentField setDelegate:self];
+    [self registerForKeyboardNotifications];
     
-    UIImage *profilePicImage = [UIImage imageNamed:self.selectedReview.user_photo];
+    PFUser *currentUser = [PFUser currentUser];
+    userId = currentUser.objectId;
+    reviewId = self.selectedReview.user_review_objectId;
+    
+    //check how we got here and pull data
+    if (self.selectedReview.movie_poster_file == nil) {
+        [self getReviewWithoutPassedData];
+    } else {
+        [self getReviewWithPassedData];
+    }
+    
+    //get current user data
+    PFQuery *query = [PFUser query];
+    [query whereKey:@"objectId" equalTo:currentUser.objectId];
+    NSArray *userArray = [query findObjects];
+    NSLog(@"User: %@", [userArray firstObject]);
+    NSDictionary *userDict = [userArray firstObject];
+    username = [userDict objectForKey:@"username"];
+    userImage = [UIImage imageWithData:[(PFFile *)userDict[@"profile_pic"] getData]];
+    
+    [self getComments];
+    [self getLikes];
+    
+}
+-(void)getReviewWithPassedData {
+    //set friend profile pic
+    UIImage *profilePicImage = self.selectedReview.user_photo_file;
     _profilePic.image = profilePicImage;
     
-    UIImage *posterImage = [UIImage imageNamed:self.selectedReview.movie_poster];
-    _posterView.image = posterImage;
+    //set poster
+    UIImage *posterImage = self.selectedReview.movie_poster_file;
+    if (posterImage != nil) {
+        _posterView.image = posterImage;
+    } else {
+        _posterView.image = self.moviePosterPassed;
+    }
     
-    _titleLabel.text = [NSString stringWithFormat:@"%@ has rated %@:", self.selectedReview.username, self.selectedReview.movie_title];
-    
+    reviewerUsername = self.selectedReview.username;
+    reviewerUserId = self.selectedReview.userID;
+    [_usernameButton setTitle:self.selectedReview.username forState:UIControlStateNormal];
+    if (self.selectedReview.movie_title != nil) {
+        [_movieTitleButton setTitle:self.selectedReview.movie_title forState:UIControlStateNormal];
+    } else {
+        [_movieTitleButton setTitle:self.movieTitlePassed forState:UIControlStateNormal];
+    }
     _reviewField.text = self.selectedReview.user_review;
     
+    //set stars
     NSString *rating = self.selectedReview.user_rating;
     
-    NSString *filledStar = @"star-48.png";
-    NSString *emptyStar = @"star-50.png";
+    NSString *filledStar = @"christmas_star-48.png";
+    NSString *emptyStar = @"outline_star-48.png";
     
     UIImage *star1Image;
     UIImage *star2Image;
@@ -78,24 +123,277 @@
     _star3.image = star3Image;
     _star4.image = star4Image;
     _star5.image = star5Image;
-    
-    
-    
 }
+-(void)getReviewWithoutPassedData {
+    
+    self.selectedReview.userID = userId;
+    PFQuery *reviewQuery = [PFQuery queryWithClassName:@"Reviews"];
+    [reviewQuery whereKey:@"objectId" equalTo:reviewId];
+    
+    [reviewQuery findObjectsInBackgroundWithBlock:^(NSArray *reviews, NSError *error) {
+        
+        for (PFObject *object in reviews) {
+            
+            //set poster
+            UIImage *posterImage = [UIImage imageWithData:[(PFFile *)object[@"moviePoster"]getData]];
+            _posterView.image = posterImage;
+            self.selectedReview.movie_TMDB_id = [object objectForKey:@"movieID"];
+            
+            PFQuery *user = [PFUser query];
+            [user whereKey:@"objectId" equalTo:userId];
+            NSArray *userArray = [user findObjects];
+            NSDictionary *userDict = [userArray firstObject];
+            
+            //set friend profile pic
+            UIImage *profilePicImage = [UIImage imageWithData:[(PFFile *)userDict[@"profile_pic"]getData]];;
+            _profilePic.image = profilePicImage;
+            
+            reviewerUsername = [userDict objectForKey:@"username"];
+            reviewerUserId = [userDict objectForKey:@"userID"];
+            [_usernameButton setTitle:[userDict objectForKey:@"username"] forState:UIControlStateNormal];
+            [_movieTitleButton setTitle:[object objectForKey:@"movieTitle"] forState:UIControlStateNormal];
+            
+            _reviewField.text = [object objectForKey:@"review"];
+            
+            //set stars
+            NSNumber *ratingNum = [object objectForKey:@"rating"];
+            NSString *rating = [NSString stringWithFormat:@"%@", ratingNum];
+            
+            NSString *filledStar = @"christmas_star-48.png";
+            NSString *emptyStar = @"outline_star-48.png";
+            
+            UIImage *star1Image;
+            UIImage *star2Image;
+            UIImage *star3Image;
+            UIImage *star4Image;
+            UIImage *star5Image;
+            
+            if ([rating isEqual:@"1"]) {
+                star1Image = [UIImage imageNamed:filledStar];
+                star2Image = [UIImage imageNamed:emptyStar];
+                star3Image = [UIImage imageNamed:emptyStar];
+                star4Image = [UIImage imageNamed:emptyStar];
+                star5Image = [UIImage imageNamed:emptyStar];
+            } else if ([rating isEqual:@"2"]) {
+                star1Image = [UIImage imageNamed:filledStar];
+                star2Image = [UIImage imageNamed:filledStar];
+                star3Image = [UIImage imageNamed:emptyStar];
+                star4Image = [UIImage imageNamed:emptyStar];
+                star5Image = [UIImage imageNamed:emptyStar];
+            } else if ([rating isEqual:@"3"]) {
+                star1Image = [UIImage imageNamed:filledStar];
+                star2Image = [UIImage imageNamed:filledStar];
+                star3Image = [UIImage imageNamed:filledStar];
+                star4Image = [UIImage imageNamed:emptyStar];
+                star5Image = [UIImage imageNamed:emptyStar];
+                
+            } else if ([rating isEqual:@"4"]) {
+                star1Image = [UIImage imageNamed:filledStar];
+                star2Image = [UIImage imageNamed:filledStar];
+                star3Image = [UIImage imageNamed:filledStar];
+                star4Image = [UIImage imageNamed:filledStar];
+                star5Image = [UIImage imageNamed:emptyStar];
+                
+            } else {
+                star1Image = [UIImage imageNamed:filledStar];
+                star2Image = [UIImage imageNamed:filledStar];
+                star3Image = [UIImage imageNamed:filledStar];
+                star4Image = [UIImage imageNamed:filledStar];
+                star5Image = [UIImage imageNamed:filledStar];
+            }
+            _star1.image = star1Image;
+            _star2.image = star2Image;
+            _star3.image = star3Image;
+            _star4.image = star4Image;
+            _star5.image = star5Image;
+            
+        }
+    }];
+}
+//get previous comments from parse
+-(void)getComments {
+    
+    //get comments that contain this review id
+    PFQuery *reviewsQuery = [PFQuery queryWithClassName:@"Activity"];
+    [reviewsQuery whereKey:@"reviewId" equalTo:reviewId];
+    [reviewsQuery whereKey:@"activityType" equalTo:@"comment"];
+    [reviewsQuery orderByAscending:@"createdAt"];
+    [reviewsQuery findObjectsInBackgroundWithBlock:^(NSArray *reviews, NSError *error) {
+        
+        for (PFObject *object in reviews) {
+            NSLog(@"Object: %@", object);
+            
+            NSString *prevComment = [object objectForKey:@"comment"];
+            NSString *prevUserId = [object objectForKey:@"fromUser"];
+            commenterId = [object objectForKey:@"fromUser"];
+            
+            //get info about user who left comment
+            PFQuery *userQuery = [PFUser query];
+            [userQuery whereKey:@"objectId" equalTo:prevUserId];
+            NSArray *usersArray = [userQuery findObjects];
+            NSDictionary *userDict = [usersArray firstObject];
+        
+            NSString *prevUsername = [userDict objectForKey:@"username"];
+            UIImage *image = [UIImage imageWithData:[(PFFile *)userDict[@"profile_pic"] getData]];
+
+            //put comments in table
+            NSDictionary *tmpDict = [[NSDictionary alloc]initWithObjectsAndKeys:prevComment, @"comment", prevUsername, @"username", image, @"profile_pic", commenterId, @"userId", nil];
+            [commentArray addObject:tmpDict];
+            [_commentTable reloadData];
+        }
+    }];
+}
+-(void)getLikes {
+    
+    //get likes that contain this review id
+    PFQuery *reviewsQuery = [PFQuery queryWithClassName:@"Activity"];
+    [reviewsQuery whereKey:@"reviewId" equalTo:reviewId];
+    [reviewsQuery whereKey:@"activityType" equalTo:@"like"];
+    [reviewsQuery orderByAscending:@"createdAt"];
+    [reviewsQuery findObjectsInBackgroundWithBlock:^(NSArray *reviews, NSError *error) {
+        
+        
+        for (PFObject *object in reviews) {
+            NSLog(@"Object: %@", object);
+            
+            NSString *prevUserId = [object objectForKey:@"fromUser"];
+            
+            //get info about user who left like
+            PFQuery *userQuery = [PFUser query];
+            [userQuery whereKey:@"objectId" equalTo:prevUserId];
+            NSArray *usersArray = [userQuery findObjects];
+            NSDictionary *userDict = [usersArray firstObject];
+            
+            NSString *prevUsername = [userDict objectForKey:@"username"];
+            [likesArray addObject:prevUsername];
+            NSString *likesString = [likesArray componentsJoinedByString:@", "];
+            [_likesLabel setText:[NSString stringWithFormat:@"Likes: %@", likesString]];
+        }
+        if ([likesArray containsObject:username]) {
+            [_likeButton setTitle:@"Liked" forState:UIControlStateNormal];
+            [_likeButton setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+        }
+            
+    }];
+}
+//set up textfield so return button closes keyboard
+-(BOOL)textFieldShouldReturn:(UITextField*)textField {
+
+    [textField resignFirstResponder];
+    return NO;
+}
+//register keyboard to receive notifications
+- (void)registerForKeyboardNotifications {
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWasShown:) name:UIKeyboardDidShowNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillBeHidden:) name:UIKeyboardWillHideNotification object:nil];
+}
+//call when keyboard is shown
+- (void)keyboardWasShown:(NSNotification*)aNotification {
+    
+    NSDictionary* info = [aNotification userInfo];
+    CGSize kbSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    
+    UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, kbSize.height, 0.0);
+    scrollView.contentInset = contentInsets;
+    scrollView.scrollIndicatorInsets = contentInsets;
+    
+    //scroll view to bottem field so keyboard doesn't hide it
+    CGRect aRect = self.view.frame;
+    aRect.size.height -= kbSize.height;
+    
+    if (!CGRectContainsPoint(aRect, commentField.frame.origin) ) {
+        
+        [self.scrollView scrollRectToVisible:commentField.frame animated:YES];
+    }
+}
+//when keyboard is hidden
+- (void)keyboardWillBeHidden:(NSNotification*)aNotification {
+    
+    //sroll view down when keyboard is hidden to regular dimensions
+    UIEdgeInsets contentInsets = UIEdgeInsetsZero;
+    scrollView.contentInset = contentInsets;
+    scrollView.scrollIndicatorInsets = contentInsets;
+}
+//when user posts a comment
 -(void)onPostComment:(id)sender {
-    NSString *comment = [_commentField text];
-    NSDictionary *commentDict = [NSDictionary dictionaryWithObjectsAndKeys:comment, @"comment", nil];
-    [commentArray addObject:commentDict];
-    [_commentTable reloadData];
-    [_commentField setText:@""];
+    NSString *comment = [commentField text];
+    [commentField resignFirstResponder];
+    
+    if ([sender tag] == 1) {
+        if (![comment isEqualToString:@""]) {
+            
+            //add to comment table
+            NSDictionary *commentDict = [NSDictionary dictionaryWithObjectsAndKeys:comment, @"comment", username, @"username", userImage, @"profile_pic", nil];
+            [commentArray addObject:commentDict];
+            [_commentTable reloadData];
+            [commentField setText:@""];
+            
+            //save to parse
+            PFObject *newComment = [PFObject objectWithClassName:@"Activity"];
+            newComment[@"activityType"] = @"comment";
+            newComment[@"fromUser"] = userId;
+            newComment[@"toUser"] = self.selectedReview.userID;
+            newComment[@"movieID"] = self.selectedReview.movie_TMDB_id;
+            newComment[@"comment"] = comment;
+            newComment[@"reviewId"] = reviewId;
+            newComment[@"movieTitle"] = self.selectedReview.movie_title;
+            newComment[@"isNew"] = @"Yes";
+            [newComment saveInBackground];
+        }
+    } else {
+        
+        //if user already liked and is unliking, remove username
+        if ([likesArray containsObject:username]) {
+            [likesArray removeObject:username];
+            NSString *likesString = [likesArray componentsJoinedByString:@", "];
+            if ([likesArray count] > 0) {
+                [_likesLabel setText:[NSString stringWithFormat:@"Likes: %@", likesString]];
+            } else {
+                [_likesLabel setText:@""];
+            }
+            [_likeButton setTitle:@"Like" forState:UIControlStateNormal];
+            [_likeButton setTitleColor:[UIColor colorWithRed:109.0/255.0 green:189.0/255.0 blue:214.0/255.0 alpha:1.0f] forState:UIControlStateNormal];
+            
+            //delete from Activity
+            PFQuery *deleteQuery = [PFQuery queryWithClassName:@"Activity"];
+            [deleteQuery whereKey:@"fromUser" equalTo:userId];
+            [deleteQuery whereKey:@"toUser" equalTo:reviewerUserId];
+            [deleteQuery whereKey:@"activityType" equalTo:@"like"];
+            [deleteQuery whereKey:@"reviewId" equalTo:reviewId];
+            [deleteQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+                [[objects firstObject]deleteInBackground];
+            }];
+            
+        }
+        //else, add the username
+        else {
+    
+            //save to label
+            [likesArray addObject:username];
+            NSString *likesString = [likesArray componentsJoinedByString:@", "];
+            [_likesLabel setText:[NSString stringWithFormat:@"Likes: %@", likesString]];
+            [_likeButton setTitle:@"Liked" forState:UIControlStateNormal];
+            [_likeButton setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+            
+            //save to parse
+            PFObject *newLike = [PFObject objectWithClassName:@"Activity"];
+            newLike[@"activityType"] = @"like";
+            newLike[@"fromUser"] = userId;
+            newLike[@"toUser"] = self.selectedReview.userID;
+            newLike[@"movieID"] = self.selectedReview.movie_TMDB_id;
+            newLike[@"reviewId"] = reviewId;
+            newLike[@"movieTitle"] = self.selectedReview.movie_title;
+            newLike[@"isNew"] = @"Yes";
+            [newLike saveInBackground];
+        }
+    }
 }
 #pragma mark TableView
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return [commentArray count];
 }
-
-
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"commentCell" forIndexPath:indexPath];
@@ -105,11 +403,11 @@
     if (cell != nil) {
         
         UIImageView *profilePicView = (UIImageView *) [cell viewWithTag:1];
-        UIImage *profileImage = [UIImage imageNamed:@"profilepic6.jpg"];
+        UIImage *profileImage = [commentDict objectForKey:@"profile_pic"];
         profilePicView.image = profileImage;
         
         UILabel *nameLabel = (UILabel *) [cell viewWithTag:2];
-        nameLabel.text = @"templepilot17 said:";
+        nameLabel.text = [commentDict objectForKey:@"username"];
         
         UILabel *commentLabel = (UILabel *) [cell viewWithTag:3];
         commentLabel.text = [commentDict objectForKey:@"comment"];
@@ -122,15 +420,32 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-/*
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    
+    //if segueing to movie detail controller
+    if ([[segue identifier] isEqualToString:@"movieDetail"]) {
+        MovieDetailViewController *mdvc = [segue destinationViewController];
+        mdvc.passed_movie_id = self.selectedReview.movie_TMDB_id;
+        mdvc.selectedMovie = self.selectedReview;
+    }
+    else if ([[segue identifier]isEqualToString:@"friendCommentProfile"]) {
+        UITableViewCell *cell = (UITableViewCell*)sender;
+        NSIndexPath *indexPath = [_commentTable indexPathForCell:cell];
+        
+        FriendProfileViewController *fpvc = [segue destinationViewController];
+        fpvc.userIdPassed = [[commentArray objectAtIndex:indexPath.row]objectForKey:@"userId"];
+    }
+    //else segueing to friend profile page
+    else {
+        FriendProfileViewController *fpvc = [segue destinationViewController];
+        fpvc.userIdPassed = self.selectedReview.userID;
+        NSLog(@"User id : %@, Passed: %@", self.selectedReview.userID, fpvc.userIdPassed);
+    }
+    
 }
-*/
+
 
 @end

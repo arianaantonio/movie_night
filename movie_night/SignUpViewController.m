@@ -14,16 +14,68 @@
 @end
 
 @implementation SignUpViewController
-@synthesize usernameField, passwordField, password2Field, emailField, fullNameField, errorLabel;
+@synthesize usernameField, passwordField, password2Field, emailField, fullNameField, errorLabel, scrollView;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    [password2Field setDelegate:self];
+    [self.view endEditing:YES];
+    [[[UIApplication sharedApplication] keyWindow] endEditing:YES];
+    [self registerForKeyboardNotifications];
 }
-
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+//set up textfield so return button puts focus on the next textfield
+-(BOOL)textFieldShouldReturn:(UITextField*)textField {
+    
+    NSInteger nextTag = textField.tag + 1;
+    UIResponder* nextResponder = [textField.superview viewWithTag:nextTag];
+    
+    //responder to next responder until reaching the last, then resign
+    if (nextResponder) {
+        [nextResponder becomeFirstResponder];
+    } else {
+        [textField resignFirstResponder];
+    }
+    return YES;
+}
+//register keyboard to receive notifications
+- (void)registerForKeyboardNotifications {
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWasShown:) name:UIKeyboardDidShowNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillBeHidden:) name:UIKeyboardWillHideNotification object:nil];
+}
+//call when keyboard is shown
+- (void)keyboardWasShown:(NSNotification*)aNotification {
+    
+    NSDictionary* info = [aNotification userInfo];
+    CGSize kbSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    
+    UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, kbSize.height, 0.0);
+    scrollView.contentInset = contentInsets;
+    scrollView.scrollIndicatorInsets = contentInsets;
+    
+    //scroll view to bottem field so keyboard doesn't hide it
+    CGRect aRect = self.view.frame;
+    aRect.size.height -= kbSize.height;
+    
+    if (!CGRectContainsPoint(aRect, password2Field.frame.origin) ) {
+        
+        [self.scrollView scrollRectToVisible:password2Field.frame animated:YES];
+    }
+}
+//when keyboard is hidden
+- (void)keyboardWillBeHidden:(NSNotification*)aNotification {
+    
+    //sroll view down when keyboard is hidden to regular dimensions
+    UIEdgeInsets contentInsets = UIEdgeInsetsZero;
+    scrollView.contentInset = contentInsets;
+    scrollView.scrollIndicatorInsets = contentInsets;
 }
 //clicked sign up
 -(IBAction)signUpClicked:(id)sender {
@@ -61,10 +113,15 @@
     }
     //sign up user
     else {
+        UIImage *image = [UIImage imageNamed:@"Ninja.png"];
+        NSData *imageData = UIImageJPEGRepresentation(image, 0.8);
+        PFFile *imageFile = [PFFile fileWithName:@"img" data:imageData];
+
         PFUser *user = [PFUser user];
         user.username = [usernameField text];
         user.password = [passwordField text];
         user.email = [emailField text];
+        user[@"profile_pic"] = imageFile;
         
         if (![fullName isEqualToString:@""]) {
             user[@"full_name"] = fullName;
@@ -73,13 +130,15 @@
         [user signUpInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
             if (!error) {
                 //Send user to main app
-                [self performSegueWithIdentifier:@"signUpSegue" sender:self];
+                [self performSegueWithIdentifier:@"addContactsSegue" sender:self];
             } else {
                 NSString *errorString = [error userInfo][@"error"];
                 NSLog(@"Error: %@", errorString);
                 //if username already in use
                 if ([error code] == 202) {
                     [errorLabel setText:@"Username already in use"];
+                } else if ([error code] == 203) {
+                    [errorLabel setText:@"Email already in use"];
                 }
             }
         }];
@@ -91,14 +150,5 @@
     NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegex];
     return [emailTest evaluateWithObject:emailStr];
 }
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

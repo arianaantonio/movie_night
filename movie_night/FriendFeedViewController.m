@@ -7,6 +7,7 @@
 //
 
 #import "FriendFeedViewController.h"
+#import <Parse/Parse.h>
 
 @interface FriendFeedViewController ()
 
@@ -19,92 +20,196 @@
     // Do any additional setup after loading the view.
     self.navigationItem.titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"movie_night_logo.png"]];
     
-    MovieClass *friend1 = [[MovieClass alloc]init];
-    friend1.username = @"lttl32";
-    friend1.user_review = @"Really loved this movie";
-    friend1.user_rating = @"5";
-    friend1.movie_poster = @"gravity.jpg";
-    friend1.movie_title = @"Gravity";
-    friend1.user_photo = @"profilepic1.jpg";
+    feedArray = [[NSMutableArray alloc]init];
+    PFUser *currentUser = [PFUser currentUser];
+    userId = currentUser.objectId;
     
-    MovieClass *friend2 = [[MovieClass alloc]init];
-    friend2.username = @"beccagirl";
-    friend2.user_rating = @"2";
-    friend2.user_photo = @"profilepic3.jpg";
-    friend2.user_review = @"Not worth the price of the ticket";
-    friend2.movie_title = @"Taken 3";
-    friend2.movie_poster = @"taken3.jpg";
+    //make sure notifications are set to logged in user
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    if (currentUser) {
+        [currentInstallation setObject:currentUser forKey:@"user"];
+        currentInstallation.channels = @[currentUser.objectId];
+        [currentInstallation setObject:[NSNumber numberWithInt:0] forKey:@"badge"];
+    }
     
-    MovieClass *friend3 = [[MovieClass alloc]init];
-    friend3.username = @"jason33";
-    friend3.user_rating = @"2";
-    friend3.user_photo = @"profilepic2.jpg";
-    friend3.user_review = @"Not great but not terrible either. Liam is fun.";
-    friend3.movie_title = @"Non-Stop";
-    friend3.movie_poster = @"nonstop.jpg";
+    //check for network status
+    reachGoogle = [Reachability reachabilityWithHostName:@"www.google.com"];
+    checkNetworkStatus = [reachGoogle currentReachabilityStatus];
     
-    MovieClass *friend4 = [[MovieClass alloc]init];
-    friend4.username = @"faeryqueen21";
-    friend4.user_rating = @"3";
-    friend4.user_photo = @"profilepic6.jpg";
-    friend4.user_review = @"Not worth the price of the ticket";
-    friend4.movie_title = @"Need For Speed";
-    friend4.movie_poster = @"Need_For_Speed_New_Oficial_Poster_JPosters.jpg";
-    
-    MovieClass *friend5 = [[MovieClass alloc]init];
-    friend5.username = @"ryanmovieguy";
-    friend5.user_rating = @"5";
-    friend5.user_photo = @"profilepic4.jpg";
-    friend5.user_review = @"Loved it!! Great action flick with lots of intensity.";
-    friend5.movie_title = @"Taken 3";
-    friend5.movie_poster = @"taken3.jpg";
-    
-    MovieClass *friend6 = [[MovieClass alloc]init];
-    friend6.username = @"beccagirl";
-    friend6.user_rating = @"5";
-    friend6.user_photo = @"profilepic3.jpg";
-    friend6.user_review = @"Best movie ever! Can't get the music out of my head!";
-    friend6.movie_title = @"Frozen";
-    friend6.movie_poster = @"frozen.jpg";
-    
-    MovieClass *friend7 = [[MovieClass alloc]init];
-    friend7.username = @"filmbuff24";
-    friend7.user_rating = @"3";
-    friend7.user_photo = @"profilepic5.jpg";
-    friend7.user_review = @"Acting was good but found the movie a bit overrated. And what's with the fake baby?!";
-    friend7.movie_title = @"Americna Sniper";
-    friend7.movie_poster = @"americansniper.jpg";
-    
-    MovieClass *friend8 = [[MovieClass alloc]init];
-    friend8.username = @"jason33";
-    friend8.user_rating = @"4";
-    friend8.user_photo = @"profilepic2.jpg";
-    friend8.user_review = @"Really enjoyable movie and surpsingly funny! Left with a big smile on my face.";
-    friend8.movie_title = @"The Lego Movie";
-    friend8.movie_poster = @"the-lego-movie-poster-full-photo.jpg";
-    
-    MovieClass *friend9 = [[MovieClass alloc]init];
-    friend9.username = @"faeryqueen21";
-    friend9.user_rating = @"4";
-    friend9.user_photo = @"profilepic6.jpg";
-    friend9.user_review = @"Great movie with excellant acting but by the end I was really OVER drumming.";
-    friend9.movie_title = @"Whiplash";
-    friend9.movie_poster = @"whiplash.jpg";
-    
-    MovieClass *friend10 = [[MovieClass alloc]init];
-    friend10.username = @"ryanmovieguy";
-    friend10.user_rating = @"5";
-    friend10.user_photo = @"profilepic5.jpg";
-    friend10.user_review = @"Such a classic! One of my favorite movies ever.";
-    friend10.movie_title = @"Back To The Future";
-    friend10.movie_poster = @"back-to-the-future.jpg";
-    
-    feedArray = [[NSArray alloc]initWithObjects:friend1, friend10, friend2, friend3, friend4, friend5, friend6, friend7, friend8, friend9, nil];
-    
-    
-    
-}
+    if (checkNetworkStatus == NotReachable) {
 
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error" message:@"Please connect to a network" preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alertController addAction:okAction];
+        [self presentViewController:alertController animated:YES completion:nil];
+    }
+    
+    if (currentUser == nil) {
+        
+    } else {
+        [self refreshFeed];
+        [self setupRefreshControl];
+        [self checkForNewActivity];
+    }
+}
+//check for new activity to increment tab badge
+-(void)checkForNewActivity {
+    __block int count = 0;
+    PFQuery *activityQuery = [PFQuery queryWithClassName:@"Activity"];
+    [activityQuery whereKey:@"toUser" equalTo:userId];
+    [activityQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        
+        //check for new activities
+        for (PFObject *object in objects) {
+            NSLog(@"Object: %@", object);
+            if ([[object objectForKey:@"isNew"]isEqualToString:@"Yes"]) {
+                count++;
+                PFQuery *query = [PFQuery queryWithClassName:@"Activity"];
+                // Retrieve the object by id and update to no
+                [query getObjectInBackgroundWithId:object.objectId block:^(PFObject *updateReview, NSError *error) {
+                    
+                    updateReview[@"isNew"] =  @"No";
+                    [updateReview saveInBackground];
+                }];
+            }
+
+        }
+        if (count > 0) {
+            [[self.tabBarController.tabBar.items objectAtIndex:2] setBadgeValue:[NSString stringWithFormat:@"%i", count]];
+        } else {
+            [[self.tabBarController.tabBar.items objectAtIndex:2] setBadgeValue:nil];
+        }
+    }];
+}
+#pragma mark - Refreshing
+//refresh the friend feed
+-(void)refreshFeed {
+    [feedArray removeAllObjects];
+    
+    PFUser *currentUser = [PFUser currentUser];
+    
+    //get users friends
+    PFQuery *query = [PFUser query];
+    [query whereKey:@"objectId" equalTo:currentUser.objectId];
+    NSArray *userArray = [query findObjects];
+    NSDictionary *userDict = [userArray firstObject];
+    NSArray *friendsArray = [[NSArray alloc]initWithArray:[userDict objectForKey:@"friends"]];
+    
+    //get reviews that contain friends userIDs
+    PFQuery *reviewsQuery = [PFQuery queryWithClassName:@"Reviews"];
+    [reviewsQuery whereKey:@"userID" containedIn:friendsArray];
+    [reviewsQuery orderByDescending:@"createdAt"];
+    [reviewsQuery findObjectsInBackgroundWithBlock:^(NSArray *reviews, NSError *error) {
+        
+       // for (PFObject *object in reviews) {
+        for (int i = 0; i < [reviews count]; i++) {
+            
+            PFObject *object = [reviews objectAtIndex:i];
+            
+            //get user info
+            PFQuery *userInfo = [PFUser query];
+            [userInfo whereKey:@"objectId" equalTo:[object objectForKey:@"userID"]];
+           // NSArray *friends = [userInfo findObjects];
+            [userInfo findObjectsInBackgroundWithBlock:^(NSArray *friends, NSError *error) {
+                
+                
+                //NSArray *friendArray = [userInfo findObjects];
+                NSDictionary *friendDict = [friends firstObject];
+                NSString *friendName = [friendDict objectForKey:@"username"];
+                UIImage *profilePic = [UIImage imageWithData:[(PFFile *)friendDict[@"profile_pic"]getData]];
+                NSLog(@"Friend: %@", friendDict);
+                NSString *friendID = [object objectForKey:@"userID"];
+                
+                //get review info
+                NSString *userReview = [object objectForKey:@"review"];
+                NSString *userRating = [object objectForKey:@"rating"];
+                NSString *movieTitle = [object objectForKey:@"movieTitle"];
+                UIImage *moviePoster = [UIImage imageWithData:[(PFFile *)object[@"moviePoster"]getData]];
+                NSString *movieID = [object objectForKey:@"movieID"];
+                NSNumber *isWantToSee = [object objectForKey:@"isWantToSee"];
+                
+                //set to tmp class
+                MovieClass *tmpMovie = [[MovieClass alloc]init];
+                tmpMovie.username = friendName;
+                tmpMovie.user_photo_file = profilePic;
+                tmpMovie.user_review = userReview;
+                tmpMovie.user_rating = userRating;
+                tmpMovie.movie_title = movieTitle;
+                tmpMovie.movie_poster_file = moviePoster;
+                tmpMovie.movie_TMDB_id = movieID;
+                tmpMovie.userID = friendID;
+                tmpMovie.user_review_objectId = object.objectId;
+                
+                //make sure movie is a review
+                if ([isWantToSee intValue]==0) {
+                    //add to array
+                    [feedArray addObject:tmpMovie];
+
+                }
+                
+                //reload table
+                [_feedTableView reloadData];
+                [self.refreshControl endRefreshing];
+            }];
+        }
+    }];
+}
+- (void)setupRefreshControl
+{
+    //Create refresh control
+    self.refreshControl = [[UIRefreshControl alloc] init];
+    NSMutableAttributedString *refreshString = [[NSMutableAttributedString alloc] initWithString:@"Refreshing Reviews..."];
+    self.refreshControl.attributedTitle = refreshString;
+    
+    //Create view for image
+    refreshLoadingView = [[UIView alloc] initWithFrame:self.refreshControl.bounds];
+    refreshLoadingView.backgroundColor = [UIColor clearColor];
+    
+    //Create image and center it in view
+    spinningIcon = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"moviereelSpinner.png"]];
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGFloat screenWidth = screenRect.size.width/2;
+    [spinningIcon setFrame:CGRectMake(screenWidth-25, self.refreshControl.frame.origin.y+5, spinningIcon.frame.size.width, spinningIcon.frame.size.height)];
+    
+    //add image to view
+    [refreshLoadingView addSubview:spinningIcon];
+    refreshLoadingView.clipsToBounds = YES;
+   
+   // self.refreshControl.tintColor = [UIColor clearColor];
+    [self.refreshControl addSubview:refreshLoadingView];
+    
+    //Set flags
+    isRefreshIconsOverlap = NO;
+    isRefreshAnimating = NO;
+    
+    //Set refresh selector
+    [self.refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
+}
+- (void)refresh:(id)sender{
+    
+    [self animateRefreshView];
+    [self refreshFeed];
+}
+- (void)animateRefreshView
+{
+    //Set to animating
+    isRefreshAnimating = YES;
+    [UIView animateWithDuration:0.3
+                          delay:0
+                        options:UIViewAnimationOptionCurveLinear
+                     animations:^{
+                         // Rotate the icon
+                         [spinningIcon setTransform:CGAffineTransformRotate(spinningIcon.transform, M_PI_2)];
+                     }
+                     completion:^(BOOL finished) {
+                         //refresh until call is done
+                         if (self.refreshControl.isRefreshing) {
+                             [self animateRefreshView];
+                         }else{
+                         }
+                     }];
+}
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -118,19 +223,16 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"friendCell" forIndexPath:indexPath];
     
     MovieClass *currentMovie = [feedArray objectAtIndex:indexPath.row];
-    if (cell != nil)
-    {
+    if (cell != nil) {
         
         UIImageView *posterView = (UIImageView *) [cell viewWithTag:9];
-        UIImage *posterImage = [UIImage imageNamed:currentMovie.movie_poster];
-        posterView.image = posterImage;
+        posterView.image = currentMovie.movie_poster_file;
         
         UILabel *titleLabel = (UILabel *) [cell viewWithTag:2];
         titleLabel.text = [NSString stringWithFormat:@"%@ rated %@:", currentMovie.username, currentMovie.movie_title];
         
         UIImageView *profilePicView = (UIImageView *) [cell viewWithTag:1];
-        UIImage *picImage = [UIImage imageNamed:currentMovie.user_photo];
-        profilePicView.image = picImage;
+        profilePicView.image = currentMovie.user_photo_file;
         
         UILabel *reviewLabel = (UILabel *) [cell viewWithTag:8];
         reviewLabel.text = currentMovie.user_review;
@@ -147,8 +249,8 @@
         UIImage *star4Image;
         UIImage *star5Image;
         
-        NSString *filledStar = @"star-48.png";
-        NSString *emptyStar = @"star-50.png";
+        NSString *filledStar = @"christmas_star-48.png";
+        NSString *emptyStar = @"outline_star-48.png";
         
         if ([currentMovie.user_rating isEqual:@"1"]) {
             star1Image = [UIImage imageNamed:filledStar];
@@ -208,8 +310,6 @@
         MovieClass *currentMovie = [feedArray objectAtIndex:indexPath.row];
         vc.selectedReview = currentMovie;
     }
-        
 }
-
 
 @end

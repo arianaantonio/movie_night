@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <Parse/Parse.h>
 
 @interface MovieClass : NSObject
 
@@ -25,5 +26,12 @@
 @property (nonatomic, strong) NSString *username;
 @property (nonatomic, strong) NSString *user_review;
 @property (nonatomic, strong) NSString *user_photo;
+@property (nonatomic, strong) UIImage *user_photo_file;
+@property (nonatomic, strong) NSNumber *user_is_fave;
+@property (nonatomic, strong) NSString *user_review_objectId;
+@property (nonatomic, strong) UIImage *movie_poster_file;
+@property (nonatomic, strong) NSString *userID;
+@property (nonatomic, strong) NSString *user_full_name;
+@property (nonatomic, strong) NSString *isBrowsing;
 
 @end

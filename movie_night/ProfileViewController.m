@@ -10,6 +10,8 @@
 #import "SWRevealViewController.h"
 #import <Parse/Parse.h>
 #import <ParseFacebookUtils/PFFacebookUtils.h>
+#import <Parse/Parse.h>
+#import "FollowersTableViewController.h"
 
 @interface ProfileViewController ()
 
@@ -22,17 +24,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [_uploadPhoto setHidden:YES];
-    
-    //check for current user
-    PFUser *currentUser = [PFUser currentUser];
-    if (currentUser &&
-        [PFFacebookUtils isLinkedWithUser:[PFUser currentUser]]) {
-        [self loadData];
-    } else if (currentUser) {
-        [self loadData];
-    }
-    
     //init reveal controller for settings
     SWRevealViewController *revealViewController = self.revealViewController;
     
@@ -43,103 +34,119 @@
         [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
     }
     
-    MovieClass *movie1 = [[MovieClass alloc] init];
-    movie1.movie_title = @"Birdman";
-    movie1.user_rating = @"5";
-    movie1.movie_poster = @"birdman.jpg";
-    movie1.movie_date = @"Dec 12, 2015";
-    movie1.movie_director = @"Alejandro Inarritu";
-    movie1.movie_cast = @"Michael Keaton";
-    movie1.movie_plot_overview = @"A faded actor tries to reclaim industry respect by launching a Broadway play";
+    _usernameField.delegate = self;
+    _nameField.delegate = self;
+    wantToSeeArray = [[NSMutableArray alloc]init];
+    favoritesArray = [[NSMutableArray alloc]init];
+    movieArray = [[NSMutableArray alloc]init];
+
+}
+-(void)refreshView {
     
-    MovieClass *movie2 = [[MovieClass alloc]init];
-    movie2.movie_title = @"Whiplash";
-    movie2.user_rating = @"4";
-    movie2.movie_poster = @"whiplash.jpg";
-    movie2.movie_date = @"Nov 23, 2014";
-    movie2.movie_cast = @"J.K. Simmons";
-    movie2.movie_plot_overview = @"A young drummer at a prestigeous conservatory tries to impress his difficult band leader";
-    movie2.movie_director = @"Damian Chazelle";
+    [movieArray removeAllObjects];
+    [favoritesArray removeAllObjects];
+    [wantToSeeArray removeAllObjects];
     
-    MovieClass *movie3 = [[MovieClass alloc]init];
-    movie3.movie_title = @"Taken 3";
-    movie3.user_rating = @"2";
-    movie3.movie_poster = @"taken3.jpg";
-    movie3.movie_date = @"Aug 14, 2014";
-    movie3.movie_cast = @"Liam Nesson";
-    movie3.movie_director = @"Olivier Megaton";
-    movie3.movie_plot_overview = @"In this sequal Bryan is on the run after he is blamed for his wife's death";
+    //get user reviews
+    PFQuery *query2 = [PFQuery queryWithClassName:@"Reviews"];
+    [query2 whereKey:@"userID" equalTo:userId];
+    [query2 orderByDescending:@"createdAt"];
+    [query2 findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        
+        if (!error) {
+            
+            NSString *movieTitle = @"";
+            NSString *rating = @"";
+            NSNumber *isFave;
+            UIImage *moviePoster;
+            NSString *movieID = @"";
+            NSNumber *isWantToSee;
+            NSDate *dateReleased;
+            
+            for (PFObject *object in objects) {
+                NSLog(@"%@", object.objectId);
+                
+                //get object data returned
+                rating = [object objectForKey:@"rating"];
+                moviePoster = [UIImage imageWithData:[(PFFile *)object[@"moviePoster"]getData]];
+                movieTitle = [object objectForKey:@"movieTitle"];
+                isFave = [object objectForKey:@"isFavorite"];
+                movieID = [object objectForKey:@"movieID"];
+                isWantToSee = [object objectForKey:@"isWantToSee"];
+                dateReleased = [object objectForKey:@"dateReleased"];
+                MovieClass *tmpMovie = [[MovieClass alloc]init];
+                tmpMovie.movie_title = movieTitle;
+                tmpMovie.user_rating = rating;
+                tmpMovie.movie_poster_file = moviePoster;
+                tmpMovie.movie_TMDB_id = movieID;
+                NSDateFormatter *df = [[NSDateFormatter alloc]init];
+                [df setDateFormat:@"MMM dd, yyyy"];
+                NSString *date = [df stringFromDate:dateReleased];
+                tmpMovie.movie_date = date;
+                
+                if ([isFave intValue] == 1) {
+                    [favoritesArray addObject:tmpMovie];
     
-    MovieClass *movie4 = [[MovieClass alloc]init];
-    movie4.movie_title = @"American Sniper";
-    movie4.user_rating = @"3";
-    movie4.movie_poster = @"americansniper.jpg";
-    movie4.movie_date = @"Dec 25, 2014";
-    movie4.movie_plot_overview = @"Based on the book by Chris Kyle about his time as a sniper";
-    movie4.movie_cast = @"Bradley Cooper";
-    movie4.movie_director = @"Clint Eastwood";
-    
-    MovieClass *movie5 = [[MovieClass alloc]init];
-    movie5.movie_title = @"Selma";
-    movie5.user_rating = @"5";
-    movie5.movie_poster = @"selma.jpg";
-    movie5.movie_date = @"Dec 28, 2014";
-    movie5.movie_director = @"Ava DuVernay";
-    movie5.movie_cast = @"David Oyelowo";
-    movie5.movie_plot_overview = @"Based on the true events surrounding the civil rights march from Selma";
-    
-    MovieClass *movie6 = [[MovieClass alloc]init];
-    movie6.movie_title = @"Need for Speed";
-    movie6.user_rating = @"1";
-    movie6.movie_poster = @"Need_For_Speed_New_Oficial_Poster_JPosters.jpg";
-    movie6.movie_date = @"Mar 12, 2014";
-    movie6.movie_cast = @"Aaron Paul";
-    movie6.movie_director = @"Scott Waugh";
-    movie6.movie_plot_overview = @"An ex-racer fresh out of jail seeks to redeem himself in a high stakes race";
-    
-    MovieClass *movie7 = [[MovieClass alloc]init];
-    movie7.movie_title = @"Back To The Future";
-    movie7.user_rating = @"5";
-    movie7.movie_poster = @"back-to-the-future.jpg";
-    movie7.movie_date = @"Jun 22, 1985";
-    movie7.movie_plot_overview = @"A young time traveler finds himself stranded in 1955 and he much make sure his parents get together to return to the future";
-    movie7.movie_cast = @"Michael J Fox";
-    movie7.movie_director = @"Robert Zemekis";
-    
-    MovieClass *movie8 = [[MovieClass alloc]init];
-    movie8.movie_title = @"Gravity";
-    movie8.user_rating = @"5";
-    movie8.movie_poster = @"gravity.jpg";
-    movie8.movie_date = @"Jul 12, 2013";
-    movie8.movie_director = @"Alfonso Cuaron";
-    movie8.movie_cast = @"Sandra Bullock";
-    movie8.movie_plot_overview = @"When satellite depris destroys the space shuttle a stranded astronaut must survive in the cold of space";
-    
-    MovieClass *movie9 = [[MovieClass alloc]init];
-    movie9.movie_title = @"Frozen";
-    movie9.user_rating = @"4";
-    movie9.movie_poster = @"frozen.jpg";
-    movie9.movie_date = @"Nov 18, 2013";
-    movie9.movie_cast = @"Kristen Bell";
-    movie9.movie_plot_overview = @"A Disney classic about two sisters trying to find happiness when one has magical powers";
-    movie9.movie_director = @"Chris Buck, Jennifer Lee";
-    
-    MovieClass *movie10 = [[MovieClass alloc]init];
-    movie10.movie_title = @"The Lego Movie";
-    movie10.user_rating = @"5";
-    movie10.movie_poster = @"the-lego-movie-poster-full-photo.jpg";
-    movie10.movie_date = @"Feb 12, 2014";
-    movie10.movie_cast = @"Chris Pratt";
-    movie10.movie_plot_overview = @"An all Lego animated movie about finding yourself in a big and complicated world";
-    movie10.movie_director = @"Phil Lord";
-    
-    movieArray = [[NSMutableArray alloc]initWithObjects:movie1, movie2, movie3, movie4, movie5, movie6, movie7, movie8, movie9, movie10, nil];
-    
-    favoritesArray = [[NSMutableArray alloc]initWithObjects:movie9, movie6, movie1, movie8, movie2, movie4, movie10, movie5, movie3, movie7, nil];
-    
-    wantToSeeArray = [[NSMutableArray alloc]initWithObjects:movie3, movie9, movie6, movie10, movie2, movie8, movie4, movie7, movie5, movie1, nil];
+                }
+                if ([isWantToSee intValue] ==1) {
+                    [wantToSeeArray addObject:tmpMovie];
+                } else {
+                    [movieArray addObject:tmpMovie];
+                }
+                [_listTableView reloadData];
+            }
+        }
+    }];
+}
+//load and refresh data whenever we come back to the profile screen
+-(void)viewDidAppear:(BOOL)animated {
+    //check for current user
+    PFUser *currentUser = [PFUser currentUser];
+    userId = currentUser.objectId;
     
     
+    if (currentUser != nil) {
+        [self loadData];
+        [self refreshView];
+        [_guestView setHidden:YES];
+    } else {
+        [_guestView setHidden:NO];
+        [self.settingsButton setAction:nil];
+    }
+}
+//set up textfield so return button puts focus on the next textfield
+-(BOOL)textFieldShouldReturn:(UITextField*)textField {
+    
+    if (userId != nil) {
+        [textField resignFirstResponder];
+        if ([textField tag] == 10) {
+            //update username
+            [[PFUser currentUser]setObject:[_usernameField text] forKey:@"username"];
+            [[PFUser currentUser]saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                if (!error) {
+                    
+                } else {
+                    NSString *errorString = [error userInfo][@"error"];
+                    NSLog(@"Error: %@", errorString);
+                    //if username already in use
+                    if ([error code] == 202) {
+           
+                        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error" message:@"Username already in use" preferredStyle:UIAlertControllerStyleAlert];
+                        
+                        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+                        [alertController addAction:okAction];
+                        [self presentViewController:alertController animated:YES completion:nil];
+                    }
+                    [_usernameField setText:oldUsername];
+                }
+            }];
+        } else if ([textField tag] == 11) {
+            //update name
+            [[PFUser currentUser]setObject:[_nameField text] forKey:@"full_name"];
+            [[PFUser currentUser]saveInBackground];
+        }
+    }
+    return YES;
 }
 //load user data to populate UI
 -(void)loadData {
@@ -155,52 +162,134 @@
     NSDictionary *userDict = [userArray firstObject];
     NSString *username = [userDict objectForKey:@"username"];
     NSString *fullName = [userDict objectForKey:@"full_name"];
+    friendsArray = [[NSArray alloc]initWithArray:[userDict objectForKey:@"friends"]];
+    [_followingButton setTitle:[NSString stringWithFormat:@"%lu", (unsigned long)[friendsArray count]] forState:UIControlStateNormal];
     UIImage *image = [UIImage imageWithData:[(PFFile *)userDict[@"profile_pic"] getData]];
     
-    if (image == nil) {
-        _profilePicView.image = [UIImage imageNamed:@"Ninja.png"];
-        [_uploadPhoto setHidden:NO];
-    } else {
+    //get number of revies
+    __block int reviewsCount;
+    PFQuery *countQuery = [PFQuery queryWithClassName:@"Reviews"];
+    [countQuery whereKey:@"userID" equalTo:currentUser.objectId];
+    [countQuery countObjectsInBackgroundWithBlock:^(int count, NSError *error) {
+        if (!error) {
+            reviewsCount = count;
+        } else {
+            reviewsCount = 0;
+        }
+        [_reviewsCountButton setTitle:[NSString stringWithFormat:@"%i", reviewsCount] forState:UIControlStateNormal];
+    }];
+   //make sure we aren't refreshing after uploading a new photo, parse won't have saved it yet
+    if (!newPic) {
         _profilePicView.image = image;
+    } else {
+        newPic = NO;
     }
     
     //set uielements
-    [_nameLabel setText:username];
-    self.navBar.title = fullName;
+    [_nameLabel setText:fullName];
+    oldUsername = username;
+    self.navBar.title = @"My Profile";
+    [_nameField setText:fullName];
+    [_usernameField setText:username];
+    
+    //get number of followers
+    PFQuery *followersQuery = [PFUser query];
+    [followersQuery whereKey:@"friends" equalTo:userId];
+    NSArray *followersFoundArray = [followersQuery findObjects];
+    NSLog(@"%@", followersFoundArray);
+    [_followersButton setTitle:[NSString stringWithFormat:@"%lu", (unsigned long)[followersFoundArray count]] forState:UIControlStateNormal];
 
 }
+#pragma mark - Change Photo
 //upload a profile pic
 -(IBAction)uploadPhoto:(id)sender {
     
-    UIImagePickerController *imgPicker = [[UIImagePickerController alloc] init];
+    imgPicker = [[UIImagePickerController alloc] init];
     imgPicker.delegate = self;
-    imgPicker.sourceType = UIImagePickerControllerSourceTypeCamera &&UIImagePickerControllerSourceTypePhotoLibrary;
-    //[self.navigationController presentModalViewController:imgPicker animated:YES];
-    [self.navigationController presentViewController:imgPicker animated:YES completion:nil];
+    imgPicker.allowsEditing = YES;
+    
+    //open action sheet to choose photo type
+    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+        UIAlertController * view=   [UIAlertController
+                                     alertControllerWithTitle:@"Upload Photo"
+                                     message:@""
+                                     preferredStyle:UIAlertControllerStyleActionSheet];
+        
+        UIAlertAction* camera = [UIAlertAction
+                                 actionWithTitle:@"Take Photo With Camera"
+                                 style:UIAlertActionStyleDefault
+                                 handler:^(UIAlertAction * action)
+                                 {
+                                     //display camera
+                                     [view dismissViewControllerAnimated:YES completion:nil];
+                                     imgPicker.sourceType = UIImagePickerControllerSourceTypeCamera;
+                                     [self presentViewController:imgPicker animated:YES completion:nil];
+                                     
+                                 }];
+        UIAlertAction* album = [UIAlertAction
+                                actionWithTitle:@"Choose Existing Photo"
+                                style:UIAlertActionStyleDefault
+                                handler:^(UIAlertAction * action)
+                                {
+                                    //display photo album
+                                    [view dismissViewControllerAnimated:YES completion:nil];
+                                    imgPicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+                                    [self presentViewController:imgPicker animated:YES completion:nil];
+                                    
+                                }];
+        UIAlertAction* cancel = [UIAlertAction
+                                 actionWithTitle:@"Cancel"
+                                 style:UIAlertActionStyleDefault
+                                 handler:^(UIAlertAction * action)
+                                 {
+                                     [view dismissViewControllerAnimated:YES completion:nil];
+                                     
+                                 }];
+        
+        
+        [view addAction:camera];
+        [view addAction:album];
+        [view addAction:cancel];
+        [self presentViewController:view animated:YES completion:nil];
+    } else {
+        imgPicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+        [self presentViewController:imgPicker animated:YES completion:nil];
+    }
 }
-- (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
-{
-    // Close the image picker
-    //[picker dismissModalViewControllerAnimated:YES];
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    // close the image picker
     [picker dismissViewControllerAnimated:YES completion:nil];
 
+    //set the image on the ui
     UIImage *image = (UIImage *)info[UIImagePickerControllerOriginalImage];
     _profilePicView.image = image;
-    [_uploadPhoto setHidden:YES];
- 
+    newPic = YES;
     
+    //save image to parse
     NSData *imageData = UIImageJPEGRepresentation(image, 0.8);
     PFFile *imageFile = [PFFile fileWithName:@"img" data:imageData];
     [[PFUser currentUser]setObject:imageFile forKey:@"profile_pic"];
     [[PFUser currentUser]saveInBackground];
-    }
+}
+#pragma mark - Actions
 - (void)logoutButtonAction:(id)sender  {
+    
+    //log user out of notifications
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    [[PFInstallation currentInstallation] removeObjectForKey:currentInstallation.installationId];
+    [[PFInstallation currentInstallation] saveInBackground];
     [PFUser logOut]; // Log out
     
     // Return to Login view controller
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
+//reload table when user selects segment
 -(void)segmentSelected:(id)sender {
+    [_listTableView reloadData];
+}
+//if clicks reviews, pop to reviews table
+-(void)clickedReviews:(id)sender {
+    [_listSegment setSelectedSegmentIndex:0];
     [_listTableView reloadData];
 }
 - (void)didReceiveMemoryWarning {
@@ -219,14 +308,13 @@
     }
     return [movieArray count];
 }
-
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"movieCell" forIndexPath:indexPath];
 
     MovieClass *currentMovie;
     
+    //switch out data based on which segment is selected
     switch ([_listSegment selectedSegmentIndex]) {
         case 0:
             currentMovie = [movieArray objectAtIndex:indexPath.row];
@@ -243,8 +331,8 @@
 
     if (cell != nil)
     {
-        NSString *filledStar = @"star-48.png";
-        NSString *emptyStar = @"star-50.png";
+        NSString *filledStar = @"christmas_star-48.png";
+        NSString *emptyStar = @"outline_star-48.png";
         
         UIImageView *star1 = (UIImageView *) [cell viewWithTag:3];
         UIImageView *star2 = (UIImageView *) [cell viewWithTag:4];
@@ -319,7 +407,7 @@
         }
         
         UIImageView *posterView = (UIImageView *) [cell viewWithTag:1];
-        UIImage *posterImage = [UIImage imageNamed:currentMovie.movie_poster];
+        UIImage *posterImage = currentMovie.movie_poster_file;
         posterView.image = posterImage;
         
         UILabel *titleLabel = (UILabel *) [cell viewWithTag:2];
@@ -335,26 +423,37 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
 
-    MovieDetailViewController *vc = [segue destinationViewController];
-    UITableViewCell *cell = (UITableViewCell*)sender;
-    NSIndexPath *indexPath = [_listTableView indexPathForCell:cell];
     
-    MovieClass *currentMovie;
-    switch ([_listSegment selectedSegmentIndex]) {
-        case 0:
-            currentMovie = [movieArray objectAtIndex:indexPath.row];
-            break;
-        case 1:
-            currentMovie = [favoritesArray objectAtIndex:indexPath.row];
-            break;
-        case 2:
-            currentMovie = [wantToSeeArray objectAtIndex:indexPath.row];
-            break;
-        default:
-            currentMovie = [movieArray objectAtIndex:indexPath.row];
-            break;
+    if ([[segue identifier]isEqualToString:@"movieDetail"]) {
+        MovieDetailViewController *vc = [segue destinationViewController];
+        UITableViewCell *cell = (UITableViewCell*)sender;
+        NSIndexPath *indexPath = [_listTableView indexPathForCell:cell];
+        
+        MovieClass *currentMovie;
+        switch ([_listSegment selectedSegmentIndex]) {
+            case 0:
+                currentMovie = [movieArray objectAtIndex:indexPath.row];
+                break;
+            case 1:
+                currentMovie = [favoritesArray objectAtIndex:indexPath.row];
+                break;
+            case 2:
+                currentMovie = [wantToSeeArray objectAtIndex:indexPath.row];
+                break;
+            default:
+                currentMovie = [movieArray objectAtIndex:indexPath.row];
+                break;
+        }
+        vc.selectedMovie = currentMovie;
+    } else if ([[segue identifier]isEqualToString:@"following"]) {
+        FollowersTableViewController *fvc = [segue destinationViewController];
+        fvc.selectionType = @"following";
+    } else if ([[segue identifier]isEqualToString:@"followers"]){
+        FollowersTableViewController *fvc = [segue destinationViewController];
+        fvc.selectionType = @"followers";
+    } else {
+        
     }
-    vc.selectedMovie = currentMovie;
 }
 
 @end

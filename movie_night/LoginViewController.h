@@ -9,13 +9,21 @@
 #import <UIKit/UIKit.h>
 #import "FriendFeedViewController.h"
 
-@interface LoginViewController : UIViewController
-
+@interface LoginViewController : UIViewController <UITextFieldDelegate>
+{
+    Reachability *reachGoogle;
+    NetworkStatus checkNetworkStatus;
+}
 
 @property (nonatomic, strong) IBOutlet UITextField *usernameField;
 @property (nonatomic, strong) IBOutlet UITextField *passwordField;
+@property (nonatomic, strong) IBOutlet UIView *forgotPasswordView;
+@property (nonatomic, strong) IBOutlet UITextField *emailField;
+@property (nonatomic, strong) IBOutlet UILabel *errorLabel;
 
 -(IBAction)loginWithFacebook:(id)sender;
 -(IBAction)loginWithUsername:(id)sender;
+-(IBAction)forgotPassword:(id)sender;
+-(IBAction)resetPassword:(id)sender;
 
 @end
